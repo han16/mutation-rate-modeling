@@ -28,6 +28,35 @@ knitr::read_chunk("chunks.R")
 
 ## Session information
 
+## initial simple model
+
+
+At every genomic locus, observed number of mutations, $y_i$ is modeled as Poisson distribution as 
+
+$y_i \sim Pois(\mu_i)$
+
+There are several covariates affecting the mutation rate, such as tri-nucleotide context, parents' age, etc. To relate the mutation rate to covariates $X_i$, Poisson regression could be one way to do that 
+
+$log(E(y_i|X_i))=log(\mu_i)=X_i^T\beta$
+
+Thus 
+
+$\mu_i=e^{X_i^T\beta}$. 
+
+
+
+If we already have baseline mutation rate, say $\hat{\mu}_{i0}$, we can adjust 
+
+$\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}$
+
+
+Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate. Consider a genomic window, the prior of its mutation rate is defined as 
+
+$\lambda \sim Ga(\alpha, \alpha)$
+
+
+
+
 <!-- Insert the session information into the document -->
 ```{r session-info}
 ```

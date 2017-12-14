@@ -320,13 +320,26 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2017-12-13</p>
+<p><strong>Last updated:</strong> 2017-12-14</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 4a3622b</p>
+<p><strong>Code version:</strong> 63b8382</p>
 <!-- Add your analysis here -->
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
+</div>
+<div id="initial-simple-model" class="section level2">
+<h2>initial simple model</h2>
+<p>At every genomic locus, observed number of mutations, <span class="math inline">\(y_i\)</span> is modeled as Poisson distribution as</p>
+<p><span class="math inline">\(y_i \sim Pois(\mu_i)\)</span></p>
+<p>There are several covariates affecting the mutation rate, such as tri-nucleotide context, parents’ age, etc. To relate the mutation rate to covariates <span class="math inline">\(X_i\)</span>, Poisson regression could be one way to do that</p>
+<p><span class="math inline">\(log(E(y_i|X_i))=log(\mu_i)=X_i^T\beta\)</span></p>
+<p>Thus</p>
+<p><span class="math inline">\(\mu_i=e^{X_i^T\beta}\)</span>.</p>
+<p>If we already have baseline mutation rate, say <span class="math inline">\(\hat{\mu}_{i0}\)</span>, we can adjust</p>
+<p><span class="math inline">\(\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}\)</span></p>
+<p>Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate. Consider a genomic window, the prior of its mutation rate is defined as</p>
+<p><span class="math inline">\(\lambda \sim Ga(\alpha, \alpha)\)</span></p>
 <!-- Insert the session information into the document -->
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.4.3 (2017-11-30)
