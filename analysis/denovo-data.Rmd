@@ -1,0 +1,50 @@
+---
+title: "De novo mutations"
+author: "Shengtong  Han"
+date: YYYY-MM-DD
+output: html_document
+---
+
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+
+## Samples 
+
+
+
+index    | Samples | \# mutations| \# subjects
+----|-------|-------|---
+1 | Jiang_cases_DNM.bed | 2,091| 32
+2 | Michaelson_cases_DNM.bed |581 | 10
+3 | Yuen_NM2015_cases_DNM.bed | 9,381| 162
+4 | Wu_cases_DNM.bed | 1,915 | 32
+5 | Kong_cases_DNM.bed | 4,930 | 78
+
+Table: Five WGS  DNM Sample information
+
+
+<!-- Add your analysis here -->
+
+## Session information
+
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
