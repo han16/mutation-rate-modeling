@@ -28,7 +28,7 @@ knitr::read_chunk("chunks.R")
 
 ## Session information
 
-## initial simple model
+## base level
 
 
 At every genomic locus, observed number of mutations, $y_i$ is modeled as Poisson distribution as 
@@ -43,6 +43,9 @@ Thus
 
 $\mu_i=e^{X_i^T\beta}$. 
 
+With parameters estimates, we have 
+
+$\hat{\mu_i}=e^{X_i^T\hat{\beta}}$
 
 
 If we already have baseline mutation rate, say $\hat{\mu}_{i0}$, we can adjust 
@@ -50,11 +53,36 @@ If we already have baseline mutation rate, say $\hat{\mu}_{i0}$, we can adjust
 $\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}$
 
 
-Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate. Consider a genomic window, the prior of its mutation rate is defined as 
+Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate. 
+
+
+## region level
+
+With the base level mutation rate estimate, the mutation rate in a region can be obtained simply by adding the locals 
+
+$\hat{\mu}=\sum_i \hat{\mu}_i$
+
+Let $y$ be the observed number of mutations in the same region.  If $y>\hat{\mu}$, observed mutation rate is higher than estimated. 
+
+Define $\lambda$ as the local deviation. Treat the region as a unit, similarly, the number of mutations in a region follows Poisson distribution 
+
+$y \sim Pois(\lambda \mu)$
+
+Use Gamma as its prior, 
 
 $\lambda \sim Ga(\alpha, \alpha)$
 
+Thus the posterior of $\lambda$ is 
 
+$$
+\begin{aligned}
+ \lambda|y  & \propto P(\lambda) \times P(y|\lambda \mu)  \\
+   & \propto \lambda ^{\alpha+y-1} e^{-\lambda(\alpha+\mu)}
+\end{aligned}
+$$
+
+
+$\lambda|y \sim Ga(\alpha+y, \alpha+\mu)$
 
 
 <!-- Insert the session information into the document -->

@@ -1,5 +1,5 @@
 ---
-title: "De novo mutations"
+title: "De novo mutations of ASD"
 author: "Shengtong  Han"
 date: YYYY-MM-DD
 output: html_document
@@ -24,8 +24,15 @@ knitr::read_chunk("chunks.R")
 ```{r code-version, echo=FALSE, results='asis'}
 ```
 
+## Samples and reference windows
 
-## Samples 
+
+### Reference window
+
+Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score. 
+
+
+### Case Samples 
 
 
 
@@ -37,7 +44,16 @@ index    | Samples | \# mutations| \# subjects
 4 | Wu_cases_DNM.bed | 1,915 | 32
 5 | Kong_cases_DNM.bed | 4,930 | 78
 
-Table: Five WGS  DNM Sample information
+Table: Five WGS  DNM case sample information
+
+
+
+### Control sample 
+
+index    | Samples | \# mutations| \# subjects
+----|-------|-------|---
+1 | Wong_NC_2016_693_control_SNV.bed | 27,092| 
+Table:WGS  DNM control sample information 
 
 
 <!-- Add your analysis here -->

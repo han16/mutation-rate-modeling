@@ -12,7 +12,7 @@
 <meta name="author" content="Shengtong Han" />
 
 
-<title>De novo mutations</title>
+<title>De novo mutations of ASD</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -309,7 +309,7 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">De novo mutations</h1>
+<h1 class="title toc-ignore">De novo mutations of ASD</h1>
 <h4 class="author"><em>Shengtong Han</em></h4>
 <h4 class="date"><em>YYYY-MM-DD</em></h4>
 
@@ -320,14 +320,20 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2017-12-14</p>
+<p><strong>Last updated:</strong> 2017-12-27</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 63b8382</p>
-<div id="samples" class="section level2">
-<h2>Samples</h2>
+<p><strong>Code version:</strong> 48a5a04</p>
+<div id="samples-and-reference-windows" class="section level2">
+<h2>Samples and reference windows</h2>
+<div id="reference-window" class="section level3">
+<h3>Reference window</h3>
+<p>Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score.</p>
+</div>
+<div id="case-samples" class="section level3">
+<h3>Case Samples</h3>
 <table>
-<caption>Five WGS DNM Sample information</caption>
+<caption>Five WGS DNM case sample information</caption>
 <thead>
 <tr class="header">
 <th>index</th>
@@ -369,7 +375,30 @@ shared across the workflowr files. -->
 </tr>
 </tbody>
 </table>
+</div>
+<div id="control-sample" class="section level3">
+<h3>Control sample</h3>
+<table>
+<caption>WGS DNM control sample information</caption>
+<thead>
+<tr class="header">
+<th>index</th>
+<th>Samples</th>
+<th># mutations</th>
+<th># subjects</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Wong_NC_2016_693_control_SNV.bed</td>
+<td>27,092</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <!-- Add your analysis here -->
+</div>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
