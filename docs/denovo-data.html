@@ -320,15 +320,15 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2017-12-27</p>
+<p><strong>Last updated:</strong> 2018-01-04</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 48a5a04</p>
+<p><strong>Code version:</strong> Unavailable. Install git2r package to enable.</p>
 <div id="samples-and-reference-windows" class="section level2">
 <h2>Samples and reference windows</h2>
 <div id="reference-window" class="section level3">
 <h3>Reference window</h3>
-<p>Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score.</p>
+<p>Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score; only cover genes and 10-kb regions within TSSs.</p>
 </div>
 <div id="case-samples" class="section level3">
 <h3>Case Samples</h3>
@@ -393,11 +393,18 @@ shared across the workflowr files. -->
 <td>1</td>
 <td>Wong_NC_2016_693_control_SNV.bed</td>
 <td>27,092</td>
-<td></td>
+<td>693</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div id="use-reference-window-of-50-bp" class="section level3">
+<h3>use reference window of 50 bp</h3>
 <!-- Add your analysis here -->
+</div>
+<div id="kb-window" class="section level3">
+<h3>1kb window</h3>
+<p>only 15.91% mutations fall within the reference windows.</p>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -421,10 +428,10 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
- [1] compiler_3.4.3  backports_1.0.5 magrittr_1.5    rprojroot_1.2  
- [5] tools_3.4.3     htmltools_0.3.5 yaml_2.1.15     Rcpp_0.12.10   
- [9] stringi_1.1.5   rmarkdown_1.8   knitr_1.17      git2r_0.19.0   
-[13] stringr_1.2.0   digest_0.6.12   evaluate_0.10  </code></pre>
+ [1] compiler_3.4.3  backports_1.0.5 magrittr_1.5    rprojroot_1.3-1
+ [5] tools_3.4.3     htmltools_0.3.5 yaml_2.1.16     Rcpp_0.12.10   
+ [9] stringi_1.1.5   rmarkdown_1.8   knitr_1.17      stringr_1.2.0  
+[13] digest_0.6.12   evaluate_0.10  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

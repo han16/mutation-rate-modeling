@@ -29,7 +29,7 @@ knitr::read_chunk("chunks.R")
 
 ### Reference window
 
-Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score. 
+Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score; only cover genes and 10-kb regions within TSSs. 
 
 
 ### Case Samples 
@@ -52,11 +52,47 @@ Table: Five WGS  DNM case sample information
 
 index    | Samples | \# mutations| \# subjects
 ----|-------|-------|---
-1 | Wong_NC_2016_693_control_SNV.bed | 27,092| 
+1 | Wong_NC_2016_693_control_SNV.bed | 27,092|  693
 Table:WGS  DNM control sample information 
 
 
+### use reference window of 50 bp
+
+
+```{r, echo=F}
+ref.50bp.win=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\Wong_NC_2016_693_control_SNV.Example_windows_with_div_score.bed", header=F)
+unique.win.start=unique(ref.50bp.win[,5])
+for ( i in 1:length(unique.win.start))
+{
+  i=1
+  mutation.data=ref.50bp.win[ref.50bp.win[,5]==unique.win.start[i],]
+  count=nrow(mutation.data)
+  x1=mutation.data[,11]; x2=mutation.data[,12]; x3=mutation.data[,13]
+  fit <- glm(count ~ x1+x2+x3, family=poisson())
+}
+```
 <!-- Add your analysis here -->
+
+
+### 1kb window 
+
+```{r, echo=F}
+ref.1kbp.win=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\hg19.genome.1000bp.window.Wong_NC_2016_693_control_SNV.Example_windows_with_div_score.bed", header=F)
+unique.win.start=unique(ref.1kbp.win[,2])
+for ( i in 1:length(unique.win.start))
+{
+  i=2
+  mutation.data=ref.1kbp.win[ref.1kbp.win[,2]==unique.win.start[i],]
+  count=rep(1,nrow(mutation.data))
+  x1=mutation.data[,15]; x2=mutation.data[,16]
+  fit <- glm(count ~ x1+x2, family=poisson())
+}
+```
+
+
+only 15.91\% mutations fall within the reference windows. 
+
+
 
 ## Session information
 
