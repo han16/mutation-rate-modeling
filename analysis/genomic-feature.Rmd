@@ -38,10 +38,15 @@ library(git2r)
 
 ## Genomic features 
 
+These features are from the [reference data][data]
+
+[data]:https://github.com/carjed/smaug-genetics
+
+
  11 binary features 
 
 *  EXON:
-* DP:
+* DP: (DNase hypersensitive sites)
 * H3K4me1
 * H3K4me3
 * H3K9ac
