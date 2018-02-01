@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-01-04</p>
+<p><strong>Last updated:</strong> 2018-02-01</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> Unavailable. Install git2r package to enable.</p>
+<p><strong>Code version:</strong> 2309dc7</p>
 <div id="samples-and-reference-windows" class="section level2">
 <h2>Samples and reference windows</h2>
 <div id="reference-window" class="section level3">
@@ -395,16 +395,89 @@ shared across the workflowr files. -->
 <td>27,092</td>
 <td>693</td>
 </tr>
+<tr class="even">
+<td>2</td>
+<td>A-&gt;C</td>
+<td>990 (3.65%)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>A-&gt;G</td>
+<td>3,812 (14.07%)</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>A-&gt;T</td>
+<td>815 (3.01%)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>C-&gt;G</td>
+<td>1,274 (4.70%)</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>C-&gt;T</td>
+<td>5,314 (19.61%)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>C-&gt;A</td>
+<td>1,298 (4.79%)</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 </div>
-<div id="use-reference-window-of-50-bp" class="section level3">
-<h3>use reference window of 50 bp</h3>
-<!-- Add your analysis here -->
-</div>
-<div id="kb-window" class="section level3">
-<h3>1kb window</h3>
-<p>only 15.91% mutations fall within the reference windows.</p>
+<div id="bp-window" class="section level3">
+<h3>100 bp window</h3>
+<p>For each mutation type in the above table, fit the Poisson regression on the feature DHS</p>
+<table>
+<thead>
+<tr class="header">
+<th>mutation type</th>
+<th><span class="math inline">\(\hat{\beta}_0\)</span> (intercept)</th>
+<th><span class="math inline">\(\hat{\beta_1}\)</span> (DHS)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A-&gt;C</td>
+<td>-10.47</td>
+<td>0.45</td>
+</tr>
+<tr class="even">
+<td>A-&gt;G</td>
+<td>-9.08</td>
+<td>0.33</td>
+</tr>
+<tr class="odd">
+<td>A-&gt;T</td>
+<td>-10.62</td>
+<td>0.30</td>
+</tr>
+<tr class="even">
+<td>C-&gt;G</td>
+<td>-10.31</td>
+<td>0.75</td>
+</tr>
+<tr class="odd">
+<td>C-&gt;T</td>
+<td>-8.87</td>
+<td>0.70</td>
+</tr>
+<tr class="even">
+<td>C-&gt;A</td>
+<td>-10.24</td>
+<td>0.60</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -430,8 +503,8 @@ attached base packages:
 loaded via a namespace (and not attached):
  [1] compiler_3.4.3  backports_1.0.5 magrittr_1.5    rprojroot_1.3-1
  [5] tools_3.4.3     htmltools_0.3.5 yaml_2.1.16     Rcpp_0.12.10   
- [9] stringi_1.1.5   rmarkdown_1.8   knitr_1.17      stringr_1.2.0  
-[13] digest_0.6.12   evaluate_0.10  </code></pre>
+ [9] stringi_1.1.5   rmarkdown_1.8   knitr_1.17      git2r_0.21.0   
+[13] stringr_1.2.0   digest_0.6.12   evaluate_0.10  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

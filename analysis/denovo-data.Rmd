@@ -53,46 +53,28 @@ Table: Five WGS  DNM case sample information
 index    | Samples | \# mutations| \# subjects
 ----|-------|-------|---
 1 | Wong_NC_2016_693_control_SNV.bed | 27,092|  693
+2 | A->C | 990 (3.65%) | 
+3 | A->G | 3,812 (14.07%) |
+4 | A->T | 815 (3.01%) |
+5 | C->G | 1,274 (4.70%) |
+6 | C->T | 5,314 (19.61%) |
+7 | C->A | 1,298 (4.79%) |
 Table:WGS  DNM control sample information 
 
 
-### use reference window of 50 bp
+### 100 bp window 
+
+For each mutation type in the above table, fit the Poisson regression on the feature DHS 
 
 
-```{r, echo=F}
-ref.50bp.win=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\Wong_NC_2016_693_control_SNV.Example_windows_with_div_score.bed", header=F)
-unique.win.start=unique(ref.50bp.win[,5])
-for ( i in 1:length(unique.win.start))
-{
-  i=1
-  mutation.data=ref.50bp.win[ref.50bp.win[,5]==unique.win.start[i],]
-  count=nrow(mutation.data)
-  x1=mutation.data[,11]; x2=mutation.data[,12]; x3=mutation.data[,13]
-  fit <- glm(count ~ x1+x2+x3, family=poisson())
-}
-```
-<!-- Add your analysis here -->
-
-
-### 1kb window 
-
-```{r, echo=F}
-ref.1kbp.win=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\hg19.genome.1000bp.window.Wong_NC_2016_693_control_SNV.Example_windows_with_div_score.bed", header=F)
-unique.win.start=unique(ref.1kbp.win[,2])
-for ( i in 1:length(unique.win.start))
-{
-  i=2
-  mutation.data=ref.1kbp.win[ref.1kbp.win[,2]==unique.win.start[i],]
-  count=rep(1,nrow(mutation.data))
-  x1=mutation.data[,15]; x2=mutation.data[,16]
-  fit <- glm(count ~ x1+x2, family=poisson())
-}
-```
-
-
-only 15.91\% mutations fall within the reference windows. 
-
-
+mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
+---|-----|-------------|------
+ A->C | -10.47 | 0.45
+ A->G | -9.08 | 0.33
+ A->T | -10.62 | 0.30
+ C->G | -10.31 | 0.75
+ C->T | -8.87 | 0.70
+ C->A | -10.24 | 0.60 
 
 ## Session information
 
