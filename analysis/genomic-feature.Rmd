@@ -46,10 +46,10 @@ These features are from the [reference data][data]
  11 binary features 
 
 *  EXON:
-* DP: (DNase hypersensitive sites)
 * H3K4me1
 * H3K4me3
 * H3K9ac
+* H3K9me3
 * H3K27ac
 * H3K27me3
 * H3K36me3
@@ -58,7 +58,7 @@ These features are from the [reference data][data]
 [cpgi]:http://web.stanford.edu/class/bios221/data/model-based-cpg-islands-hg19.txt
 
 * LAMIN
-* DHS
+* DHS (DNase  hypersensitive sites)
 
 3 continuous features:
 
