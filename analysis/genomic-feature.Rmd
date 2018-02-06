@@ -53,18 +53,18 @@ These features are from the [reference data][data]
 * H3K27ac
 * H3K27me3
 * H3K36me3
-* [CpGI][cpgi]
+* [CpGI][cpgi] (~1kb, 65,699 windows in total)
 
 [cpgi]:http://web.stanford.edu/class/bios221/data/model-based-cpg-islands-hg19.txt
 
-* LAMIN
-* DHS (DNase  hypersensitive sites)
+* LAMIN (300,000, 1301 windows in total)
+* DHS (DNase  hypersensitive sites, 1~200 bp window, 1867665 windows in total)
 
 3 continuous features:
 
 * RR (recombination rate)
-* TIME (Replication timing)
-* GC
+* TIME (Replication timing, 2,386,623 sites)
+* GC 
 
 
 ## Session information

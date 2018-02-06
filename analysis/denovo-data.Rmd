@@ -76,6 +76,19 @@ mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
  C->T | -8.87 | 0.70
  C->A | -10.24 | 0.60 
 
+#### 
+
+```{r, echo=F}
+library(knitr)
+para.summary=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary.txt", header=T)[1:22,]
+rownames(para.summary)=paste("chr", seq(1,22), sep="")
+colnames(para.summary)=c("Intercept","DHS", "CpGisland", "lamin", "gc", "RT")
+#para.summary=para.summary*10^5
+```
+
+```{r, echo=F}
+kable(para.summary, digits=10, format="html", caption="Mutation A->C ")
+```
 ## Session information
 
 
