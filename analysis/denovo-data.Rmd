@@ -87,7 +87,7 @@ colnames(para.summary)=c("Intercept","DHS", "CpGisland", "lamin", "gc", "RT")
 ```
 
 ```{r, echo=F}
-kable(para.summary, digits=10, format="html", caption="Mutation A->C ")
+kable(para.summary*10^5, digits=2, format="html", caption="Mutation A->C (*10^{-5}) ")
 ```
 ## Session information
 
