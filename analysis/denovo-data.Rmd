@@ -61,6 +61,8 @@ index    | Samples | \# mutations| \# subjects
 7 | C->A | 1,298 (4.79%) |
 Table:WGS  DNM control sample information 
 
+There are 585,017,944 C's  and 844,868,045 A's in hg19. 
+
 
 ### 100 bp window 
 
@@ -78,17 +80,41 @@ mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
 
 #### 
 
+
+mutation type| $\hat{\beta}_0$ | $\hat{\beta_1}$  | $\hat{\beta_2}$ | $\hat{\beta_3}$ | $\hat{\beta_4}$ | $\hat{\beta_5}$
+---|-----|-------------|------|-----|----|-----|  
+ A->C | -10.47 | 0.46 | -0.10 | | |
+ A->C | -10.51 | 0.47 | -0.08 | 0.11 | |
+ A->C (chr1 )| -11.23 | 0.14 | -0.44 | 0.13| 1.53 |
+ A->C (chr1) | -11.24 | 0.16 | -0.44 | 0.09 | 1.62 | -0.87 |
+ Table: $\beta_0, \beta_1, \beta_2, \beta_3$ are for intercept, DHS,  CpG island and lamin. 
+
 ```{r, echo=F}
 library(knitr)
-para.summary=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary.txt", header=T)[1:22,]
+para.summary=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary2.txt", header=T)[1:22,]
 rownames(para.summary)=paste("chr", seq(1,22), sep="")
 colnames(para.summary)=c("Intercept","DHS", "CpGisland", "lamin", "gc", "RT")
 #para.summary=para.summary*10^5
 ```
 
 ```{r, echo=F}
-kable(para.summary*10^5, digits=2, format="html", caption="Mutation A->C (*10^{-5}) ")
+kable(para.summary, digits=2, format="html", caption="Mutation A->C ", align="c")
 ```
+
+
+```{r, echo=F}
+library(knitr)
+para.summary.nointer=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary2.withoutintercept.txt", header=T)[1:22,]
+rownames(para.summary.nointer)=paste("chr", seq(1,22), sep="")
+colnames(para.summary.nointer)=c("DHS", "CpGisland", "lamin", "gc", "RT")
+#para.summary=para.summary*10^5
+```
+
+```{r, echo=F}
+kable(para.summary.nointer, digits=2, format="html", caption="Mutation A->C without intercept", align="c")
+```
+
+
 ## Session information
 
 
