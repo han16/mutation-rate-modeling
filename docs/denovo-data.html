@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-19</p>
+<p><strong>Last updated:</strong> 2018-02-25</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> a7ded93</p>
+<p><strong>Code version:</strong> 53533ee</p>
 <div id="samples-and-reference-windows" class="section level2">
 <h2>Samples and reference windows</h2>
 <div id="reference-window" class="section level3">
@@ -479,6 +479,12 @@ shared across the workflowr files. -->
 </tr>
 </tbody>
 </table>
+<pre class="r"><code> inter=c(-10.47, -9.08, -10.62, -10.31, -8.87, -10.24)
+ DHS=matrix(nrow=6, ncol=1)
+ DHS[,1]=c(0.45, 0.33, 0.30, 0.75, 0.70, 0.60)
+ rownames(DHS)=c(&quot;A-&gt;C&quot;, &quot;A-&gt;G&quot;, &quot;A-&gt;T&quot;, &quot;C-&gt;G&quot;, &quot;C-&gt;T&quot;, &quot;C-&gt;A&quot;)
+ barplot(DHS[,1], col=&quot; blue&quot;, xlab=&quot;&quot;, ylab=&quot;DHS (whole genome)&quot;)</code></pre>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="section" class="section level4">
 <h4></h4>
 <table style="width:67%;">
@@ -551,9 +557,10 @@ shared across the workflowr files. -->
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
 <table>
 <caption>
-Mutation A-&gt;C
+Estimated effect of five features
 </caption>
 <thead>
 <tr>
@@ -582,980 +589,150 @@ RT
 <tbody>
 <tr>
 <td style="text-align:left;">
-chr1
+A-&gt;C
 </td>
 <td style="text-align:center;">
--11.24
+-9.57
 </td>
 <td style="text-align:center;">
-0.16
+-0.83
 </td>
 <td style="text-align:center;">
--0.44
+-1.59
+</td>
+<td style="text-align:center;">
+-0.47
+</td>
+<td style="text-align:center;">
+-1.05
+</td>
+<td style="text-align:center;">
+0.06
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A-&gt;G
+</td>
+<td style="text-align:center;">
+-8.56
+</td>
+<td style="text-align:center;">
+-0.27
+</td>
+<td style="text-align:center;">
+-1.47
+</td>
+<td style="text-align:center;">
+-0.35
+</td>
+<td style="text-align:center;">
+-0.76
+</td>
+<td style="text-align:center;">
+0.19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A-&gt;T
+</td>
+<td style="text-align:center;">
+-9.49
+</td>
+<td style="text-align:center;">
+-0.04
+</td>
+<td style="text-align:center;">
+-3.48
+</td>
+<td style="text-align:center;">
+1.04
+</td>
+<td style="text-align:center;">
+-4.74
+</td>
+<td style="text-align:center;">
+-0.22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C-&gt;G
+</td>
+<td style="text-align:center;">
+-9.19
 </td>
 <td style="text-align:center;">
 0.09
 </td>
 <td style="text-align:center;">
-1.62
+-0.43
 </td>
 <td style="text-align:center;">
--0.87
+-0.55
+</td>
+<td style="text-align:center;">
+-1.14
+</td>
+<td style="text-align:center;">
+0.77
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-chr2
+C-&gt;T
 </td>
 <td style="text-align:center;">
--10.05
+-8.60
+</td>
+<td style="text-align:center;">
+0.07
 </td>
 <td style="text-align:center;">
 0.26
-</td>
-<td style="text-align:center;">
--12.32
-</td>
-<td style="text-align:center;">
-0.05
-</td>
-<td style="text-align:center;">
--0.25
-</td>
-<td style="text-align:center;">
--0.02
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr3
-</td>
-<td style="text-align:center;">
--8.42
-</td>
-<td style="text-align:center;">
--0.17
-</td>
-<td style="text-align:center;">
--12.00
-</td>
-<td style="text-align:center;">
-0.15
-</td>
-<td style="text-align:center;">
--2.73
-</td>
-<td style="text-align:center;">
--0.09
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr4
-</td>
-<td style="text-align:center;">
--10.92
-</td>
-<td style="text-align:center;">
-0.76
-</td>
-<td style="text-align:center;">
--12.82
-</td>
-<td style="text-align:center;">
-0.34
-</td>
-<td style="text-align:center;">
-1.16
-</td>
-<td style="text-align:center;">
-0.58
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr5
-</td>
-<td style="text-align:center;">
--10.66
-</td>
-<td style="text-align:center;">
-0.54
-</td>
-<td style="text-align:center;">
--13.37
-</td>
-<td style="text-align:center;">
-0.02
-</td>
-<td style="text-align:center;">
-0.42
-</td>
-<td style="text-align:center;">
--0.01
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr6
-</td>
-<td style="text-align:center;">
--7.66
-</td>
-<td style="text-align:center;">
-2.01
-</td>
-<td style="text-align:center;">
--12.22
-</td>
-<td style="text-align:center;">
-0.13
-</td>
-<td style="text-align:center;">
--11.39
-</td>
-<td style="text-align:center;">
-0.41
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr7
-</td>
-<td style="text-align:center;">
--10.38
-</td>
-<td style="text-align:center;">
-0.49
-</td>
-<td style="text-align:center;">
-0.92
-</td>
-<td style="text-align:center;">
-0.14
-</td>
-<td style="text-align:center;">
--0.20
-</td>
-<td style="text-align:center;">
-0.51
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr8
-</td>
-<td style="text-align:center;">
--10.68
-</td>
-<td style="text-align:center;">
-0.47
-</td>
-<td style="text-align:center;">
--13.05
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr9
-</td>
-<td style="text-align:center;">
--10.89
-</td>
-<td style="text-align:center;">
-0.53
-</td>
-<td style="text-align:center;">
--13.78
-</td>
-<td style="text-align:center;">
--0.08
-</td>
-<td style="text-align:center;">
-1.43
-</td>
-<td style="text-align:center;">
-0.45
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr10
-</td>
-<td style="text-align:center;">
--10.71
-</td>
-<td style="text-align:center;">
-0.62
-</td>
-<td style="text-align:center;">
--0.15
-</td>
-<td style="text-align:center;">
-0.08
-</td>
-<td style="text-align:center;">
-0.57
-</td>
-<td style="text-align:center;">
-0.26
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr11
-</td>
-<td style="text-align:center;">
--9.94
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-<td style="text-align:center;">
-0.24
 </td>
 <td style="text-align:center;">
 -0.44
 </td>
 <td style="text-align:center;">
--0.38
-</td>
-<td style="text-align:center;">
-0.37
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr12
-</td>
-<td style="text-align:center;">
--13.39
-</td>
-<td style="text-align:center;">
--0.05
-</td>
-<td style="text-align:center;">
--14.41
-</td>
-<td style="text-align:center;">
-0.66
-</td>
-<td style="text-align:center;">
-6.74
-</td>
-<td style="text-align:center;">
--0.18
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr13
-</td>
-<td style="text-align:center;">
--10.32
-</td>
-<td style="text-align:center;">
-0.72
-</td>
-<td style="text-align:center;">
--12.57
-</td>
-<td style="text-align:center;">
--0.60
-</td>
-<td style="text-align:center;">
-0.12
-</td>
-<td style="text-align:center;">
--0.50
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr14
-</td>
-<td style="text-align:center;">
--11.37
-</td>
-<td style="text-align:center;">
--0.28
-</td>
-<td style="text-align:center;">
-0.49
-</td>
-<td style="text-align:center;">
--0.30
-</td>
-<td style="text-align:center;">
-2.58
-</td>
-<td style="text-align:center;">
--0.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr15
-</td>
-<td style="text-align:center;">
--9.00
-</td>
-<td style="text-align:center;">
--16.43
-</td>
-<td style="text-align:center;">
--14.49
-</td>
-<td style="text-align:center;">
--16.70
-</td>
-<td style="text-align:center;">
--0.89
-</td>
-<td style="text-align:center;">
--0.12
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr16
-</td>
-<td style="text-align:center;">
--11.23
-</td>
-<td style="text-align:center;">
-0.04
-</td>
-<td style="text-align:center;">
--0.03
-</td>
-<td style="text-align:center;">
-0.39
-</td>
-<td style="text-align:center;">
-2.74
-</td>
-<td style="text-align:center;">
--0.29
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr17
-</td>
-<td style="text-align:center;">
--12.09
-</td>
-<td style="text-align:center;">
-0.27
-</td>
-<td style="text-align:center;">
--0.41
-</td>
-<td style="text-align:center;">
-0.23
-</td>
-<td style="text-align:center;">
-3.17
-</td>
-<td style="text-align:center;">
-0.51
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr18
-</td>
-<td style="text-align:center;">
--12.22
-</td>
-<td style="text-align:center;">
-0.05
-</td>
-<td style="text-align:center;">
--13.15
-</td>
-<td style="text-align:center;">
 0.85
 </td>
 <td style="text-align:center;">
-2.68
-</td>
-<td style="text-align:center;">
-0.30
+0.08
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-chr19
+C-&gt;A
 </td>
 <td style="text-align:center;">
--11.12
+-15.18
 </td>
 <td style="text-align:center;">
-2.02
+0.53
 </td>
 <td style="text-align:center;">
--16.35
+-1.70
 </td>
 <td style="text-align:center;">
--15.39
+1.28
 </td>
 <td style="text-align:center;">
--1.76
+8.10
 </td>
 <td style="text-align:center;">
-0.33
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr20
-</td>
-<td style="text-align:center;">
--27.30
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr21
-</td>
-<td style="text-align:center;">
--27.30
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr22
-</td>
-<td style="text-align:center;">
--13.05
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-<td style="text-align:center;">
--14.05
-</td>
-<td style="text-align:center;">
-0.92
-</td>
-<td style="text-align:center;">
-4.05
-</td>
-<td style="text-align:center;">
--2.10
+1.16
 </td>
 </tr>
 </tbody>
 </table>
-<table>
-<caption>
-Mutation A-&gt;C without intercept
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
-DHS
-</th>
-<th style="text-align:center;">
-CpGisland
-</th>
-<th style="text-align:center;">
-lamin
-</th>
-<th style="text-align:center;">
-gc
-</th>
-<th style="text-align:center;">
-RT
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-chr1
-</td>
-<td style="text-align:center;">
-0.60
-</td>
-<td style="text-align:center;">
-4.85
-</td>
-<td style="text-align:center;">
--5.07
-</td>
-<td style="text-align:center;">
--32.17
-</td>
-<td style="text-align:center;">
--0.15
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr2
-</td>
-<td style="text-align:center;">
-0.76
-</td>
-<td style="text-align:center;">
--3.87
-</td>
-<td style="text-align:center;">
--3.46
-</td>
-<td style="text-align:center;">
--31.33
-</td>
-<td style="text-align:center;">
-1.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr3
-</td>
-<td style="text-align:center;">
--0.05
-</td>
-<td style="text-align:center;">
--6.45
-</td>
-<td style="text-align:center;">
--1.25
-</td>
-<td style="text-align:center;">
--29.29
-</td>
-<td style="text-align:center;">
-0.29
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr4
-</td>
-<td style="text-align:center;">
-1.02
-</td>
-<td style="text-align:center;">
--4.50
-</td>
-<td style="text-align:center;">
--3.18
-</td>
-<td style="text-align:center;">
--31.76
-</td>
-<td style="text-align:center;">
-1.31
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr5
-</td>
-<td style="text-align:center;">
-1.26
-</td>
-<td style="text-align:center;">
--3.39
-</td>
-<td style="text-align:center;">
--3.86
-</td>
-<td style="text-align:center;">
--33.12
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr6
-</td>
-<td style="text-align:center;">
-2.46
-</td>
-<td style="text-align:center;">
--5.79
-</td>
-<td style="text-align:center;">
--2.71
-</td>
-<td style="text-align:center;">
--41.79
-</td>
-<td style="text-align:center;">
-1.20
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr7
-</td>
-<td style="text-align:center;">
-0.76
-</td>
-<td style="text-align:center;">
-6.10
-</td>
-<td style="text-align:center;">
--4.21
-</td>
-<td style="text-align:center;">
--31.76
-</td>
-<td style="text-align:center;">
--0.09
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr8
-</td>
-<td style="text-align:center;">
-0.88
-</td>
-<td style="text-align:center;">
--3.76
-</td>
-<td style="text-align:center;">
--2.15
-</td>
-<td style="text-align:center;">
--33.36
-</td>
-<td style="text-align:center;">
-0.16
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr9
-</td>
-<td style="text-align:center;">
-0.97
-</td>
-<td style="text-align:center;">
--2.04
-</td>
-<td style="text-align:center;">
--2.26
-</td>
-<td style="text-align:center;">
--31.02
-</td>
-<td style="text-align:center;">
--0.80
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr10
-</td>
-<td style="text-align:center;">
-1.23
-</td>
-<td style="text-align:center;">
-4.44
-</td>
-<td style="text-align:center;">
--1.89
-</td>
-<td style="text-align:center;">
--31.92
-</td>
-<td style="text-align:center;">
-0.73
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr11
-</td>
-<td style="text-align:center;">
-0.40
-</td>
-<td style="text-align:center;">
-5.14
-</td>
-<td style="text-align:center;">
--4.98
-</td>
-<td style="text-align:center;">
--30.11
-</td>
-<td style="text-align:center;">
-0.55
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr12
-</td>
-<td style="text-align:center;">
-0.45
-</td>
-<td style="text-align:center;">
--3.73
-</td>
-<td style="text-align:center;">
--1.86
-</td>
-<td style="text-align:center;">
--32.80
-</td>
-<td style="text-align:center;">
-0.76
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr13
-</td>
-<td style="text-align:center;">
-1.14
-</td>
-<td style="text-align:center;">
--4.69
-</td>
-<td style="text-align:center;">
--1.29
-</td>
-<td style="text-align:center;">
--34.35
-</td>
-<td style="text-align:center;">
-1.36
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr14
-</td>
-<td style="text-align:center;">
-0.50
-</td>
-<td style="text-align:center;">
-5.90
-</td>
-<td style="text-align:center;">
--2.22
-</td>
-<td style="text-align:center;">
--33.40
-</td>
-<td style="text-align:center;">
-2.03
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr15
-</td>
-<td style="text-align:center;">
--12.14
-</td>
-<td style="text-align:center;">
--5.60
-</td>
-<td style="text-align:center;">
--16.21
-</td>
-<td style="text-align:center;">
--37.77
-</td>
-<td style="text-align:center;">
-1.42
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr16
-</td>
-<td style="text-align:center;">
-0.49
-</td>
-<td style="text-align:center;">
-4.39
-</td>
-<td style="text-align:center;">
--1.89
-</td>
-<td style="text-align:center;">
--26.78
-</td>
-<td style="text-align:center;">
--0.79
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr17
-</td>
-<td style="text-align:center;">
-0.49
-</td>
-<td style="text-align:center;">
-4.77
-</td>
-<td style="text-align:center;">
--2.25
-</td>
-<td style="text-align:center;">
--30.45
-</td>
-<td style="text-align:center;">
--1.14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr18
-</td>
-<td style="text-align:center;">
-0.69
-</td>
-<td style="text-align:center;">
--2.41
-</td>
-<td style="text-align:center;">
--3.91
-</td>
-<td style="text-align:center;">
--34.52
-</td>
-<td style="text-align:center;">
--1.57
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr19
-</td>
-<td style="text-align:center;">
-2.64
-</td>
-<td style="text-align:center;">
--8.89
-</td>
-<td style="text-align:center;">
--15.40
-</td>
-<td style="text-align:center;">
--32.78
-</td>
-<td style="text-align:center;">
--0.37
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr20
-</td>
-<td style="text-align:center;">
-69.26
-</td>
-<td style="text-align:center;">
-237.81
-</td>
-<td style="text-align:center;">
--16.30
-</td>
-<td style="text-align:center;">
--1073.47
-</td>
-<td style="text-align:center;">
-0.20
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr21
-</td>
-<td style="text-align:center;">
--16.20
-</td>
-<td style="text-align:center;">
-368.53
-</td>
-<td style="text-align:center;">
-8.81
-</td>
-<td style="text-align:center;">
--1210.01
-</td>
-<td style="text-align:center;">
-0.83
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-chr22
-</td>
-<td style="text-align:center;">
-1.21
-</td>
-<td style="text-align:center;">
--0.31
-</td>
-<td style="text-align:center;">
--1.86
-</td>
-<td style="text-align:center;">
--34.93
-</td>
-<td style="text-align:center;">
-0.30
-</td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
+<li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
+<li>For each window cluster, use averaged mutation and features to run GLM.</li>
+</ul>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-6.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>

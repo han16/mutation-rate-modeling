@@ -9,6 +9,7 @@ output: html_document
 shared across the workflowr files. -->
 ```{r read-chunk, include=FALSE, cache=FALSE}
 knitr::read_chunk("chunks.R")
+library(knitr)
 ```
 
 <!-- Update knitr chunk options -->
@@ -77,6 +78,16 @@ mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
  C->G | -10.31 | 0.75
  C->T | -8.87 | 0.70
  C->A | -10.24 | 0.60 
+ 
+ 
+```{r, echo=T}
+ inter=c(-10.47, -9.08, -10.62, -10.31, -8.87, -10.24)
+ DHS=matrix(nrow=6, ncol=1)
+ DHS[,1]=c(0.45, 0.33, 0.30, 0.75, 0.70, 0.60)
+ rownames(DHS)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+ barplot(DHS[,1], col=" blue", xlab="", ylab="DHS (whole genome)")
+```
+ 
 
 #### 
 
@@ -99,12 +110,11 @@ colnames(para.summary)=c("Intercept","DHS", "CpGisland", "lamin", "gc", "RT")
 ```
 
 ```{r, echo=F}
-kable(para.summary, digits=2, format="html", caption="Mutation A->C ", align="c")
+#kable(para.summary, digits=2, format="html", caption="Mutation A->C ", align="c")
 ```
 
 
 ```{r, echo=F}
-library(knitr)
 para.summary.nointer=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary2.withoutintercept.txt", header=T)[1:22,]
 rownames(para.summary.nointer)=paste("chr", seq(1,22), sep="")
 colnames(para.summary.nointer)=c("DHS", "CpGisland", "lamin", "gc", "RT")
@@ -112,8 +122,47 @@ colnames(para.summary.nointer)=c("DHS", "CpGisland", "lamin", "gc", "RT")
 ```
 
 ```{r, echo=F}
-kable(para.summary.nointer, digits=2, format="html", caption="Mutation A->C without intercept", align="c")
+#kable(para.summary.nointer, digits=2, format="html", caption="Mutation A->C without intercept", align="c")
 ```
+
+
+```{r, echo=F}
+AtoC=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_C_para.est.50cate.csv", header=T)
+AtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_G_para.est.50cate.csv", header=T)
+AtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_T_para.est.50cate.csv", header=T)
+CtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_G_para.est.50cate.csv", header=T)
+CtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_T_para.est.50cate.csv", header=T)
+CtoA=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_A_para.est.50cate.csv", header=T)
+combine=matrix(nrow=6, ncol=6)
+combine[1,]=AtoC[,2]
+combine[2,]=AtoG[,2]
+combine[3,]=AtoT[,2]
+combine[4,]=CtoG[,2]
+combine[5,]=CtoT[,2]
+combine[6,]=CtoA[,2]
+rownames(combine)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+colnames(combine)=c("Intercept", "DHS", "CpGisland", "lamin", "gc", "RT")
+```
+
+```{r, echo=T}
+kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
+```
+
+* Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
+* use R function Split to cluster windows with similar features including discrete features and categorized features 
+* For each window cluster, use averaged mutation and features to run GLM. 
+
+
+
+```{r, echo=F}
+barplot(combine[,1], col="blue", main="Intercept")
+barplot(combine[,2], col="blue", main="DHS")
+barplot(combine[,3], col="blue", main="CpG island")
+barplot(combine[,4], col="blue", main="Lamin")
+barplot(combine[,5], col="blue", main="GC content")
+barplot(combine[,6], col="blue", main="RT")
+```
+
 
 
 ## Session information
