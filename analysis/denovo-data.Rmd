@@ -115,6 +115,44 @@ colnames(para.summary)=c("Intercept","DHS", "CpGisland", "lamin", "gc", "RT")
 
 
 ```{r, echo=F}
+AtoC=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_C_para.est.optim.50cate.csv", header=T)
+AtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_G_para.est.optim.50cate.csv", header=T)
+AtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_T_para.est.optim.50cate.csv", header=T)
+CtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_G_para.est.optim.50cate.csv", header=T)
+CtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_T_para.est.optim.50cate.csv", header=T)
+CtoA=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_A_para.est.optim.50cate.csv", header=T)
+combine=matrix(nrow=6, ncol=5)
+combine[1,]=AtoC[,2]
+combine[2,]=AtoG[,2]
+combine[3,]=AtoT[,2]
+combine[4,]=CtoG[,2]
+combine[5,]=CtoT[,2]
+combine[6,]=CtoA[,2]
+rownames(combine)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+colnames(combine)=c( "DHS", "CpGisland", "lamin", "gc", "RT")
+```
+
+```{r, echo=T}
+kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
+```
+
+* Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
+* use R function Split to cluster windows with similar features including discrete features and categorized features 
+* Run R function optim to fit the model 
+
+
+
+```{r, echo=F}
+barplot(combine[,1], col="blue", main="DHS")
+barplot(combine[,2], col="blue", main="CpG island")
+barplot(combine[,3], col="blue", main="Lamin")
+barplot(combine[,4], col="blue", main="GC content")
+barplot(combine[,5], col="blue", main="RT")
+```
+
+
+
+```{r, echo=F}
 para.summary.nointer=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary2.withoutintercept.txt", header=T)[1:22,]
 rownames(para.summary.nointer)=paste("chr", seq(1,22), sep="")
 colnames(para.summary.nointer)=c("DHS", "CpGisland", "lamin", "gc", "RT")

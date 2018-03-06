@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-25</p>
+<p><strong>Last updated:</strong> 2018-03-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 53533ee</p>
+<p><strong>Code version:</strong> 539fa31</p>
 <div id="samples-and-reference-windows" class="section level2">
 <h2>Samples and reference windows</h2>
 <div id="reference-window" class="section level3">
@@ -567,6 +567,161 @@ Estimated effect of five features
 <th style="text-align:left;">
 </th>
 <th style="text-align:center;">
+DHS
+</th>
+<th style="text-align:center;">
+CpGisland
+</th>
+<th style="text-align:center;">
+lamin
+</th>
+<th style="text-align:center;">
+gc
+</th>
+<th style="text-align:center;">
+RT
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+A-&gt;C
+</td>
+<td style="text-align:center;">
+0.38
+</td>
+<td style="text-align:center;">
+0.12
+</td>
+<td style="text-align:center;">
+-0.16
+</td>
+<td style="text-align:center;">
+0.17
+</td>
+<td style="text-align:center;">
+0.11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A-&gt;G
+</td>
+<td style="text-align:center;">
+0.34
+</td>
+<td style="text-align:center;">
+0.10
+</td>
+<td style="text-align:center;">
+-0.10
+</td>
+<td style="text-align:center;">
+0.13
+</td>
+<td style="text-align:center;">
+0.12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A-&gt;T
+</td>
+<td style="text-align:center;">
+0.28
+</td>
+<td style="text-align:center;">
+0.11
+</td>
+<td style="text-align:center;">
+0.01
+</td>
+<td style="text-align:center;">
+0.11
+</td>
+<td style="text-align:center;">
+0.09
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C-&gt;G
+</td>
+<td style="text-align:center;">
+0.48
+</td>
+<td style="text-align:center;">
+0.12
+</td>
+<td style="text-align:center;">
+-0.05
+</td>
+<td style="text-align:center;">
+0.18
+</td>
+<td style="text-align:center;">
+0.10
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C-&gt;T
+</td>
+<td style="text-align:center;">
+0.41
+</td>
+<td style="text-align:center;">
+0.11
+</td>
+<td style="text-align:center;">
+-0.07
+</td>
+<td style="text-align:center;">
+0.17
+</td>
+<td style="text-align:center;">
+0.10
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C-&gt;A
+</td>
+<td style="text-align:center;">
+0.27
+</td>
+<td style="text-align:center;">
+0.12
+</td>
+<td style="text-align:center;">
+0.05
+</td>
+<td style="text-align:center;">
+0.12
+</td>
+<td style="text-align:center;">
+0.11
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
+<li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
+<li>Run R function optim to fit the model</li>
+</ul>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
+<table>
+<caption>
+Estimated effect of five features
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
 Intercept
 </th>
 <th style="text-align:center;">
@@ -732,7 +887,7 @@ C-&gt;A
 <li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
 <li>For each window cluster, use averaged mutation and features to run GLM.</li>
 </ul>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-8-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>

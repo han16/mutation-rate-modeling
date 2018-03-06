@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-14</p>
+<p><strong>Last updated:</strong> 2018-03-02</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 8922ede</p>
+<p><strong>Code version:</strong> 539fa31</p>
 <!-- Add your analysis here -->
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
@@ -359,6 +359,21 @@ shared across the workflowr files. -->
 \end{aligned}
 \]</span></p>
 <p><span class="math inline">\(\lambda|y \sim Ga(\alpha+y, \alpha+\mu)\)</span></p>
+</div>
+<div id="categorization" class="section level2">
+<h2>Categorization</h2>
+<p>Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have <span class="math inline">\(P\)</span> binary features (continuous features could be discretized into discrete values). Totally it is going to be <span class="math inline">\(2^P\)</span> feature categories. Usually <span class="math inline">\(2^P &lt;&lt; \frac{3B}{L}\)</span>, <span class="math inline">\(L\)</span> is window length.</p>
+<p>Let <span class="math inline">\(c\)</span> index category. <span class="math inline">\(Y_c\)</span> is the total number of mutations, <span class="math inline">\(\mu_c\)</span> is the baseline mutation rate, <span class="math inline">\(X_c\)</span> is the feature covariates. Then <span class="math inline">\(Y_c \sim Pois(\mu_ce^{X_c\beta})\)</span> with the probability mass function <span class="math inline">\(P(Y_c|\beta)=\frac{\lambda_c^{Y_c}e^{-\lambda_c}}{Y_c!}\)</span>, where <span class="math inline">\(\lambda_c=\mu_ce^{X_c\beta}\)</span>.</p>
+<p>The likelihood function is</p>
+<p><span class="math display">\[
+\begin{aligned}
+ logP(Y|\beta) &amp; =log \prod_c P(Y_c|\beta) \\
+ &amp;=\sum_c[Y_clog(\lambda_c)-\lambda_c-log(Y_c!) ]\\
+ &amp;=\sum_c\{Y_c[log(\mu_c)+X_c\beta]-\mu_ce^{X_c\beta}-log(Y_c!) \} \\
+ &amp;=\sum_c\{Y_c(X_c\beta)-\mu_ce^{X_c\beta} \}+constant
+\end{aligned}
+\]</span></p>
+<p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_ce^{X_c\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_cX_{ic}e^{X_c\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>.</p>
 <!-- Insert the session information into the document -->
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.4.3 (2017-11-30)
