@@ -25,12 +25,8 @@ library(knitr)
 ```{r code-version, echo=FALSE, results='asis'}
 ```
 
-## Samples and reference windows
+## Samples
 
-
-### Reference window
-
-Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score; only cover genes and 10-kb regions within TSSs. 
 
 
 ### Case Samples 
@@ -65,7 +61,11 @@ Table:WGS  DNM control sample information
 There are 585,017,944 C's  and 844,868,045 A's in hg19. 
 
 
-### 100 bp window 
+## Wong_NC_2016_693_control_SNV 
+
+The window length is set 100 bp. Use GLN to fit the model, and stated otherwise. 
+
+### Whole genome NO categorization-one feature
 
 For each mutation type in the above table, fit the Poisson regression on the feature DHS 
 
@@ -89,7 +89,7 @@ mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
 ```
  
 
-#### 
+### whole genome NO categorization-3 features (at most)
 
 
 mutation type| $\hat{\beta}_0$ | $\hat{\beta_1}$  | $\hat{\beta_2}$ | $\hat{\beta_3}$ | $\hat{\beta_4}$ | $\hat{\beta_5}$
@@ -101,18 +101,9 @@ A->C |-10.47 | 0.45 | | | |
  A->C (chr1) | -11.24 | 0.16 | -0.44 | 0.09 | 1.62 | -0.87 |
  Table: $\beta_0, \beta_1, \beta_2, \beta_3$ are for intercept, DHS,  CpG island and lamin. 
 
-```{r, echo=F}
-library(knitr)
-para.summary=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary2.txt", header=T)[1:22,]
-rownames(para.summary)=paste("chr", seq(1,22), sep="")
-colnames(para.summary)=c("Intercept","DHS", "CpGisland", "lamin", "gc", "RT")
-#para.summary=para.summary*10^5
-```
 
-```{r, echo=F}
-#kable(para.summary, digits=2, format="html", caption="Mutation A->C ", align="c")
-```
 
+### whole genome with categorization-5 features 
 
 ```{r, echo=F}
 AtoC=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_C_para.est.optim.50cate.csv", header=T)
@@ -133,72 +124,86 @@ colnames(combine)=c( "DHS", "CpGisland", "lamin", "gc", "RT")
 ```
 
 ```{r, echo=T}
-kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
+#kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
 ```
+
+#### Data discretization and categorization
 
 * Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
 * use R function Split to cluster windows with similar features including discrete features and categorized features 
-* Run R function optim to fit the model 
+
+#### Model fitting 
+
+We use two methods to fit the model 
+
+* GLM (use R function GLM)
+
+  (1) The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M1 (method 1))
+  (11)  The response is the ** averaged  number of mutations (mutation rate) ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))
+  (2) intercept is included and the same across all categories
+  (3) confidence interval could be obtained as well
+
+* use R function optim to fit the model (M3 method 3)
+
+ (1)  use estimated baseline mutation rate in the model. 
+ (2)  There is a singularity problem for hessian matrix when getting the confidence interval by optim. 
 
 
+```{r dhs, echo=F}
+optim.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.optim.csv", header=T, row.names=NULL)
+glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.total.mutation.as.response.csv", header=T)
+glm.ave.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.average.mutation.as.response.csv", header=T)
+DHS=matrix(nrow=3, ncol=6)
+DHS[1,]=optim.para$DHS
+DHS[2,]=glm.total.mut.para$DHS
+DHS[3,]=glm.ave.mut.para$DHS
+colnames(DHS)=optim.para[,1]
 
-```{r, echo=F}
-barplot(combine[,1], col="blue", main="DHS")
-barplot(combine[,2], col="blue", main="CpG island")
-barplot(combine[,3], col="blue", main="Lamin")
-barplot(combine[,4], col="blue", main="GC content")
-barplot(combine[,5], col="blue", main="RT")
-```
+barplot(DHS, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(DHS), max(DHS)+0.8), main="DHS by different methods")
 
+CpG=matrix(nrow=3, ncol=6)
+CpG[1,]=optim.para$CpGIsland
+CpG[2,]=glm.total.mut.para$CpGIsland
+CpG[3,]=glm.ave.mut.para$CpGIsland
+colnames(DHS)=optim.para[,1]
 
-
-```{r, echo=F}
-para.summary.nointer=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\para.summary2.withoutintercept.txt", header=T)[1:22,]
-rownames(para.summary.nointer)=paste("chr", seq(1,22), sep="")
-colnames(para.summary.nointer)=c("DHS", "CpGisland", "lamin", "gc", "RT")
-#para.summary=para.summary*10^5
-```
-
-```{r, echo=F}
-#kable(para.summary.nointer, digits=2, format="html", caption="Mutation A->C without intercept", align="c")
-```
+barplot(CpG, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(CpG), max(CpG)+0.8), main="CpG island by different methods")
 
 
-```{r, echo=F}
-AtoC=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_C_para.est.50cate.csv", header=T)
-AtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_G_para.est.50cate.csv", header=T)
-AtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_T_para.est.50cate.csv", header=T)
-CtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_G_para.est.50cate.csv", header=T)
-CtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_T_para.est.50cate.csv", header=T)
-CtoA=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_A_para.est.50cate.csv", header=T)
-combine=matrix(nrow=6, ncol=6)
-combine[1,]=AtoC[,2]
-combine[2,]=AtoG[,2]
-combine[3,]=AtoT[,2]
-combine[4,]=CtoG[,2]
-combine[5,]=CtoT[,2]
-combine[6,]=CtoA[,2]
-rownames(combine)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
-colnames(combine)=c("Intercept", "DHS", "CpGisland", "lamin", "gc", "RT")
-```
+lamin=matrix(nrow=3, ncol=6)
+lamin[1,]=optim.para$Lamin
+lamin[2,]=glm.total.mut.para$Lamin
+lamin[3,]=glm.ave.mut.para$Lamin
+colnames(lamin)=optim.para[,1]
 
-```{r, echo=T}
-kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
-```
-
-* Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
-* use R function Split to cluster windows with similar features including discrete features and categorized features 
-* For each window cluster, use averaged mutation and features to run GLM. 
+barplot(lamin, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(lamin), max(lamin)+0.8), main="Lamin by different methods")
 
 
+GC=matrix(nrow=3, ncol=6)
+GC[1,]=optim.para$GC
+GC[2,]=glm.total.mut.para$GC
+GC[3,]=glm.ave.mut.para$GC
+colnames(GC)=optim.para[,1]
 
-```{r, echo=F}
-barplot(combine[,1], col="blue", main="Intercept")
-barplot(combine[,2], col="blue", main="DHS")
-barplot(combine[,3], col="blue", main="CpG island")
-barplot(combine[,4], col="blue", main="Lamin")
-barplot(combine[,5], col="blue", main="GC content")
-barplot(combine[,6], col="blue", main="RT")
+barplot(GC, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(GC), max(GC)+0.8), main="GC content by  different methods")
+
+Reptime=matrix(nrow=3, ncol=6)
+Reptime[1,]=optim.para$RepTime
+Reptime[2,]=glm.total.mut.para$RepTime
+Reptime[3,]=glm.ave.mut.para$RepTime
+colnames(Reptime)=optim.para[,1]
+
+barplot(Reptime, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(Reptime), max(Reptime)+0.8), main="Replication timing by  different methods")
+
+
+Inter=matrix(nrow=2, ncol=6)
+Inter[1,]=glm.total.mut.para$Intercept
+Inter[2,]=glm.ave.mut.para$Intercept
+colnames(Inter)=optim.para[,1]
+
+barplot(Inter, beside=T, col=c( "darkblue", "green"), legend=c( "M1", "M2"), ylim=c(min(Inter), max(Inter)+8), main="Intercept by  different methods")
+
+
 ```
 
 

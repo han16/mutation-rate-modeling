@@ -56,7 +56,15 @@ $\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}$
 Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate. 
 
 
+$y_i \sim Pois(\hat{\mu}_{i0} e^{X_i^T\beta})$
+
 ## region level
+
+It's computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within  a window, collapse all bases together, denote $Y$ by the total number of mutations, assume $X_i$ are the same across all bases, and they share the same baseline mutation rate $\mu_0$.  
+
+$Y \sim Pois(\mu_0e^{X_i\beta})$
+
+
 
 With the base level mutation rate estimate, the mutation rate in a region can be obtained simply by adding the locals 
 
@@ -90,7 +98,7 @@ $\lambda|y \sim Ga(\alpha+y, \alpha+\mu)$
 
 Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have $P$ binary features (continuous features could be discretized into discrete values). Totally it is going to be $2^P$ feature categories.  Usually $2^P << \frac{3B}{L}$, $L$ is window length. 
 
-Let $c$ index category. $Y_c$ is the total number of mutations, $\mu_c$ is the baseline mutation rate, $X_c$ is the feature covariates. Then $Y_c \sim Pois(\mu_ce^{X_c\beta})$ with the probability mass function $P(Y_c|\beta)=\frac{\lambda_c^{Y_c}e^{-\lambda_c}}{Y_c!}$, where $\lambda_c=\mu_ce^{X_c\beta}$. 
+Let $c$ index category. $Y_c$ is the total number of mutations, $\mu_{c0}$ is the baseline mutation rate, $X_c$ is the feature covariates. Then $Y_c \sim Pois(\mu_{c0}e^{X_c\beta})$ with the probability mass function $P(Y_c|\beta)=\frac{\mu_c^{Y_c}e^{-\mu_c}}{Y_c!}$, where $\mu_c=\mu_{c0}e^{X_c\beta}$. 
 
 
 The likelihood function is 
@@ -98,15 +106,15 @@ The likelihood function is
 $$
 \begin{aligned}
  logP(Y|\beta) & =log \prod_c P(Y_c|\beta) \\
- &=\sum_c[Y_clog(\lambda_c)-\lambda_c-log(Y_c!) ]\\
- &=\sum_c\{Y_c[log(\mu_c)+X_c\beta]-\mu_ce^{X_c\beta}-log(Y_c!) \} \\
- &=\sum_c\{Y_c(X_c\beta)-\mu_ce^{X_c\beta} \}+constant
+ &=\sum_c[Y_clog(\mu_c)-\mu_c-log(Y_c!) ]\\
+ &=\sum_c\{Y_c[log(\mu_{c0})+X_c\beta]-\mu_{c0}e^{X_c\beta}-log(Y_c!) \} \\
+ &=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}+constant
 \end{aligned}
 $$
 
 
-Let $f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_ce^{X_c\beta} \}$ be the objective function to be optimized over $\beta$. 
-$\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_cX_{ic}e^{X_c\beta})$, $i=1, \cdots, P$. 
+Let $f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}$ be the objective function to be optimized over $\beta$. 
+$\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c\beta})$, $i=1, \cdots, P$. 
 
 <!-- Insert the session information into the document -->
 ```{r session-info}

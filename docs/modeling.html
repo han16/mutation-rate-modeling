@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-02</p>
+<p><strong>Last updated:</strong> 2018-03-23</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 539fa31</p>
+<p><strong>Code version:</strong> f07148a</p>
 <!-- Add your analysis here -->
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
@@ -341,9 +341,12 @@ shared across the workflowr files. -->
 <p>If we already have baseline mutation rate, say <span class="math inline">\(\hat{\mu}_{i0}\)</span>, we can adjust</p>
 <p><span class="math inline">\(\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}\)</span></p>
 <p>Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate.</p>
+<p><span class="math inline">\(y_i \sim Pois(\hat{\mu}_{i0} e^{X_i^T\beta})\)</span></p>
 </div>
 <div id="region-level" class="section level2">
 <h2>region level</h2>
+<p>It’s computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within a window, collapse all bases together, denote <span class="math inline">\(Y\)</span> by the total number of mutations, assume <span class="math inline">\(X_i\)</span> are the same across all bases, and they share the same baseline mutation rate <span class="math inline">\(\mu_0\)</span>.</p>
+<p><span class="math inline">\(Y \sim Pois(\mu_0e^{X_i\beta})\)</span></p>
 <p>With the base level mutation rate estimate, the mutation rate in a region can be obtained simply by adding the locals</p>
 <p><span class="math inline">\(\hat{\mu}=\sum_i \hat{\mu}_i\)</span></p>
 <p>Let <span class="math inline">\(y\)</span> be the observed number of mutations in the same region. If <span class="math inline">\(y&gt;\hat{\mu}\)</span>, observed mutation rate is higher than estimated.</p>
@@ -363,17 +366,17 @@ shared across the workflowr files. -->
 <div id="categorization" class="section level2">
 <h2>Categorization</h2>
 <p>Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have <span class="math inline">\(P\)</span> binary features (continuous features could be discretized into discrete values). Totally it is going to be <span class="math inline">\(2^P\)</span> feature categories. Usually <span class="math inline">\(2^P &lt;&lt; \frac{3B}{L}\)</span>, <span class="math inline">\(L\)</span> is window length.</p>
-<p>Let <span class="math inline">\(c\)</span> index category. <span class="math inline">\(Y_c\)</span> is the total number of mutations, <span class="math inline">\(\mu_c\)</span> is the baseline mutation rate, <span class="math inline">\(X_c\)</span> is the feature covariates. Then <span class="math inline">\(Y_c \sim Pois(\mu_ce^{X_c\beta})\)</span> with the probability mass function <span class="math inline">\(P(Y_c|\beta)=\frac{\lambda_c^{Y_c}e^{-\lambda_c}}{Y_c!}\)</span>, where <span class="math inline">\(\lambda_c=\mu_ce^{X_c\beta}\)</span>.</p>
+<p>Let <span class="math inline">\(c\)</span> index category. <span class="math inline">\(Y_c\)</span> is the total number of mutations, <span class="math inline">\(\mu_{c0}\)</span> is the baseline mutation rate, <span class="math inline">\(X_c\)</span> is the feature covariates. Then <span class="math inline">\(Y_c \sim Pois(\mu_{c0}e^{X_c\beta})\)</span> with the probability mass function <span class="math inline">\(P(Y_c|\beta)=\frac{\mu_c^{Y_c}e^{-\mu_c}}{Y_c!}\)</span>, where <span class="math inline">\(\mu_c=\mu_{c0}e^{X_c\beta}\)</span>.</p>
 <p>The likelihood function is</p>
 <p><span class="math display">\[
 \begin{aligned}
  logP(Y|\beta) &amp; =log \prod_c P(Y_c|\beta) \\
- &amp;=\sum_c[Y_clog(\lambda_c)-\lambda_c-log(Y_c!) ]\\
- &amp;=\sum_c\{Y_c[log(\mu_c)+X_c\beta]-\mu_ce^{X_c\beta}-log(Y_c!) \} \\
- &amp;=\sum_c\{Y_c(X_c\beta)-\mu_ce^{X_c\beta} \}+constant
+ &amp;=\sum_c[Y_clog(\mu_c)-\mu_c-log(Y_c!) ]\\
+ &amp;=\sum_c\{Y_c[log(\mu_{c0})+X_c\beta]-\mu_{c0}e^{X_c\beta}-log(Y_c!) \} \\
+ &amp;=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}+constant
 \end{aligned}
 \]</span></p>
-<p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_ce^{X_c\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_cX_{ic}e^{X_c\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>.</p>
+<p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>.</p>
 <!-- Insert the session information into the document -->
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.4.3 (2017-11-30)

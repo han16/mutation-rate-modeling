@@ -320,16 +320,12 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-06</p>
+<p><strong>Last updated:</strong> 2018-03-26</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 539fa31</p>
-<div id="samples-and-reference-windows" class="section level2">
-<h2>Samples and reference windows</h2>
-<div id="reference-window" class="section level3">
-<h3>Reference window</h3>
-<p>Example_windows_with_div_score.bed: each row is a 50bp window with a few features, such as mutation rate, coding, promoter, GC content, and divergence score; only cover genes and 10-kb regions within TSSs.</p>
-</div>
+<p><strong>Code version:</strong> f07148a</p>
+<div id="samples" class="section level2">
+<h2>Samples</h2>
 <div id="case-samples" class="section level3">
 <h3>Case Samples</h3>
 <table>
@@ -435,8 +431,12 @@ shared across the workflowr files. -->
 </table>
 <p>There are 585,017,944 C’s and 844,868,045 A’s in hg19.</p>
 </div>
-<div id="bp-window" class="section level3">
-<h3>100 bp window</h3>
+</div>
+<div id="wong_nc_2016_693_control_snv" class="section level2">
+<h2>Wong_NC_2016_693_control_SNV</h2>
+<p>The window length is set 100 bp. Use GLN to fit the model, and stated otherwise.</p>
+<div id="whole-genome-no-categorization-one-feature" class="section level3">
+<h3>Whole genome NO categorization-one feature</h3>
 <p>For each mutation type in the above table, fit the Poisson regression on the feature DHS</p>
 <table>
 <thead>
@@ -485,8 +485,9 @@ shared across the workflowr files. -->
  rownames(DHS)=c(&quot;A-&gt;C&quot;, &quot;A-&gt;G&quot;, &quot;A-&gt;T&quot;, &quot;C-&gt;G&quot;, &quot;C-&gt;T&quot;, &quot;C-&gt;A&quot;)
  barplot(DHS[,1], col=&quot; blue&quot;, xlab=&quot;&quot;, ylab=&quot;DHS (whole genome)&quot;)</code></pre>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
-<div id="section" class="section level4">
-<h4></h4>
+</div>
+<div id="whole-genome-no-categorization-3-features-at-most" class="section level3">
+<h3>whole genome NO categorization-3 features (at most)</h3>
 <table style="width:67%;">
 <caption><span class="math inline">\(\beta_0, \beta_1, \beta_2, \beta_3\)</span> are for intercept, DHS, CpG island and lamin.</caption>
 <colgroup>
@@ -557,337 +558,37 @@ shared across the workflowr files. -->
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
-<table>
-<caption>
-Estimated effect of five features
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
-DHS
-</th>
-<th style="text-align:center;">
-CpGisland
-</th>
-<th style="text-align:center;">
-lamin
-</th>
-<th style="text-align:center;">
-gc
-</th>
-<th style="text-align:center;">
-RT
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-A-&gt;C
-</td>
-<td style="text-align:center;">
-0.38
-</td>
-<td style="text-align:center;">
-0.12
-</td>
-<td style="text-align:center;">
--0.16
-</td>
-<td style="text-align:center;">
-0.17
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-A-&gt;G
-</td>
-<td style="text-align:center;">
-0.34
-</td>
-<td style="text-align:center;">
-0.10
-</td>
-<td style="text-align:center;">
--0.10
-</td>
-<td style="text-align:center;">
-0.13
-</td>
-<td style="text-align:center;">
-0.12
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-A-&gt;T
-</td>
-<td style="text-align:center;">
-0.28
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-<td style="text-align:center;">
-0.01
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-<td style="text-align:center;">
-0.09
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C-&gt;G
-</td>
-<td style="text-align:center;">
-0.48
-</td>
-<td style="text-align:center;">
-0.12
-</td>
-<td style="text-align:center;">
--0.05
-</td>
-<td style="text-align:center;">
-0.18
-</td>
-<td style="text-align:center;">
-0.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C-&gt;T
-</td>
-<td style="text-align:center;">
-0.41
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-<td style="text-align:center;">
--0.07
-</td>
-<td style="text-align:center;">
-0.17
-</td>
-<td style="text-align:center;">
-0.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C-&gt;A
-</td>
-<td style="text-align:center;">
-0.27
-</td>
-<td style="text-align:center;">
-0.12
-</td>
-<td style="text-align:center;">
-0.05
-</td>
-<td style="text-align:center;">
-0.12
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-</tr>
-</tbody>
-</table>
+</div>
+<div id="whole-genome-with-categorization-5-features" class="section level3">
+<h3>whole genome with categorization-5 features</h3>
+<pre class="r"><code>#kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
+<div id="data-discretization-and-categorization" class="section level4">
+<h4>Data discretization and categorization</h4>
 <ul>
 <li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
 <li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
-<li>Run R function optim to fit the model</li>
 </ul>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
-<table>
-<caption>
-Estimated effect of five features
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
-Intercept
-</th>
-<th style="text-align:center;">
-DHS
-</th>
-<th style="text-align:center;">
-CpGisland
-</th>
-<th style="text-align:center;">
-lamin
-</th>
-<th style="text-align:center;">
-gc
-</th>
-<th style="text-align:center;">
-RT
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-A-&gt;C
-</td>
-<td style="text-align:center;">
--9.57
-</td>
-<td style="text-align:center;">
--0.83
-</td>
-<td style="text-align:center;">
--1.59
-</td>
-<td style="text-align:center;">
--0.47
-</td>
-<td style="text-align:center;">
--1.05
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-A-&gt;G
-</td>
-<td style="text-align:center;">
--8.56
-</td>
-<td style="text-align:center;">
--0.27
-</td>
-<td style="text-align:center;">
--1.47
-</td>
-<td style="text-align:center;">
--0.35
-</td>
-<td style="text-align:center;">
--0.76
-</td>
-<td style="text-align:center;">
-0.19
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-A-&gt;T
-</td>
-<td style="text-align:center;">
--9.49
-</td>
-<td style="text-align:center;">
--0.04
-</td>
-<td style="text-align:center;">
--3.48
-</td>
-<td style="text-align:center;">
-1.04
-</td>
-<td style="text-align:center;">
--4.74
-</td>
-<td style="text-align:center;">
--0.22
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C-&gt;G
-</td>
-<td style="text-align:center;">
--9.19
-</td>
-<td style="text-align:center;">
-0.09
-</td>
-<td style="text-align:center;">
--0.43
-</td>
-<td style="text-align:center;">
--0.55
-</td>
-<td style="text-align:center;">
--1.14
-</td>
-<td style="text-align:center;">
-0.77
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C-&gt;T
-</td>
-<td style="text-align:center;">
--8.60
-</td>
-<td style="text-align:center;">
-0.07
-</td>
-<td style="text-align:center;">
-0.26
-</td>
-<td style="text-align:center;">
--0.44
-</td>
-<td style="text-align:center;">
-0.85
-</td>
-<td style="text-align:center;">
-0.08
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C-&gt;A
-</td>
-<td style="text-align:center;">
--15.18
-</td>
-<td style="text-align:center;">
-0.53
-</td>
-<td style="text-align:center;">
--1.70
-</td>
-<td style="text-align:center;">
-1.28
-</td>
-<td style="text-align:center;">
-8.10
-</td>
-<td style="text-align:center;">
-1.16
-</td>
-</tr>
-</tbody>
-</table>
+</div>
+<div id="model-fitting" class="section level4">
+<h4>Model fitting</h4>
+<p>We use two methods to fit the model</p>
 <ul>
-<li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
-<li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
-<li>For each window cluster, use averaged mutation and features to run GLM.</li>
+<li>GLM (use R function GLM)</li>
 </ul>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: decimal">
+<li>The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M1 (method 1))</li>
+<li>The response is the ** averaged number of mutations (mutation rate) ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))</li>
+<li>intercept is included and the same across all categories</li>
+<li>confidence interval could be obtained as well</li>
+</ol>
+<ul>
+<li>use R function optim to fit the model (M3 method 3)</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>use estimated baseline mutation rate in the model.</li>
+<li>There is a singularity problem for hessian matrix when getting the confidence interval by optim.</li>
+</ol>
+<p><img src="figure/denovo-data.Rmd/dhs-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-6.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>
@@ -917,8 +618,8 @@ other attached packages:
 loaded via a namespace (and not attached):
  [1] compiler_3.4.3  backports_1.0.5 magrittr_1.5    rprojroot_1.3-1
  [5] tools_3.4.3     htmltools_0.3.5 yaml_2.1.16     Rcpp_0.12.10   
- [9] stringi_1.1.5   rmarkdown_1.8   highr_0.6       git2r_0.21.0   
-[13] stringr_1.2.0   digest_0.6.12   evaluate_0.10  </code></pre>
+ [9] stringi_1.1.5   rmarkdown_1.8   git2r_0.21.0    stringr_1.2.0  
+[13] digest_0.6.12   evaluate_0.10  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
