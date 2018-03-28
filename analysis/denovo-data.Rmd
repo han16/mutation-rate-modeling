@@ -45,7 +45,7 @@ Table: Five WGS  DNM case sample information
 
 
 
-### Control sample 
+### Wong_NC_2016_693_control_SNV- Control sample 
 
 index    | Samples | \# mutations| \# subjects
 ----|-------|-------|---
@@ -58,7 +58,42 @@ index    | Samples | \# mutations| \# subjects
 7 | C->A | 1,298 (4.79%) |
 Table:WGS  DNM control sample information 
 
+```{r, echo=F}
+slices <- c(990, 3812, 815, 1274, 5314, 1298) 
+lbls <- c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) # add percents to labels 
+lbls <- paste(lbls,"%",sep="") # ad % to labels 
+pie(slices,labels = lbls, col=rainbow(length(lbls)),
+  	main="Percentage of mutation types in Wong_NC_2016_693_control_SNV ")
+```
+
+
 There are 585,017,944 C's  and 844,868,045 A's in hg19. 
+
+
+
+### Jonsson_Yuen2017
+De novo WGS of the combination of 1629 ASD cases and 1548 controls. 
+
+index    | mutation type | \# mutations
+----|-------|-------|---
+1 | A->C | 7,821   
+2 | A->G | 29,370  
+3 | A->T | 7,417
+4 | C->G | 10,255 
+5 | C->T | 45,638 
+6 | C->A | 9,804
+
+```{r, echo=F}
+slices <- c(7821, 29370, 7417, 10255, 45638, 9804) 
+lbls <- c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) # add percents to labels 
+lbls <- paste(lbls,"%",sep="") # ad % to labels 
+pie(slices,labels = lbls, col=rainbow(length(lbls)),
+  	main="Percentage of mutation types in Jonsson_Yuen2017 ")
+```
 
 
 ## Wong_NC_2016_693_control_SNV 
