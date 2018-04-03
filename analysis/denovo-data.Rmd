@@ -124,7 +124,7 @@ mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
 ```
  
 
-### whole genome NO categorization-3 features (at most)
+### whole genome NO categorization-3 discrete features (at most)
 
 
 mutation type| $\hat{\beta}_0$ | $\hat{\beta_1}$  | $\hat{\beta_2}$ | $\hat{\beta_3}$ | $\hat{\beta_4}$ | $\hat{\beta_5}$
@@ -172,6 +172,8 @@ colnames(combine)=c( "DHS", "CpGisland", "lamin", "gc", "RT")
 We use two methods to fit the model 
 
 * GLM (use R function GLM)
+  
+  $$y\sim Pois( e^{\mu+X^T\beta})$$
 
   (1) The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))
   
@@ -187,24 +189,54 @@ We use two methods to fit the model
 ```{r dhs, echo=F}
 optim.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.optim.csv", header=T, row.names=NULL)
 glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.log.as.offset.csv", header=T)
+conf.inter=load("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.conf.by.glm.use.log.as.offset.RData")
+names(conf.with.log)=optim.para[,1]
+for (i in 1:length(conf.with.log))
+   rownames(conf.with.log[[i]])=colnames(glm.total.mut.para)[2:7]
 #glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.total.mutation.as.response.csv", header=T)
 #glm.ave.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.average.mutation.as.response.csv", header=T)
+```
+
+
+```{r, echo=F}
 num.method=2; num.mut=6
 DHS=matrix(nrow=num.method, ncol=num.mut)
 DHS[1,]=optim.para$DHS
 DHS[2,]=glm.total.mut.para$DHS
 colnames(DHS)=optim.para[,1]
+DHS.conf=matrix(nrow=2, ncol=num.mut)
+for (i in 1:num.mut)
+  DHS.conf[,i]=conf.with.log[[i]][rownames(conf.with.log[[i]])=="DHS",]
+barCenters=barplot(DHS, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(DHS), max(DHS)), main="DHS by different methods")
+segments(barCenters[2,], DHS.conf[1,], barCenters[2,],
+         DHS.conf[2,], lwd = 1.5)
 
-barplot(DHS, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(DHS), max(DHS)), main="DHS by different methods")
+arrows(barCenters[2,], DHS.conf[1,], barCenters[2,],
+       DHS.conf[2,], lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+```
 
+```{r, echo=F}
 CpG=matrix(nrow=num.method, ncol=num.mut)
 CpG[1,]=optim.para$CpGIsland
 CpG[2,]=glm.total.mut.para$CpGIsland
-colnames(DHS)=optim.para[,1]
+colnames(CpG)=optim.para[,1]
 
-barplot(CpG, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(CpG), max(CpG)), main="CpG island by different methods")
+CpG.conf=matrix(nrow=2, ncol=num.mut)
+for (i in 1:num.mut)
+  CpG.conf[,i]=conf.with.log[[i]][rownames(conf.with.log[[i]])=="CpGIsland",]
+barCenters=barplot(CpG, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(CpG), max(CpG)), main="DHS by different methods")
+segments(barCenters[2,], CpG.conf[1,], barCenters[2,],
+         CpG.conf[2,], lwd = 1.5)
+
+arrows(barCenters[2,], CpG.conf[1,], barCenters[2,],
+       CpG.conf[2,], lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
+```
 
 
+```{r, cecho=F}
 lamin=matrix(nrow=num.method, ncol=num.mut)
 lamin[1,]=optim.para$Lamin
 lamin[2,]=glm.total.mut.para$Lamin

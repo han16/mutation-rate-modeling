@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-04-02</p>
+<p><strong>Last updated:</strong> 2018-04-03</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 5f9d9e5</p>
+<p><strong>Code version:</strong> eea03b1</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -533,8 +533,8 @@ shared across the workflowr files. -->
  barplot(DHS[,1], col=&quot; blue&quot;, xlab=&quot;&quot;, ylab=&quot;DHS (whole genome)&quot;)</code></pre>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="whole-genome-no-categorization-3-features-at-most" class="section level3">
-<h3>whole genome NO categorization-3 features (at most)</h3>
+<div id="whole-genome-no-categorization-3-discrete-features-at-most" class="section level3">
+<h3>whole genome NO categorization-3 discrete features (at most)</h3>
 <table style="width:67%;">
 <caption><span class="math inline">\(\beta_0, \beta_1, \beta_2, \beta_3\)</span> are for intercept, DHS, CpG island and lamin.</caption>
 <colgroup>
@@ -622,6 +622,7 @@ shared across the workflowr files. -->
 <ul>
 <li>GLM (use R function GLM)</li>
 </ul>
+<p><span class="math display">\[y\sim Pois( e^{\mu+X^T\beta})\]</span></p>
 <ol style="list-style-type: decimal">
 <li><p>The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))</p></li>
 <li>intercept is included and the same across all categories</li>
@@ -634,7 +635,35 @@ shared across the workflowr files. -->
 <li>use estimated baseline mutation rate in the model.</li>
 <li>There is a singularity problem for hessian matrix when getting the confidence interval by optim.</li>
 </ol>
-<p><img src="figure/denovo-data.Rmd/dhs-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lamin=matrix(nrow=num.method, ncol=num.mut)
+lamin[1,]=optim.para$Lamin
+lamin[2,]=glm.total.mut.para$Lamin
+colnames(lamin)=optim.para[,1]
+
+barplot(lamin, beside=T, col=c(&quot;red&quot;, &quot;darkblue&quot;), legend=c(&quot;M1&quot;, &quot;M2&quot;), ylim=c(min(lamin), 0.1), main=&quot;Lamin by different methods&quot;)</code></pre>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>GC=matrix(nrow=num.method, ncol=num.mut)
+GC[1,]=optim.para$GC
+GC[2,]=glm.total.mut.para$GC
+colnames(GC)=optim.para[,1]
+
+barplot(GC, beside=T, col=c(&quot;red&quot;, &quot;darkblue&quot;), legend=c(&quot;M1&quot;, &quot;M2&quot;), ylim=c(min(GC), max(GC)), main=&quot;GC content by  different methods&quot;)</code></pre>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Reptime=matrix(nrow=num.method, ncol=num.mut)
+Reptime[1,]=optim.para$RepTime
+Reptime[2,]=glm.total.mut.para$RepTime
+colnames(Reptime)=optim.para[,1]
+
+barplot(Reptime, beside=T, col=c(&quot;red&quot;, &quot;darkblue&quot;), legend=c(&quot;M1&quot;, &quot;M2&quot;), ylim=c(min(Reptime), max(Reptime)+0.2), main=&quot;Replication timing by  different methods&quot;)</code></pre>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Inter=matrix(nrow=1, ncol=6)
+Inter[1,]=glm.total.mut.para$Intercept
+colnames(Inter)=optim.para[,1]
+
+barplot(Inter, beside=T, col=c( &quot;darkblue&quot;), legend=c( &quot;M2&quot;), ylim=c(min(Inter), max(Inter)), main=&quot;Intercept by  GLM &quot;)</code></pre>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>
