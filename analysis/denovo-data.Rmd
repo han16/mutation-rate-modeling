@@ -173,12 +173,12 @@ We use two methods to fit the model
 
 * GLM (use R function GLM)
 
-  (1) The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M1 (method 1))
-  (11)  The response is the ** averaged  number of mutations (mutation rate) ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))
+  (1) The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))
+  
   (2) intercept is included and the same across all categories
   (3) confidence interval could be obtained as well
 
-* use R function optim to fit the model (M3 method 3)
+* use R function optim to fit the model (M1 method)
 
  (1)  use estimated baseline mutation rate in the model. 
  (2)  There is a singularity problem for hessian matrix when getting the confidence interval by optim. 
@@ -186,57 +186,53 @@ We use two methods to fit the model
 
 ```{r dhs, echo=F}
 optim.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.optim.csv", header=T, row.names=NULL)
-glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.total.mutation.as.response.csv", header=T)
-glm.ave.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.average.mutation.as.response.csv", header=T)
-DHS=matrix(nrow=3, ncol=6)
+glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.log.as.offset.csv", header=T)
+#glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.total.mutation.as.response.csv", header=T)
+#glm.ave.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.average.mutation.as.response.csv", header=T)
+num.method=2; num.mut=6
+DHS=matrix(nrow=num.method, ncol=num.mut)
 DHS[1,]=optim.para$DHS
 DHS[2,]=glm.total.mut.para$DHS
-DHS[3,]=glm.ave.mut.para$DHS
 colnames(DHS)=optim.para[,1]
 
-barplot(DHS, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(DHS), max(DHS)+0.8), main="DHS by different methods")
+barplot(DHS, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(DHS), max(DHS)), main="DHS by different methods")
 
-CpG=matrix(nrow=3, ncol=6)
+CpG=matrix(nrow=num.method, ncol=num.mut)
 CpG[1,]=optim.para$CpGIsland
 CpG[2,]=glm.total.mut.para$CpGIsland
-CpG[3,]=glm.ave.mut.para$CpGIsland
 colnames(DHS)=optim.para[,1]
 
-barplot(CpG, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(CpG), max(CpG)+0.8), main="CpG island by different methods")
+barplot(CpG, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(CpG), max(CpG)), main="CpG island by different methods")
 
 
-lamin=matrix(nrow=3, ncol=6)
+lamin=matrix(nrow=num.method, ncol=num.mut)
 lamin[1,]=optim.para$Lamin
 lamin[2,]=glm.total.mut.para$Lamin
-lamin[3,]=glm.ave.mut.para$Lamin
 colnames(lamin)=optim.para[,1]
 
-barplot(lamin, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(lamin), max(lamin)+0.8), main="Lamin by different methods")
+barplot(lamin, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(lamin), 0.1), main="Lamin by different methods")
 
 
-GC=matrix(nrow=3, ncol=6)
+GC=matrix(nrow=num.method, ncol=num.mut)
 GC[1,]=optim.para$GC
 GC[2,]=glm.total.mut.para$GC
-GC[3,]=glm.ave.mut.para$GC
 colnames(GC)=optim.para[,1]
 
-barplot(GC, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(GC), max(GC)+0.8), main="GC content by  different methods")
+barplot(GC, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(GC), max(GC)), main="GC content by  different methods")
 
-Reptime=matrix(nrow=3, ncol=6)
+Reptime=matrix(nrow=num.method, ncol=num.mut)
 Reptime[1,]=optim.para$RepTime
 Reptime[2,]=glm.total.mut.para$RepTime
-Reptime[3,]=glm.ave.mut.para$RepTime
 colnames(Reptime)=optim.para[,1]
 
-barplot(Reptime, beside=T, col=c("red", "darkblue", "green"), legend=c("M3", "M1", "M2"), ylim=c(min(Reptime), max(Reptime)+0.8), main="Replication timing by  different methods")
+barplot(Reptime, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(Reptime), max(Reptime)+0.2), main="Replication timing by  different methods")
 
 
-Inter=matrix(nrow=2, ncol=6)
+Inter=matrix(nrow=1, ncol=6)
 Inter[1,]=glm.total.mut.para$Intercept
-Inter[2,]=glm.ave.mut.para$Intercept
 colnames(Inter)=optim.para[,1]
 
-barplot(Inter, beside=T, col=c( "darkblue", "green"), legend=c( "M1", "M2"), ylim=c(min(Inter), max(Inter)+8), main="Intercept by  different methods")
+barplot(Inter, beside=T, col=c( "darkblue"), legend=c( "M2"), ylim=c(min(Inter), max(Inter)), main="Intercept by  GLM ")
 
 
 ```
