@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-04-03</p>
+<p><strong>Last updated:</strong> 2018-04-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> eea03b1</p>
+<p><strong>Code version:</strong> d564c47</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -479,6 +479,36 @@ shared across the workflowr files. -->
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
+<div id="data-processing-and-model-fitting" class="section level2">
+<h2>Data processing and model fitting</h2>
+<div id="data-discretization-and-categorization" class="section level3">
+<h3>Data discretization and categorization</h3>
+<ul>
+<li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
+<li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
+</ul>
+</div>
+<div id="model-fitting" class="section level3">
+<h3>Model fitting</h3>
+<p>We use two methods to fit the model</p>
+<ul>
+<li>GLM (use R function GLM)</li>
+</ul>
+<p><span class="math display">\[y\sim Pois( e^{\mu+X^T\beta})\]</span></p>
+<ol style="list-style-type: decimal">
+<li><p>The response is the ** number of mutations ** in the unit(base window or category) and the each feature is base level or averaged across all windows within the category (denoted as M2 (method 2))</p></li>
+<li>intercept is included and the same across all categories</li>
+<li><p>confidence interval could be obtained as well</p></li>
+</ol>
+<ul>
+<li>use R function optim to fit the model (M1 method)</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>use estimated baseline mutation rate in the model.</li>
+<li>There is a singularity problem for hessian matrix when getting the confidence interval by optim.</li>
+</ol>
+</div>
+</div>
 <div id="wong_nc_2016_693_control_snv" class="section level2">
 <h2>Wong_NC_2016_693_control_SNV</h2>
 <p>The window length is set 100 bp. Use GLN to fit the model, and stated otherwise.</p>
@@ -609,32 +639,6 @@ shared across the workflowr files. -->
 <div id="whole-genome-with-categorization-5-features" class="section level3">
 <h3>whole genome with categorization-5 features</h3>
 <pre class="r"><code>#kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
-<div id="data-discretization-and-categorization" class="section level4">
-<h4>Data discretization and categorization</h4>
-<ul>
-<li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
-<li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
-</ul>
-</div>
-<div id="model-fitting" class="section level4">
-<h4>Model fitting</h4>
-<p>We use two methods to fit the model</p>
-<ul>
-<li>GLM (use R function GLM)</li>
-</ul>
-<p><span class="math display">\[y\sim Pois( e^{\mu+X^T\beta})\]</span></p>
-<ol style="list-style-type: decimal">
-<li><p>The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))</p></li>
-<li>intercept is included and the same across all categories</li>
-<li><p>confidence interval could be obtained as well</p></li>
-</ol>
-<ul>
-<li>use R function optim to fit the model (M1 method)</li>
-</ul>
-<ol style="list-style-type: decimal">
-<li>use estimated baseline mutation rate in the model.</li>
-<li>There is a singularity problem for hessian matrix when getting the confidence interval by optim.</li>
-</ol>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lamin=matrix(nrow=num.method, ncol=num.mut)
@@ -664,7 +668,6 @@ colnames(Inter)=optim.para[,1]
 
 barplot(Inter, beside=T, col=c( &quot;darkblue&quot;), legend=c( &quot;M2&quot;), ylim=c(min(Inter), max(Inter)), main=&quot;Intercept by  GLM &quot;)</code></pre>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
 </div>
 </div>
 <div id="session-information" class="section level2">

@@ -95,6 +95,32 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
   	main="Percentage of mutation types in Jonsson_Yuen2017 ")
 ```
 
+## Data processing and model fitting 
+
+### Data discretization and categorization
+
+* Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
+* use R function Split to cluster windows with similar features including discrete features and categorized features 
+
+### Model fitting 
+
+We use two methods to fit the model 
+
+* GLM (use R function GLM)
+  
+  $$y\sim Pois( e^{\mu+X^T\beta})$$
+
+  (1) The response is the ** number of mutations ** in the unit(base window or category) and the each feature is base level or  averaged across all windows within the category (denoted as M2 (method 2))
+  
+  (2) intercept is included and the same across all categories
+  (3) confidence interval could be obtained as well
+
+* use R function optim to fit the model (M1 method)
+
+ (1)  use estimated baseline mutation rate in the model. 
+ (2)  There is a singularity problem for hessian matrix when getting the confidence interval by optim. 
+
+
 
 ## Wong_NC_2016_693_control_SNV 
 
@@ -161,29 +187,6 @@ colnames(combine)=c( "DHS", "CpGisland", "lamin", "gc", "RT")
 ```{r, echo=T}
 #kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
 ```
-
-#### Data discretization and categorization
-
-* Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
-* use R function Split to cluster windows with similar features including discrete features and categorized features 
-
-#### Model fitting 
-
-We use two methods to fit the model 
-
-* GLM (use R function GLM)
-  
-  $$y\sim Pois( e^{\mu+X^T\beta})$$
-
-  (1) The response is the ** total number of mutations ** in the category and the each feature is averaged across all widnows within the category (denoted as M2 (method 2))
-  
-  (2) intercept is included and the same across all categories
-  (3) confidence interval could be obtained as well
-
-* use R function optim to fit the model (M1 method)
-
- (1)  use estimated baseline mutation rate in the model. 
- (2)  There is a singularity problem for hessian matrix when getting the confidence interval by optim. 
 
 
 ```{r dhs, echo=F}

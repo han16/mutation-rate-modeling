@@ -28,7 +28,7 @@ knitr::read_chunk("chunks.R")
 
 ## Session information
 
-## base level
+## Base level
 
 
 At every genomic locus, observed number of mutations, $y_i$ is modeled as Poisson distribution as 
@@ -43,54 +43,61 @@ Thus
 
 $\mu_i=e^{X_i^T\beta}$. 
 
-With parameters estimates, we have 
 
-$\hat{\mu_i}=e^{X_i^T\hat{\beta}}$
+The likelihood function is 
 
+$$
+\begin{aligned} 
+L(\beta|Y)&=\prod_i\frac{[e^{X_i^T\beta}]^{Y_i}e^{-e^{X_i^T\beta}}}{Y_i!}\\
+&=e^{\sum_i[X_i^T\beta Y_i-e^{X_i^T\beta}]} \times constant
+\end{aligned}
+$$
 
-If we already have baseline mutation rate, say $\hat{\mu}_{i0}$, we can adjust 
-
-$\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}$
-
-
-Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate. 
-
-
-$y_i \sim Pois(\hat{\mu}_{i0} e^{X_i^T\beta})$
-
-## region level
-
-It's computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within  a window, collapse all bases together, denote $Y$ by the total number of mutations, assume $X_i$ are the same across all bases, and they share the same baseline mutation rate $\mu_0$.  
-
-$Y \sim Pois(\mu_0e^{X_i\beta})$
-
-
-
-With the base level mutation rate estimate, the mutation rate in a region can be obtained simply by adding the locals 
-
-$\hat{\mu}=\sum_i \hat{\mu}_i$
-
-Let $y$ be the observed number of mutations in the same region.  If $y>\hat{\mu}$, observed mutation rate is higher than estimated. 
-
-Define $\lambda$ as the local deviation. Treat the region as a unit, similarly, the number of mutations in a region follows Poisson distribution 
-
-$y \sim Pois(\lambda \mu)$
-
-Use Gamma as its prior, 
-
-$\lambda \sim Ga(\alpha, \alpha)$
-
-Thus the posterior of $\lambda$ is 
+The log likelihood is 
 
 $$
 \begin{aligned}
- \lambda|y  & \propto P(\lambda) \times P(y|\lambda \mu)  \\
-   & \propto \lambda ^{\alpha+y-1} e^{-\lambda(\alpha+\mu)}
+l(\beta)&=\sum_i[X_i^T\beta Y_i-e^{X_i^T\beta}]+constant\\
+&=\sum_i(X_i^T\beta)Y_i-\sum_ie^{X_i^T\beta}+constant
 \end{aligned}
 $$
 
 
-$\lambda|y \sim Ga(\alpha+y, \alpha+\mu)$
+
+## Region level
+
+It's computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within  a window, collapse all bases together, denote $Y$ by the total number of mutations, assume $X_i$ are the same across all bases. Within a window, assuming $Y_i\sim Pois(\mu_i)$ are indepedent poisson random variables, the sum $Y=\sum_iY_i \sim Pois (\sum_i\mu_i)$
+
+
+Considering baseline mutation rate $\mu_{i0}$ at every base $i$, then $Y \sim Pois(\sum_i \mu_{i0} \mu_i)$, where $\sum_i \mu_{i0}\mu_i=\sum_i\mu_{i0}e^{X_i^T\beta}=e^{X^T\beta}\sum_i\mu_{i0}$, assuming $x_i^T\beta$ are the same across all bases in the window and $\sum_i \mu_{i0}$ is the total baseline mutation for the window. Then $Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})$
+
+
+The likelihood funciton is 
+
+
+$$
+\begin{aligned} 
+L(\beta|Y)=\prod_j\frac{[\mu_{j0}e^{X_j^T\beta}]^{Y_j}e^{-\mu_{j0}e^{X_j^T\beta}}}{Y_j!}
+\end{aligned}
+$$
+
+
+and
+
+* $Y_j$; total number of mutations in  window $j$
+* $X_j$: a vector of covariates for the window, assuming the same acorss all bases in the window
+
+
+
+
+
+And the log likelihood function is 
+
+$$
+\begin{aligned}
+l(\beta)=\sum_j[Y_jlog(\mu_{j0}e^{X_j^T\beta})]-\sum_j[\mu_{j0}e^{X_j^T\beta}]+constant
+\end{aligned}
+$$
 
 
 
@@ -98,23 +105,179 @@ $\lambda|y \sim Ga(\alpha+y, \alpha+\mu)$
 
 Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have $P$ binary features (continuous features could be discretized into discrete values). Totally it is going to be $2^P$ feature categories.  Usually $2^P << \frac{3B}{L}$, $L$ is window length. 
 
-Let $c$ index category. $Y_c$ is the total number of mutations, $\mu_{c0}$ is the baseline mutation rate, $X_c$ is the feature covariates. Then $Y_c \sim Pois(\mu_{c0}e^{X_c\beta})$ with the probability mass function $P(Y_c|\beta)=\frac{\mu_c^{Y_c}e^{-\mu_c}}{Y_c!}$, where $\mu_c=\mu_{c0}e^{X_c\beta}$. 
+Let $c$ index category. $Y_c$ is the total number of mutations, $\mu_{c0}$ is the baseline mutation rate, $X_c$ is the feature covariates. 
 
 
 The likelihood function is 
 
 $$
 \begin{aligned}
- logP(Y|\beta) & =log \prod_c P(Y_c|\beta) \\
- &=\sum_c[Y_clog(\mu_c)-\mu_c-log(Y_c!) ]\\
- &=\sum_c\{Y_c[log(\mu_{c0})+X_c\beta]-\mu_{c0}e^{X_c\beta}-log(Y_c!) \} \\
- &=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}+constant
+ logP(Y|\beta) & = \sum_j[Y_jlog(\mu_{j0}e^{X_j^T\beta})]-\sum_j[\mu_{j0}e^{X_j^T\beta}]+constant(following ~LH~of~region~level)\\
+ &=\sum_c\{Y_c(X_c^T\beta)-\mu_{c0}e^{X_c^T\beta} \}+constant
 \end{aligned}
 $$
+
+* $\mu_{c0}=\sum_j\mu_{j0}$ in category $c$.
+* The last equation is because for category $c$, all $X_j=X_c$ are the same, so $\sum_jY_j(X_j^T\beta)=X_c^T\beta \sum_jY_j=Y_c(X_c^T\beta)$. 
+
+Thus $Y_c\sim Pois(\mu_{c0}e^{X_c^T\beta})$. Another way to understand it is that since $Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})$, in category $c$, the sum of $\sum_j Y_j \sim Pois(\sum_j \mu_{j0}e^{X_j^T\beta})$, where $\sum_j \mu_{j0}e^{X_j^T\beta}=e^{X_c\beta} \sum_j \mu_{j0}=\mu_{c0}e^{X_c\beta}$, assuming $Y_j$ are independent.   
 
 
 Let $f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}$ be the objective function to be optimized over $\beta$. 
 $\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c\beta})$, $i=1, \cdots, P$. 
+
+
+
+## Simulations 
+
+### Constant baseline mutation rate $\mu_0$
+
+
+```{r, echo=T, warning=FALSE, results='hide', cache=T}
+#rm(list=ls())
+set.seed(1000)
+n <- 1000000
+baseline.rate=0.01
+#regression coefficients
+ beta0 <- 0.1
+ beta1 <- log(2)
+#generate covariate values
+ x <- rbinom(n, 1, prob=0.5)
+#compute mu's
+mu <- exp(beta0 + beta1 * x)*baseline.rate
+#generate Y-values
+ y <- rpois(n=n, lambda=mu)
+   #data set
+ data <- data.frame(y=y, x=x)
+ y0=sum(data$y[data$x==0]); y1=sum(data$y[data$x==1])
+ cate.data=data.frame(y=c(y0,y1), x=c(0,1))
+ fit=glm(data$y~data$x+offset(log(rep(baseline.rate, n))), family=poisson())
+ cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(baseline.rate*sum(x==cate.data$x[1]), baseline.rate*sum(x==cate.data$x[2])))), family=poisson())
+fit.conf=confint(fit)
+cate.fit.conf=confint(cate.fit)
+```
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
+para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+barCenters=barplot(para.est[,1], beside=F, ylim=c(0, 0.15), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
+abline(h=beta0, lty=4)
+segments(barCenters, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
+barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
+abline(h=beta1, lty=4)
+segments(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+```
+
+* sample size, i.e. number of windows $N=10^6$
+* baseline rate is constant across all windows $\mu_0=0.01$.
+* $\beta_0=0.1, \beta_1=log(2)$. 
+
+#### 100 replicates 
+
+
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(0.1023, 0.6902)
+para.est[2,]=c(0.1023, 0.6902)
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+barCenters=barplot(para.est[,1], beside=F, ylim=c(0, 0.15), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
+abline(h=beta0, lty=4)
+segments(barCenters, c(0.0763, 0.0763), barCenters,
+        c(0.1289, 0.1289) , lwd = 1.5)
+
+arrows(barCenters, c(0.0763, 0.0763), barCenters,
+        c(0.1289, 0.1289) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
+barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
+abline(h=beta1, lty=4)
+segments(barCenters, c(0.6531, 0.6531), barCenters,
+        c(0.7216, 0.7216) , lwd = 1.5)
+
+arrows(barCenters, c(0.6531, 0.6531), barCenters,
+        c(0.7216, 0.7216) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Comparison of estimate averaged across 100 replicates with sample size of", n, sep=" ")  , outer=TRUE)
+```
+
+
+
+
+### Variable baseline mutatiom rate $\mu_{i0}$
+
+```{r, echo=F, warning=F, results='hide', cache=T}
+#rm(list=ls())
+set.seed(1000)
+n <- 1000000
+baseline.rate=rbeta(n, 1, 100)
+#regression coefficients
+ beta0 <- 0.1
+ beta1 <- log(2)
+#generate covariate values
+ x <- rbinom(n, 1, prob=0.5)
+#compute mu's
+mu <- exp(beta0 + beta1 * x)*baseline.rate
+#generate Y-values
+ y <- rpois(n=n, lambda=mu)
+   #data set
+ data <- data.frame(y=y, x=x)
+ y0=sum(data$y[data$x==0]); y1=sum(data$y[data$x==1])
+ cate.data=data.frame(y=c(y0,y1), x=c(0,1))
+ fit=glm(data$y~data$x+offset(log(baseline.rate)), family=poisson())
+ cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(baseline.rate[x==cate.data$x[1]]), sum(baseline.rate[x==cate.data$x[2]])))), family=poisson())
+fit.conf=confint(fit)
+cate.fit.conf=confint(cate.fit)
+```
+
+```{r, echo=F}
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+plot(density(mu), main=expression(paste("Density of generated", mu[i0], sep=" ")), xlab="")
+#abline(v=Mode(mu), col=2)
+```
+
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
+para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+barCenters=barplot(para.est[,1], beside=F, ylim=c(0, 0.15), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
+abline(h=beta0, lty=4)
+segments(barCenters, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
+barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
+abline(h=beta1, lty=4)
+segments(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+```
 
 <!-- Insert the session information into the document -->
 ```{r session-info}

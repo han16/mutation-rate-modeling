@@ -320,63 +320,117 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-30</p>
+<p><strong>Last updated:</strong> 2018-04-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 5f9d9e5</p>
+<p><strong>Code version:</strong> d564c47</p>
 <!-- Add your analysis here -->
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 </div>
 <div id="base-level" class="section level2">
-<h2>base level</h2>
+<h2>Base level</h2>
 <p>At every genomic locus, observed number of mutations, <span class="math inline">\(y_i\)</span> is modeled as Poisson distribution as</p>
 <p><span class="math inline">\(y_i \sim Pois(\mu_i)\)</span></p>
 <p>There are several covariates affecting the mutation rate, such as tri-nucleotide context, parents’ age, etc. To relate the mutation rate to covariates <span class="math inline">\(X_i\)</span>, Poisson regression could be one way to do that</p>
 <p><span class="math inline">\(log(E(y_i|X_i))=log(\mu_i)=X_i^T\beta\)</span></p>
 <p>Thus</p>
 <p><span class="math inline">\(\mu_i=e^{X_i^T\beta}\)</span>.</p>
-<p>With parameters estimates, we have</p>
-<p><span class="math inline">\(\hat{\mu_i}=e^{X_i^T\hat{\beta}}\)</span></p>
-<p>If we already have baseline mutation rate, say <span class="math inline">\(\hat{\mu}_{i0}\)</span>, we can adjust</p>
-<p><span class="math inline">\(\mu_i=\hat{\mu}_{i0} e^{X_i^T\beta}\)</span></p>
-<p>Mutation rate at single base may be largely influenced by its local context, thus it would be more reasonable to adjust by region level mutation rate.</p>
-<p><span class="math inline">\(y_i \sim Pois(\hat{\mu}_{i0} e^{X_i^T\beta})\)</span></p>
-</div>
-<div id="region-level" class="section level2">
-<h2>region level</h2>
-<p>It’s computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within a window, collapse all bases together, denote <span class="math inline">\(Y\)</span> by the total number of mutations, assume <span class="math inline">\(X_i\)</span> are the same across all bases, and they share the same baseline mutation rate <span class="math inline">\(\mu_0\)</span>.</p>
-<p><span class="math inline">\(Y \sim Pois(\mu_0e^{X_i\beta})\)</span></p>
-<p>With the base level mutation rate estimate, the mutation rate in a region can be obtained simply by adding the locals</p>
-<p><span class="math inline">\(\hat{\mu}=\sum_i \hat{\mu}_i\)</span></p>
-<p>Let <span class="math inline">\(y\)</span> be the observed number of mutations in the same region. If <span class="math inline">\(y&gt;\hat{\mu}\)</span>, observed mutation rate is higher than estimated.</p>
-<p>Define <span class="math inline">\(\lambda\)</span> as the local deviation. Treat the region as a unit, similarly, the number of mutations in a region follows Poisson distribution</p>
-<p><span class="math inline">\(y \sim Pois(\lambda \mu)\)</span></p>
-<p>Use Gamma as its prior,</p>
-<p><span class="math inline">\(\lambda \sim Ga(\alpha, \alpha)\)</span></p>
-<p>Thus the posterior of <span class="math inline">\(\lambda\)</span> is</p>
+<p>The likelihood function is</p>
 <p><span class="math display">\[
-\begin{aligned}
- \lambda|y  &amp; \propto P(\lambda) \times P(y|\lambda \mu)  \\
-   &amp; \propto \lambda ^{\alpha+y-1} e^{-\lambda(\alpha+\mu)}
+\begin{aligned} 
+L(\beta|Y)&amp;=\prod_i\frac{[e^{X_i^T\beta}]^{Y_i}e^{-e^{X_i^T\beta}}}{Y_i!}\\
+&amp;=e^{\sum_i[X_i^T\beta Y_i-e^{X_i^T\beta}]} \times constant
 \end{aligned}
 \]</span></p>
-<p><span class="math inline">\(\lambda|y \sim Ga(\alpha+y, \alpha+\mu)\)</span></p>
+<p>The log likelihood is</p>
+<p><span class="math display">\[
+\begin{aligned}
+l(\beta)&amp;=\sum_i[X_i^T\beta Y_i-e^{X_i^T\beta}]+constant\\
+&amp;=\sum_i(X_i^T\beta)Y_i-\sum_ie^{X_i^T\beta}+constant
+\end{aligned}
+\]</span></p>
+</div>
+<div id="region-level" class="section level2">
+<h2>Region level</h2>
+<p>It’s computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within a window, collapse all bases together, denote <span class="math inline">\(Y\)</span> by the total number of mutations, assume <span class="math inline">\(X_i\)</span> are the same across all bases. Within a window, assuming <span class="math inline">\(Y_i\sim Pois(\mu_i)\)</span> are indepedent poisson random variables, the sum <span class="math inline">\(Y=\sum_iY_i \sim Pois (\sum_i\mu_i)\)</span></p>
+<p>Considering baseline mutation rate <span class="math inline">\(\mu_{i0}\)</span> at every base <span class="math inline">\(i\)</span>, then <span class="math inline">\(Y \sim Pois(\sum_i \mu_{i0} \mu_i)\)</span>, where <span class="math inline">\(\sum_i \mu_{i0}\mu_i=\sum_i\mu_{i0}e^{X_i^T\beta}=e^{X^T\beta}\sum_i\mu_{i0}\)</span>, assuming <span class="math inline">\(x_i^T\beta\)</span> are the same across all bases in the window and <span class="math inline">\(\sum_i \mu_{i0}\)</span> is the total baseline mutation for the window. Then <span class="math inline">\(Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})\)</span></p>
+<p>The likelihood funciton is</p>
+<p><span class="math display">\[
+\begin{aligned} 
+L(\beta|Y)=\prod_j\frac{[\mu_{j0}e^{X_j^T\beta}]^{Y_j}e^{-\mu_{j0}e^{X_j^T\beta}}}{Y_j!}
+\end{aligned}
+\]</span></p>
+<p>and</p>
+<ul>
+<li><span class="math inline">\(Y_j\)</span>; total number of mutations in window <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(X_j\)</span>: a vector of covariates for the window, assuming the same acorss all bases in the window</li>
+</ul>
+<p>And the log likelihood function is</p>
+<p><span class="math display">\[
+\begin{aligned}
+l(\beta)=\sum_j[Y_jlog(\mu_{j0}e^{X_j^T\beta})]-\sum_j[\mu_{j0}e^{X_j^T\beta}]+constant
+\end{aligned}
+\]</span></p>
 </div>
 <div id="categorization" class="section level2">
 <h2>Categorization</h2>
 <p>Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have <span class="math inline">\(P\)</span> binary features (continuous features could be discretized into discrete values). Totally it is going to be <span class="math inline">\(2^P\)</span> feature categories. Usually <span class="math inline">\(2^P &lt;&lt; \frac{3B}{L}\)</span>, <span class="math inline">\(L\)</span> is window length.</p>
-<p>Let <span class="math inline">\(c\)</span> index category. <span class="math inline">\(Y_c\)</span> is the total number of mutations, <span class="math inline">\(\mu_{c0}\)</span> is the baseline mutation rate, <span class="math inline">\(X_c\)</span> is the feature covariates. Then <span class="math inline">\(Y_c \sim Pois(\mu_{c0}e^{X_c\beta})\)</span> with the probability mass function <span class="math inline">\(P(Y_c|\beta)=\frac{\mu_c^{Y_c}e^{-\mu_c}}{Y_c!}\)</span>, where <span class="math inline">\(\mu_c=\mu_{c0}e^{X_c\beta}\)</span>.</p>
+<p>Let <span class="math inline">\(c\)</span> index category. <span class="math inline">\(Y_c\)</span> is the total number of mutations, <span class="math inline">\(\mu_{c0}\)</span> is the baseline mutation rate, <span class="math inline">\(X_c\)</span> is the feature covariates.</p>
 <p>The likelihood function is</p>
 <p><span class="math display">\[
 \begin{aligned}
- logP(Y|\beta) &amp; =log \prod_c P(Y_c|\beta) \\
- &amp;=\sum_c[Y_clog(\mu_c)-\mu_c-log(Y_c!) ]\\
- &amp;=\sum_c\{Y_c[log(\mu_{c0})+X_c\beta]-\mu_{c0}e^{X_c\beta}-log(Y_c!) \} \\
- &amp;=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}+constant
+ logP(Y|\beta) &amp; = \sum_j[Y_jlog(\mu_{j0}e^{X_j^T\beta})]-\sum_j[\mu_{j0}e^{X_j^T\beta}]+constant(following ~LH~of~region~level)\\
+ &amp;=\sum_c\{Y_c(X_c^T\beta)-\mu_{c0}e^{X_c^T\beta} \}+constant
 \end{aligned}
 \]</span></p>
+<ul>
+<li><span class="math inline">\(\mu_{c0}=\sum_j\mu_{j0}\)</span> in category <span class="math inline">\(c\)</span>.</li>
+<li>The last equation is because for category <span class="math inline">\(c\)</span>, all <span class="math inline">\(X_j=X_c\)</span> are the same, so <span class="math inline">\(\sum_jY_j(X_j^T\beta)=X_c^T\beta \sum_jY_j=Y_c(X_c^T\beta)\)</span>.</li>
+</ul>
+<p>Thus <span class="math inline">\(Y_c\sim Pois(\mu_{c0}e^{X_c^T\beta})\)</span>. Another way to understand it is that since <span class="math inline">\(Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})\)</span>, in category <span class="math inline">\(c\)</span>, the sum of <span class="math inline">\(\sum_j Y_j \sim Pois(\sum_j \mu_{j0}e^{X_j^T\beta})\)</span>, where <span class="math inline">\(\sum_j \mu_{j0}e^{X_j^T\beta}=e^{X_c\beta} \sum_j \mu_{j0}=\mu_{c0}e^{X_c\beta}\)</span>, assuming <span class="math inline">\(Y_j\)</span> are independent.</p>
 <p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>.</p>
+</div>
+<div id="simulations" class="section level2">
+<h2>Simulations</h2>
+<div id="constant-baseline-mutation-rate-mu_0" class="section level3">
+<h3>Constant baseline mutation rate <span class="math inline">\(\mu_0\)</span></h3>
+<pre class="r"><code>rm(list=ls())
+set.seed(1000)
+n &lt;- 1000000
+baseline.rate=0.01
+#regression coefficients
+ beta0 &lt;- 0.1
+ beta1 &lt;- log(2)
+#generate covariate values
+ x &lt;- rbinom(n, 1, prob=0.5)
+#compute mu&#39;s
+mu &lt;- exp(beta0 + beta1 * x)*baseline.rate
+#generate Y-values
+ y &lt;- rpois(n=n, lambda=mu)
+   #data set
+ data &lt;- data.frame(y=y, x=x)
+ y0=sum(data$y[data$x==0]); y1=sum(data$y[data$x==1])
+ cate.data=data.frame(y=c(y0,y1), x=c(0,1))
+ fit=glm(data$y~data$x+offset(log(rep(baseline.rate, n))), family=poisson())
+ cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(baseline.rate*sum(x==cate.data$x[1]), baseline.rate*sum(x==cate.data$x[2])))), family=poisson())
+fit.conf=confint(fit)</code></pre>
+<pre><code>Waiting for profiling to be done...</code></pre>
+<pre class="r"><code>cate.fit.conf=confint(cate.fit)</code></pre>
+<pre><code>Waiting for profiling to be done...</code></pre>
+<p><img src="figure/modeling.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li>sample size, i.e. number of windows <span class="math inline">\(N=10^6\)</span></li>
+<li>baseline rate is constant across all windows <span class="math inline">\(\mu_0=0.01\)</span>.</li>
+<li><span class="math inline">\(\beta_0=0.1, \beta_1=log(2)\)</span>.</li>
+</ul>
+</div>
+<div id="variable-baseline-mutatiom-rate-mu_i0" class="section level3">
+<h3>Variable baseline mutatiom rate <span class="math inline">\(\mu_{i0}\)</span></h3>
+<pre><code>Waiting for profiling to be done...
+Waiting for profiling to be done...</code></pre>
+<p><img src="figure/modeling.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/modeling.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <!-- Insert the session information into the document -->
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.4.3 (2017-11-30)
@@ -396,10 +450,11 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
- [1] compiler_3.4.3  backports_1.0.5 magrittr_1.5    rprojroot_1.3-1
- [5] tools_3.4.3     htmltools_0.3.5 yaml_2.1.16     Rcpp_0.12.10   
- [9] stringi_1.1.5   rmarkdown_1.8   knitr_1.17      git2r_0.21.0   
-[13] stringr_1.2.0   digest_0.6.12   evaluate_0.10  </code></pre>
+ [1] MASS_7.3-47     compiler_3.4.3  backports_1.0.5 magrittr_1.5   
+ [5] rprojroot_1.3-1 tools_3.4.3     htmltools_0.3.5 yaml_2.1.16    
+ [9] Rcpp_0.12.10    stringi_1.1.5   rmarkdown_1.8   knitr_1.17     
+[13] git2r_0.21.0    stringr_1.2.0   digest_0.6.12   evaluate_0.10  </code></pre>
+</div>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
