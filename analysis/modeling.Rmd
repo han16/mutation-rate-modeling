@@ -132,8 +132,68 @@ $\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^
 
 ### Constant baseline mutation rate $\mu_0$
 
+#### Use true baseline mutation rate as offset 
 
 ```{r, echo=T, warning=FALSE, results='hide', cache=T}
+#rm(list=ls())
+set.seed(1000)
+n <- 10000
+baseline.rate=0.01
+#regression coefficients
+ beta0 <- 0.1
+ beta1 <- log(2)
+#generate covariate values
+ x <- rbinom(n, 1, prob=0.5)
+#compute mu's
+mu <- exp(beta0 + beta1 * x)*baseline.rate
+#generate Y-values
+ y <- rpois(n=n, lambda=mu)
+   #data set
+ data <- data.frame(y=y, x=x)
+ y0=sum(data$y[data$x==0]); y1=sum(data$y[data$x==1])
+ cate.data=data.frame(y=c(y0,y1), x=c(0,1))
+ fit=glm(data$y~data$x+offset(log(rep(baseline.rate, n))), family=poisson())
+ cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(baseline.rate*sum(x==cate.data$x[1]), baseline.rate*sum(x==cate.data$x[2])))), family=poisson())
+fit.conf=confint(fit)
+cate.fit.conf=confint(cate.fit)
+```
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
+para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+barCenters=barplot(para.est[,1], beside=F, ylim=c(0, 0.15), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
+abline(h=beta0, lty=4)
+segments(barCenters, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
+barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
+abline(h=beta1, lty=4)
+segments(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+```
+
+* sample size, i.e. number of windows $N=10^4$
+* baseline rate is constant across all windows $\mu_0=0.01$.
+* $\beta_0=0.1, \beta_1=log(2)$. 
+
+
+
+
+
+
+
+```{r, echo=F, warning=FALSE, results='hide', cache=T}
 #rm(list=ls())
 set.seed(1000)
 n <- 1000000
@@ -186,7 +246,6 @@ title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE
 * baseline rate is constant across all windows $\mu_0=0.01$.
 * $\beta_0=0.1, \beta_1=log(2)$. 
 
-#### 100 replicates 
 
 
 
@@ -212,13 +271,48 @@ segments(barCenters, c(0.6531, 0.6531), barCenters,
 arrows(barCenters, c(0.6531, 0.6531), barCenters,
         c(0.7216, 0.7216) , lwd = 1.5, angle = 90,
        code = 3, length = 0.05)
-title(paste("Comparison of estimate averaged across 100 replicates with sample size of", n, sep=" ")  , outer=TRUE)
+title(paste("Comparison of estimate averaged across 100 replicates with sample size of", n, sep=" "), cex.main=0.9  , outer=TRUE)
 ```
 
 
+* when use true baseline mutation rate, GLM with categorization and without give mostly identical results and both results  are approaching to their true values when $n \geq 10^6$. 
+
+#### Use estimated baseline mutation rate 
+
+In most cases, we never know the true baseline mutation rate, so we may have to use their estimates 
+
+```{r, echo=T}
+fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
+cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
+ 
+```
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
+para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+#barCenters=barplot(para.est[,1], beside=F, ylim=c(min(para.est[,1], beta0, 0), max(para.est[,1], beta0, 0)), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
+plot(para.est[,1],ylim=c(min(para.est[,1], beta0, 0), max(para.est[,1], beta0, 0)), xlab="",  xaxt='n',  main=expression(paste(beta[0])), ylab="", col=c("red", "darkblue"), pch=16)
+
+barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
+abline(h=beta1, lty=4)
+segments(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+```
+
+* with estimated baseline mutation rate as offset, intercept esmtiate is not correct, but $\widehat{\beta_1}$ is good. 
 
 
 ### Variable baseline mutatiom rate $\mu_{i0}$
+
+#### use true baseline mutation rate 
+
 
 ```{r, echo=F, warning=F, results='hide', cache=T}
 #rm(list=ls())
@@ -253,6 +347,8 @@ plot(density(mu), main=expression(paste("Density of generated", mu[i0], sep=" ")
 #abline(v=Mode(mu), col=2)
 ```
 
+* $\mu_{i0}$ is generated by $\mu_{i0} \sim rbeta(n, 1, 100)$
+
 
 ```{r, echo=F}
 para.est=matrix(nrow=2, ncol=2)
@@ -278,6 +374,38 @@ arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
        code = 3, length = 0.05)
 title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
 ```
+
+#### use estimated baseline mutation rate 
+
+
+
+```{r, echo=T}
+fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
+cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
+ 
+```
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
+para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+#barCenters=barplot(para.est[,1], beside=F, ylim=c(min(para.est[,1], beta0, 0), max(para.est[,1], beta0, 0)), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
+plot(para.est[,1],ylim=c(min(para.est[,1], beta0, 0), max(para.est[,1], beta0, 0)), xlab="",  xaxt='n',  main=expression(paste(beta[0])), ylab="", col=c("red", "darkblue"), pch=16)
+abline(h=beta0, lty=4)
+
+barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
+abline(h=beta1, lty=4)
+segments(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+```
+
+* with estimated baseline mutation rate as offset, intercept esmtiate is not correct, but $\widehat{\beta_1}$ is good. 
 
 <!-- Insert the session information into the document -->
 ```{r session-info}
