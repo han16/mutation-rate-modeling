@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-04-06</p>
+<p><strong>Last updated:</strong> 2018-04-10</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> d564c47</p>
+<p><strong>Code version:</strong> 3ae630c</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -488,20 +488,21 @@ shared across the workflowr files. -->
 <li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
 </ul>
 </div>
-<div id="model-fitting" class="section level3">
-<h3>Model fitting</h3>
-<p>We use two methods to fit the model</p>
+<div id="model-fitting-for-each-mutation-type-separately" class="section level3">
+<h3>Model fitting for each mutation type separately</h3>
+<p>There are two ways to fit the model, GLM and optims. For each method, we can look at whole genome (three discrete featuree at most because of memory issue) and thus need to use categorization trick to speed up the computation. Both ways (with or without categorization) will give same results.</p>
 <ul>
-<li>GLM (use R function GLM)</li>
+<li>GLM (use R function GLM) with offset term</li>
 </ul>
 <p><span class="math display">\[y\sim Pois( e^{\mu+X^T\beta})\]</span></p>
 <ol style="list-style-type: decimal">
-<li><p>The response is the ** number of mutations ** in the unit(base window or category) and the each feature is base level or averaged across all windows within the category (denoted as M2 (method 2))</p></li>
+<li><p>Without categorization, <span class="math inline">\(y\)</span> is number of mutations in every window, features and baseline mutations are also at window level (denote M11)</p></li>
+<li><p>With categorization, response <span class="math inline">\(y\)</span> is the ** number of mutations ** from all windows within a category and covariate feature, baseline mutations are also category level (dneote M12)</p></li>
 <li>intercept is included and the same across all categories</li>
 <li><p>confidence interval could be obtained as well</p></li>
 </ol>
 <ul>
-<li>use R function optim to fit the model (M1 method)</li>
+<li>use R function optim to fit the model (M2 method)</li>
 </ul>
 <ol style="list-style-type: decimal">
 <li>use estimated baseline mutation rate in the model.</li>
@@ -512,6 +513,10 @@ shared across the workflowr files. -->
 <div id="wong_nc_2016_693_control_snv" class="section level2">
 <h2>Wong_NC_2016_693_control_SNV</h2>
 <p>The window length is set 100 bp. Use GLN to fit the model, and stated otherwise.</p>
+<div id="test-different-methods-on-chr20-for-mutation-a-c" class="section level3">
+<h3>Test different methods on chr20 for mutation A-&gt;C</h3>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 <div id="whole-genome-no-categorization-one-feature" class="section level3">
 <h3>Whole genome NO categorization-one feature</h3>
 <p>For each mutation type in the above table, fit the Poisson regression on the feature DHS</p>
@@ -561,7 +566,7 @@ shared across the workflowr files. -->
  DHS[,1]=c(0.45, 0.33, 0.30, 0.75, 0.70, 0.60)
  rownames(DHS)=c(&quot;A-&gt;C&quot;, &quot;A-&gt;G&quot;, &quot;A-&gt;T&quot;, &quot;C-&gt;G&quot;, &quot;C-&gt;T&quot;, &quot;C-&gt;A&quot;)
  barplot(DHS[,1], col=&quot; blue&quot;, xlab=&quot;&quot;, ylab=&quot;DHS (whole genome)&quot;)</code></pre>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="whole-genome-no-categorization-3-discrete-features-at-most" class="section level3">
 <h3>whole genome NO categorization-3 discrete features (at most)</h3>
@@ -639,35 +644,6 @@ shared across the workflowr files. -->
 <div id="whole-genome-with-categorization-5-features" class="section level3">
 <h3>whole genome with categorization-5 features</h3>
 <pre class="r"><code>#kable(combine, digits=2, format=&quot;html&quot;, caption=&quot;Estimated effect of five features&quot;, align=&quot;c&quot;)</code></pre>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>lamin=matrix(nrow=num.method, ncol=num.mut)
-lamin[1,]=optim.para$Lamin
-lamin[2,]=glm.total.mut.para$Lamin
-colnames(lamin)=optim.para[,1]
-
-barplot(lamin, beside=T, col=c(&quot;red&quot;, &quot;darkblue&quot;), legend=c(&quot;M1&quot;, &quot;M2&quot;), ylim=c(min(lamin), 0.1), main=&quot;Lamin by different methods&quot;)</code></pre>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>GC=matrix(nrow=num.method, ncol=num.mut)
-GC[1,]=optim.para$GC
-GC[2,]=glm.total.mut.para$GC
-colnames(GC)=optim.para[,1]
-
-barplot(GC, beside=T, col=c(&quot;red&quot;, &quot;darkblue&quot;), legend=c(&quot;M1&quot;, &quot;M2&quot;), ylim=c(min(GC), max(GC)), main=&quot;GC content by  different methods&quot;)</code></pre>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>Reptime=matrix(nrow=num.method, ncol=num.mut)
-Reptime[1,]=optim.para$RepTime
-Reptime[2,]=glm.total.mut.para$RepTime
-colnames(Reptime)=optim.para[,1]
-
-barplot(Reptime, beside=T, col=c(&quot;red&quot;, &quot;darkblue&quot;), legend=c(&quot;M1&quot;, &quot;M2&quot;), ylim=c(min(Reptime), max(Reptime)+0.2), main=&quot;Replication timing by  different methods&quot;)</code></pre>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>Inter=matrix(nrow=1, ncol=6)
-Inter[1,]=glm.total.mut.para$Intercept
-colnames(Inter)=optim.para[,1]
-
-barplot(Inter, beside=T, col=c( &quot;darkblue&quot;), legend=c( &quot;M2&quot;), ylim=c(min(Inter), max(Inter)), main=&quot;Intercept by  GLM &quot;)</code></pre>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="session-information" class="section level2">

@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-04-09</p>
+<p><strong>Last updated:</strong> 2018-04-10</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> c91c42c</p>
+<p><strong>Code version:</strong> 3ae630c</p>
 <!-- Add your analysis here -->
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
@@ -389,7 +389,10 @@ l(\beta)=\sum_j[Y_jlog(\mu_{j0}e^{X_j^T\beta})]-\sum_j[\mu_{j0}e^{X_j^T\beta}]+c
 <li>The last equation is because for category <span class="math inline">\(c\)</span>, all <span class="math inline">\(X_j=X_c\)</span> are the same, so <span class="math inline">\(\sum_jY_j(X_j^T\beta)=X_c^T\beta \sum_jY_j=Y_c(X_c^T\beta)\)</span>.</li>
 </ul>
 <p>Thus <span class="math inline">\(Y_c\sim Pois(\mu_{c0}e^{X_c^T\beta})\)</span>. Another way to understand it is that since <span class="math inline">\(Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})\)</span>, in category <span class="math inline">\(c\)</span>, the sum of <span class="math inline">\(\sum_j Y_j \sim Pois(\sum_j \mu_{j0}e^{X_j^T\beta})\)</span>, where <span class="math inline">\(\sum_j \mu_{j0}e^{X_j^T\beta}=e^{X_c\beta} \sum_j \mu_{j0}=\mu_{c0}e^{X_c\beta}\)</span>, assuming <span class="math inline">\(Y_j\)</span> are independent.</p>
-<p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c\beta)-\mu_{c0}e^{X_c\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>.</p>
+<div id="likelihood-and-derivative" class="section level3">
+<h3>Likelihood and derivative</h3>
+<p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c^T\beta)-\mu_{c0}e^{X_c^T\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>.</p>
+</div>
 </div>
 <div id="simulations" class="section level2">
 <h2>Simulations</h2>

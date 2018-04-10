@@ -102,20 +102,22 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 * Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
 * use R function Split to cluster windows with similar features including discrete features and categorized features 
 
-### Model fitting 
+### Model fitting for each mutation type separately 
 
-We use two methods to fit the model 
+There are two ways to fit the model, GLM and optims. For each method, we can look at whole genome (three discrete featuree at most because of memory issue) and thus need to use categorization trick to speed up the computation. Both ways (with or without categorization) will give same results.  
 
-* GLM (use R function GLM)
+* GLM (use R function GLM) with offset term
   
   $$y\sim Pois( e^{\mu+X^T\beta})$$
-
-  (1) The response is the ** number of mutations ** in the unit(base window or category) and the each feature is base level or  averaged across all windows within the category (denoted as M2 (method 2))
+ 
+  (1) Without categorization, $y$ is number of mutations in every window, features and baseline mutations are also at window level (denote M11)
+  
+  (1) With categorization,  response   $y$ is the ** number of mutations ** from all windows  within a category and covariate feature, baseline mutations are also category level (dneote M12)
   
   (2) intercept is included and the same across all categories
   (3) confidence interval could be obtained as well
 
-* use R function optim to fit the model (M1 method)
+* use R function optim to fit the model (M2 method)
 
  (1)  use estimated baseline mutation rate in the model. 
  (2)  There is a singularity problem for hessian matrix when getting the confidence interval by optim. 
@@ -125,6 +127,36 @@ We use two methods to fit the model
 ## Wong_NC_2016_693_control_SNV 
 
 The window length is set 100 bp. Use GLN to fit the model, and stated otherwise. 
+
+
+### Test different methods on chr20 for mutation A->C
+
+```{r, echo=F}
+method=c("M11", "M12", "M21", "M22")
+cova=c( "DHS", "CpGisland", "Lamin", "GC", "RT")
+mutation=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+```
+
+```{r, echo=F}
+chr20_AtoC=load("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.chr20.AtoC.RData")
+chr20_para_est=matrix(nrow=length(method), ncol=length(cova))
+chr20_para_est[1,]=para.est$glm.before.cate[2:6]
+chr20_para_est[2,]=para.est$glm.cate[2:6]
+chr20_para_est[3,]=para.est$optim.before.cate
+chr20_para_est[4,]=para.est$optim.cate
+rownames(chr20_para_est)=method
+colnames(chr20_para_est)=cova
+
+plot(chr20_para_est[1,], ylim=c(min(chr20_para_est)-1, max(chr20_para_est)+1), type="o", xaxt='n', xlab="Covariate features", ylab=expression(paste(widehat(beta))), col=1, main="mutation A->C on chr20", cex=0.8)
+lines(chr20_para_est[2,], col=2, type="o")
+lines(chr20_para_est[3,], col=3, type="o")
+lines(chr20_para_est[4,], col=4, type="o")
+legend(4, -4, method, col=c(1,2,3,4), lty=c(1,1,1,1))
+axis.labels <-cova
+axis(1, at=seq(1,5), labels=axis.labels)
+
+```
+
 
 ### Whole genome NO categorization-one feature
 
@@ -148,6 +180,9 @@ mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
  rownames(DHS)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
  barplot(DHS[,1], col=" blue", xlab="", ylab="DHS (whole genome)")
 ```
+
+
+
  
 
 ### whole genome NO categorization-3 discrete features (at most)
@@ -166,7 +201,7 @@ A->C |-10.47 | 0.45 | | | |
 
 ### whole genome with categorization-5 features 
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 AtoC=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_C_para.est.optim.50cate.csv", header=T)
 AtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_G_para.est.optim.50cate.csv", header=T)
 AtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_T_para.est.optim.50cate.csv", header=T)
@@ -189,7 +224,7 @@ colnames(combine)=c( "DHS", "CpGisland", "lamin", "gc", "RT")
 ```
 
 
-```{r dhs, echo=F}
+```{r dhs, echo=F, eval=F}
 optim.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.optim.csv", header=T, row.names=NULL)
 glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.log.as.offset.csv", header=T)
 conf.inter=load("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.conf.by.glm.use.log.as.offset.RData")
@@ -201,7 +236,7 @@ for (i in 1:length(conf.with.log))
 ```
 
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 num.method=2; num.mut=6
 DHS=matrix(nrow=num.method, ncol=num.mut)
 DHS[1,]=optim.para$DHS
@@ -219,7 +254,7 @@ arrows(barCenters[2,], DHS.conf[1,], barCenters[2,],
        code = 3, length = 0.05)
 ```
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 CpG=matrix(nrow=num.method, ncol=num.mut)
 CpG[1,]=optim.para$CpGIsland
 CpG[2,]=glm.total.mut.para$CpGIsland
@@ -239,7 +274,7 @@ arrows(barCenters[2,], CpG.conf[1,], barCenters[2,],
 ```
 
 
-```{r, cecho=F}
+```{r, echo=F, eval=F}
 lamin=matrix(nrow=num.method, ncol=num.mut)
 lamin[1,]=optim.para$Lamin
 lamin[2,]=glm.total.mut.para$Lamin
