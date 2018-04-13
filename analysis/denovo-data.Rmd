@@ -25,6 +25,15 @@ library(knitr)
 ```{r code-version, echo=FALSE, results='asis'}
 ```
 
+```{r, echo=F}
+loadRData <- function(fileName){
+#loads an RData file, and returns it
+    load(fileName)
+    get(ls()[ls() != "fileName"])
+}
+```
+
+
 ## Samples
 
 
@@ -134,178 +143,108 @@ The window length is set 100 bp. Use GLN to fit the model, and stated otherwise.
 ```{r, echo=F}
 method=c("M11", "M12", "M21", "M22")
 cova=c( "DHS", "CpGisland", "Lamin", "GC", "RT")
-mutation=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+mutation=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
 ```
 
 ```{r, echo=F}
-chr20_AtoC=load("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.chr20.AtoC.RData")
+chr20_AtoC=loadRData("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.chr20.AtoC.RData")
 chr20_para_est=matrix(nrow=length(method), ncol=length(cova))
-chr20_para_est[1,]=para.est$glm.before.cate[2:6]
-chr20_para_est[2,]=para.est$glm.cate[2:6]
-chr20_para_est[3,]=para.est$optim.before.cate
-chr20_para_est[4,]=para.est$optim.cate
+chr20_para_est[1,]=chr20_AtoC$glm.before.cate[2:6]
+chr20_para_est[2,]=chr20_AtoC$glm.cate[2:6]
+chr20_para_est[3,]=chr20_AtoC$optim.before.cate
+chr20_para_est[4,]=chr20_AtoC$optim.cate
 rownames(chr20_para_est)=method
 colnames(chr20_para_est)=cova
 
-plot(chr20_para_est[1,], ylim=c(min(chr20_para_est)-1, max(chr20_para_est)+1), type="o", xaxt='n', xlab="Covariate features", ylab=expression(paste(widehat(beta))), col=1, main="mutation A->C on chr20", cex=0.8)
-lines(chr20_para_est[2,], col=2, type="o")
-lines(chr20_para_est[3,], col=3, type="o")
-lines(chr20_para_est[4,], col=4, type="o")
-legend(4, -4, method, col=c(1,2,3,4), lty=c(1,1,1,1))
+plot(chr20_para_est[1,], ylim=c(min(chr20_para_est)-1, max(chr20_para_est)+1), type="o", xaxt='n', xlab="Covariate features", ylab=expression(paste(widehat(beta))), col=1, main="mutation A->C on chr20", cex=0.8, lty=1, pch=15)
+lines(chr20_para_est[2,], col=1, type="o", lty=2, pch=16)
+lines(chr20_para_est[3,], col=2, type="o", lty=1, pch=15)
+lines(chr20_para_est[4,], col=2, type="o", lty=2, pch=16)
+legend(4, -4, method, col=c(1,1,2,2), lty=c(1,2,1,2), pch=c(15, 16, 15, 16))
 axis.labels <-cova
 axis(1, at=seq(1,5), labels=axis.labels)
 
 ```
 
 
-### Whole genome NO categorization-one feature
-
-For each mutation type in the above table, fit the Poisson regression on the feature DHS 
+* other than CpG island, 4 different methods give same results. 
 
 
-mutation type| $\hat{\beta}_0$ (intercept) | $\hat{\beta_1}$ (DHS)
----|-----|-------------|------
- A->C | -10.47 | 0.45
- A->G | -9.08 | 0.33
- A->T | -10.62 | 0.30
- C->G | -10.31 | 0.75
- C->T | -8.87 | 0.70
- C->A | -10.24 | 0.60 
- 
- 
-```{r, echo=T}
- inter=c(-10.47, -9.08, -10.62, -10.31, -8.87, -10.24)
- DHS=matrix(nrow=6, ncol=1)
- DHS[,1]=c(0.45, 0.33, 0.30, 0.75, 0.70, 0.60)
- rownames(DHS)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
- barplot(DHS[,1], col=" blue", xlab="", ylab="DHS (whole genome)")
+### Whole genome with categorization-one feature
+
+```{r, echo=F}
+single.feature=loadRData("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\mutation.A_to_C.para.est.single.feature.RData")
+single.fea.para.est=data.frame(optim.cate=single.feature$optim.cate, optim.no.cate=single.feature$optim.before.cate, glm.cate=single.feature$glm.cate[,2], glm.cate.conf.lower=single.feature$glm.cate.conf[c(2,4,6,8,10),1], glm.cate.conf.upper=single.feature$glm.cate.conf[c(2,4,6,8,10),2])
+
+glm.fit=matrix(nrow=1, ncol=5)
+glm.fit[1,]=t(single.fea.para.est[,3])
+colnames(glm.fit)=rownames(single.fea.para.est)
+barcenters=barplot(glm.fit, beside=T, col=c("red"), legend=c("M12"),
+ylab=expression(paste(beta)), main="mutation A_to_C",  cex.names=1)
+
+
+
+segments(barcenters, c(single.fea.para.est$glm.cate.conf.lower), barcenters,
+        c(single.fea.para.est$glm.cate.conf.upper) , lwd = 1.5)
+
+arrows(barcenters, c(single.fea.para.est$glm.cate.conf.lower), barcenters,
+        c(single.fea.para.est$glm.cate.conf.upper) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
 ```
 
+* Fit method M12 to the model for each covariate at a time, while M11 doesn't work 
 
-
- 
-
-### whole genome NO categorization-3 discrete features (at most)
-
-
-mutation type| $\hat{\beta}_0$ | $\hat{\beta_1}$  | $\hat{\beta_2}$ | $\hat{\beta_3}$ | $\hat{\beta_4}$ | $\hat{\beta_5}$
----|-----|-------------|------|-----|----|-----| 
-A->C |-10.47 | 0.45 | | | | 
- A->C | -10.47 | 0.46 | -0.10 | | |
- A->C | -10.51 | 0.47 | -0.08 | 0.11 | |
- A->C (chr1 )| -11.23 | 0.14 | -0.44 | 0.13| 1.53 |
- A->C (chr1) | -11.24 | 0.16 | -0.44 | 0.09 | 1.62 | -0.87 |
- Table: $\beta_0, \beta_1, \beta_2, \beta_3$ are for intercept, DHS,  CpG island and lamin. 
 
 
 
 ### whole genome with categorization-5 features 
 
-```{r, echo=F, eval=F}
-AtoC=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_C_para.est.optim.50cate.csv", header=T)
-AtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_G_para.est.optim.50cate.csv", header=T)
-AtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_A_to_T_para.est.optim.50cate.csv", header=T)
-CtoG=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_G_para.est.optim.50cate.csv", header=T)
-CtoT=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_T_para.est.optim.50cate.csv", header=T)
-CtoA=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\mutation_C_to_A_para.est.optim.50cate.csv", header=T)
-combine=matrix(nrow=6, ncol=5)
-combine[1,]=AtoC[,2]
-combine[2,]=AtoG[,2]
-combine[3,]=AtoT[,2]
-combine[4,]=CtoG[,2]
-combine[5,]=CtoT[,2]
-combine[6,]=CtoA[,2]
-rownames(combine)=c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
-colnames(combine)=c( "DHS", "CpGisland", "lamin", "gc", "RT")
+```{r, echo=F}
+all.para.est=list()
+for (i in 1:length(mutation))
+  all.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\mutation", mutation[i], "para.est.RData", sep="."))
+names(all.para.est)=mutation
 ```
 
-```{r, echo=T}
-#kable(combine, digits=2, format="html", caption="Estimated effect of five features", align="c")
-```
+```{r DHS, echo=F}
+for (cova.index in 1:5)
+{
+cova.across.mut=matrix(nrow=3, ncol=length(mutation))
+conf.inter=matrix(nrow=length(mutation), ncol=2)
+colnames(conf.inter)=c("lower", "upper")
+rownames(conf.inter)=names(all.para.est)
+for (i in 1:length(mutation))
+{
+  cova.across.mut[1,i]=all.para.est[[i]]$glm.cate[cova.index+1]
+  cova.across.mut[2,i]=all.para.est[[i]]$optim.before.cate[cova.index]
+  cova.across.mut[3,i]=all.para.est[[i]]$optim.cate[cova.index]
+  conf.inter[i,]=all.para.est[[i]]$glm.cate.conf[cova.index+1,]
+}
+rownames(cova.across.mut)=method[2:4]
+colnames(cova.across.mut)=names(all.para.est)
 
 
-```{r dhs, echo=F, eval=F}
-optim.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.optim.csv", header=T, row.names=NULL)
-glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.log.as.offset.csv", header=T)
-conf.inter=load("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.conf.by.glm.use.log.as.offset.RData")
-names(conf.with.log)=optim.para[,1]
-for (i in 1:length(conf.with.log))
-   rownames(conf.with.log[[i]])=colnames(glm.total.mut.para)[2:7]
-#glm.total.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.total.mutation.as.response.csv", header=T)
-#glm.ave.mut.para=read.csv("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.by.glm.use.average.mutation.as.response.csv", header=T)
-```
+
+barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "darkblue", "black"), legend=method[2:4], main=cova[cova.index],  cex.names=1, args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
 
 
-```{r, echo=F, eval=F}
-num.method=2; num.mut=6
-DHS=matrix(nrow=num.method, ncol=num.mut)
-DHS[1,]=optim.para$DHS
-DHS[2,]=glm.total.mut.para$DHS
-colnames(DHS)=optim.para[,1]
-DHS.conf=matrix(nrow=2, ncol=num.mut)
-for (i in 1:num.mut)
-  DHS.conf[,i]=conf.with.log[[i]][rownames(conf.with.log[[i]])=="DHS",]
-barCenters=barplot(DHS, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(DHS), max(DHS)), main="DHS by different methods")
-segments(barCenters[2,], DHS.conf[1,], barCenters[2,],
-         DHS.conf[2,], lwd = 1.5)
+segments(barcenters[1,], conf.inter[,1], barcenters[1,],conf.inter[,2], lwd = 1.5)
 
-arrows(barCenters[2,], DHS.conf[1,], barCenters[2,],
-       DHS.conf[2,], lwd = 1.5, angle = 90,
+arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.5, angle = 90,
        code = 3, length = 0.05)
-```
-
-```{r, echo=F, eval=F}
-CpG=matrix(nrow=num.method, ncol=num.mut)
-CpG[1,]=optim.para$CpGIsland
-CpG[2,]=glm.total.mut.para$CpGIsland
-colnames(CpG)=optim.para[,1]
-
-CpG.conf=matrix(nrow=2, ncol=num.mut)
-for (i in 1:num.mut)
-  CpG.conf[,i]=conf.with.log[[i]][rownames(conf.with.log[[i]])=="CpGIsland",]
-barCenters=barplot(CpG, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(CpG), max(CpG)), main="DHS by different methods")
-segments(barCenters[2,], CpG.conf[1,], barCenters[2,],
-         CpG.conf[2,], lwd = 1.5)
-
-arrows(barCenters[2,], CpG.conf[1,], barCenters[2,],
-       CpG.conf[2,], lwd = 1.5, angle = 90,
-       code = 3, length = 0.05)
-
+}
 ```
 
 
-```{r, echo=F, eval=F}
-lamin=matrix(nrow=num.method, ncol=num.mut)
-lamin[1,]=optim.para$Lamin
-lamin[2,]=glm.total.mut.para$Lamin
-colnames(lamin)=optim.para[,1]
+* Fit three different ways to data for five covariate features simultaneously.
 
-barplot(lamin, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(lamin), 0.1), main="Lamin by different methods")
+* 95% confidence interval by GLM (M12) is big, while M11 (without categorization) fails.  
+
+* optim with categorization and without in many cases give similar estimates, while estimate by GLM is different 
 
 
-GC=matrix(nrow=num.method, ncol=num.mut)
-GC[1,]=optim.para$GC
-GC[2,]=glm.total.mut.para$GC
-colnames(GC)=optim.para[,1]
 
-barplot(GC, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(GC), max(GC)), main="GC content by  different methods")
-
-Reptime=matrix(nrow=num.method, ncol=num.mut)
-Reptime[1,]=optim.para$RepTime
-Reptime[2,]=glm.total.mut.para$RepTime
-colnames(Reptime)=optim.para[,1]
-
-barplot(Reptime, beside=T, col=c("red", "darkblue"), legend=c("M1", "M2"), ylim=c(min(Reptime), max(Reptime)+0.2), main="Replication timing by  different methods")
-
-
-Inter=matrix(nrow=1, ncol=6)
-Inter[1,]=glm.total.mut.para$Intercept
-colnames(Inter)=optim.para[,1]
-
-barplot(Inter, beside=T, col=c( "darkblue"), legend=c( "M2"), ylim=c(min(Inter), max(Inter)), main="Intercept by  GLM ")
-
-
-```
 
 
 
