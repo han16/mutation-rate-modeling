@@ -128,11 +128,17 @@ Thus $Y_c\sim Pois(\mu_{c0}e^{X_c^T\beta})$. Another way to understand it is tha
 
 
 Let $f(\beta)=\sum_c\{Y_c(X_c^T\beta)-\mu_{c0}e^{X_c^T\beta} \}$ be the objective function to be optimized over $\beta$. 
-$\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c^T\beta})$, $i=1, \cdots, P$. 
+$\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c^T\beta})$, $i=1, \cdots, P$, and 
 
+$\frac{\partial f(\beta)}{\partial \beta_0}=\sum_c (Y_c-\mu_{c0}e^{X_c^T\beta})$. 
 
 
 ## Simulations 
+
+The model generating the data is 
+
+$y \sim Pois(\mu_0e^{\beta_0+\beta_1X})$
+
 
 ### Constant baseline mutation rate $\mu_0$
 
