@@ -147,7 +147,7 @@ mutation=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
 ```
 
 ```{r, echo=F}
-chr20_AtoC=loadRData("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\para.est.chr20.AtoC.RData")
+chr20_AtoC=loadRData("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\chr20_mutation.A_to_C.para.est.RData")
 chr20_para_est=matrix(nrow=length(method), ncol=length(cova))
 chr20_para_est[1,]=chr20_AtoC$glm.before.cate[2:6]
 chr20_para_est[2,]=chr20_AtoC$glm.cate[2:6]
