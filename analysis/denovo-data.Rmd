@@ -198,7 +198,7 @@ arrows(barcenters, c(single.fea.para.est$glm.cate.conf.lower), barcenters,
 
 
 
-### whole genome with categorization-5 features 
+### Whole genome-5 features 
 
 ```{r, echo=F}
 all.para.est=list()
@@ -241,7 +241,7 @@ arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.
 
 * 95% confidence interval by GLM (M12) is big, while M11 (without categorization) fails.  
 
-* optim with categorization and without in many cases give similar estimates, while estimate by GLM is different 
+* optim with categorization and without give same estimates, while estimate by GLM is slightly different 
 
 
 
