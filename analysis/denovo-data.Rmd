@@ -246,6 +246,44 @@ arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.
 
 
 
+## Jonsson_Yuen2017
+
+
+```{r, echo=F}
+all.para.est=list()
+for (i in 1:length(mutation))
+  all.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\mutation", mutation[i], "para.est.RData", sep="."))
+names(all.para.est)=mutation
+```
+
+```{r, echo=F}
+for (cova.index in 1:5)
+{
+cova.across.mut=matrix(nrow=3, ncol=length(mutation))
+conf.inter=matrix(nrow=length(mutation), ncol=2)
+colnames(conf.inter)=c("lower", "upper")
+rownames(conf.inter)=names(all.para.est)
+for (i in 1:length(mutation))
+{
+  cova.across.mut[1,i]=all.para.est[[i]]$glm.cate[cova.index+1]
+  cova.across.mut[2,i]=all.para.est[[i]]$optim.before.cate[cova.index]
+  cova.across.mut[3,i]=all.para.est[[i]]$optim.cate[cova.index]
+  conf.inter[i,]=all.para.est[[i]]$glm.cate.conf[cova.index+1,]
+}
+rownames(cova.across.mut)=method[2:4]
+colnames(cova.across.mut)=names(all.para.est)
+
+
+
+barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "darkblue", "black"), legend=method[2:4], main=cova[cova.index],  cex.names=1, args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
+
+
+segments(barcenters[1,], conf.inter[,1], barcenters[1,],conf.inter[,2], lwd = 1.5)
+
+arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+}
+```
 
 
 ## Session information
