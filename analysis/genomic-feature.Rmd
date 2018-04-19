@@ -45,7 +45,7 @@ These features are from the [reference data][data]
 
  11 binary features 
 
-*  EXON:
+*  EXON: (416,549)
 * H3K4me1
 * H3K4me3
 * H3K9ac
@@ -66,6 +66,9 @@ These features are from the [reference data][data]
 * TIME (Replication timing, 2,386,623 sites)
 * GC 
 
+Others: 
+
+* Human Accelerated Regions (HAR, 562 windows)
 
 ## Session information
 
