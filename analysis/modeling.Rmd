@@ -144,42 +144,50 @@ $y \sim Pois(\mu_0e^{\beta_0+\beta_1X})$
 
 #### Use true baseline mutation rate as offset 
 
+
 ```{r, echo=F}
 cate.fr=function(beta)
 {
-sum.lkhd=cate.matrix[,1]*cate.matrix[,2:(1+feature_number)]*beta-baseline.mutation*exp(cate.matrix[,2:(1+feature_number)]*beta)
+cova.matx=cbind(rep(1,nrow(cate.matrix)), cate.matrix[,2:(1+feature_number)])
+sum.lkhd=cate.matrix[,1]*cova.matx%*%beta-baseline.mutation*exp(cova.matx%*%beta)
  return(sum(sum.lkhd))
 }
 
 cate.grr=function(beta)
 {
- partial.deriv=numeric(feature_number)
+ partial.deriv=numeric(1+feature_number)
+ cova.matx=cbind(rep(1,nrow(cate.matrix)), cate.matrix[,2:(1+feature_number)])
  for (i in 1:feature_number)
   {
-    sum.fea=cate.matrix[,1]*cate.matrix[,(1+i)]-baseline.mutation*cate.matrix[,(1+i)]*exp(cate.matrix[,2:(1+feature_number)]*beta)
-  partial.deriv[i]=sum(sum.fea)
+    sum.fea=cate.matrix[,1]*cate.matrix[,(1+i)]-baseline.mutation*cate.matrix[,(1+i)]*exp(cova.matx%*%beta)
+  partial.deriv[1+i]=sum(sum.fea)
   }
+  partial.deriv[1]=sum(cate.matrix[,1]-baseline.mutation*exp(cova.matx%*%beta))
 
  return(partial.deriv)
 }
 
+
 fr=function(beta)
 {
-sum.lkhd=discrete.feature[,1]*discrete.feature[,2:(1+feature_number)]*beta-baseline.mutation.before.cate*exp(discrete.feature[,2:(1+feature_number)]*beta)
+cova.matx=cbind(rep(1, nrow(discrete.feature)), discrete.feature[,2:(1+feature_number)])
+sum.lkhd=discrete.feature[,1]*cova.matx%*%beta-baseline.mutation.before.cate*exp(cova.matx%*%beta)
  return(sum(sum.lkhd))
 }
 
 grr=function(beta)
 {
- partial.deriv=numeric(feature_number)
+ partial.deriv=numeric(1+feature_number)
+ cova.matx=cbind(rep(1, nrow(discrete.feature)), discrete.feature[,2:(1+feature_number)])
  for (i in 1:feature_number)
   {
-    sum.fea=discrete.feature[,1]*discrete.feature[,(1+i)]-baseline.mutation.before.cate*discrete.feature[,(1+i)]*exp(discrete.feature[,2:(1+feature_number)]*beta)
-  partial.deriv[i]=sum(sum.fea)
+    sum.fea=discrete.feature[,1]*discrete.feature[,(1+i)]-baseline.mutation.before.cate*discrete.feature[,(1+i)]*exp(cova.matx%*%beta)
+  partial.deriv[1+i]=sum(sum.fea)
   }
-
+  partial.deriv[1]=sum(discrete.feature[,1]-baseline.mutation.before.cate*exp(cova.matx%*%beta))
  return(partial.deriv)
 }
+
 
 ```
 
@@ -228,15 +236,15 @@ cate.matrix=cate.data
 baseline.mutation=c(baseline.rate*sum(x==cate.data$x[1]), baseline.rate*sum(x==cate.data$x[2]))
 baseline.mutation.before.cate=baseline.rate
 discrete.feature=data
-para.initial=rep(0.1, feature_number)
+para.initial=rep(0.1, (1+feature_number))
 para.est.optim.cate=optim(para.initial, cate.fr, cate.grr, method="BFGS", control=list(fnscale=-1))
 para.est.optim.before.cate=optim(para.initial, fr, grr, method="BFGS", control=list(fnscale=-1))
 ################
 beta1.est=matrix(nrow=length(method), ncol=1)
 beta1.est[1,]=fit$coefficients[2]
 beta1.est[2,]=cate.fit$coefficients[2]
-beta1.est[3,]=para.est.optim.before.cate$par
-beta1.est[4,]=para.est.optim.cate$par
+beta1.est[3,]=para.est.optim.before.cate$par[2]
+beta1.est[4,]=para.est.optim.cate$par[2]
 
 barcenters=barplot(beta1.est, beside=T, ylim=c(0, 1.2), col=c("red", "darkblue", "green", "darkgreen"),  xlab="", legend=method, main=expression(paste(beta[1])), args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
 abline(h=beta1, lty=4)
@@ -252,7 +260,7 @@ title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE
 * sample size, i.e. number of windows $N=10^4$
 * baseline rate is constant across all windows $\mu_0=0.01$.
 * $\beta_0=0.1, \beta_1=log(2)$. 
-* M11 and M12 are GLM without and with categorization; M21,  M22 are optim without and with categorization. 
+* M11 and M12 are GLM without and with categorization; M21,  M22 are optim without and with categorization.  $\widehat{\beta}_{11}=\widehat{\beta}_{12}$ and $\widehat{\beta}_{21}=\widehat{\beta}_{22}$ and the difference between M11 and M21 are too minor to visualize 
 
 
 
@@ -303,15 +311,15 @@ cate.matrix=cate.data
 baseline.mutation=c(baseline.rate*sum(x==cate.data$x[1]), baseline.rate*sum(x==cate.data$x[2]))
 baseline.mutation.before.cate=baseline.rate
 discrete.feature=data
-para.initial=rep(0.1, feature_number)
+para.initial=rep(0.1, (1+feature_number))
 para.est.optim.cate=optim(para.initial, cate.fr, cate.grr, method="BFGS", control=list(fnscale=-1))
 para.est.optim.before.cate=optim(para.initial, fr, grr, method="BFGS", control=list(fnscale=-1))
 ################
 beta1.est=matrix(nrow=length(method), ncol=1)
 beta1.est[1,]=fit$coefficients[2]
 beta1.est[2,]=cate.fit$coefficients[2]
-beta1.est[3,]=para.est.optim.before.cate$par
-beta1.est[4,]=para.est.optim.cate$par
+beta1.est[3,]=para.est.optim.before.cate$par[2]
+beta1.est[4,]=para.est.optim.cate$par[2]
 
 barcenters2=barplot(beta1.est, beside=T, ylim=c(0, 1.2), col=c("red", "darkblue", "green", "darkgreen"),  xlab="", legend=method, main=expression(paste(beta[1])), args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
 abline(h=beta1, lty=4)
