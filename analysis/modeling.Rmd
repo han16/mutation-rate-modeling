@@ -148,7 +148,7 @@ $y \sim Pois(\mu_0e^{\beta_0+\beta_1X})$
 ```{r, echo=F}
 cate.fr=function(beta)
 {
-cova.matx=cbind(rep(1,nrow(cate.matrix)), cate.matrix[,2:(1+feature_number)])
+cova.matx=as.matrix(cbind(rep(1,nrow(cate.matrix)), cate.matrix[,2:(1+feature_number)]))
 sum.lkhd=cate.matrix[,1]*cova.matx%*%beta-baseline.mutation*exp(cova.matx%*%beta)
  return(sum(sum.lkhd))
 }
@@ -156,7 +156,7 @@ sum.lkhd=cate.matrix[,1]*cova.matx%*%beta-baseline.mutation*exp(cova.matx%*%beta
 cate.grr=function(beta)
 {
  partial.deriv=numeric(1+feature_number)
- cova.matx=cbind(rep(1,nrow(cate.matrix)), cate.matrix[,2:(1+feature_number)])
+ cova.matx=as.matrix(cbind(rep(1,nrow(cate.matrix)), cate.matrix[,2:(1+feature_number)]))
  for (i in 1:feature_number)
   {
     sum.fea=cate.matrix[,1]*cate.matrix[,(1+i)]-baseline.mutation*cate.matrix[,(1+i)]*exp(cova.matx%*%beta)
@@ -170,7 +170,7 @@ cate.grr=function(beta)
 
 fr=function(beta)
 {
-cova.matx=cbind(rep(1, nrow(discrete.feature)), discrete.feature[,2:(1+feature_number)])
+cova.matx=as.matrix(cbind(rep(1, nrow(discrete.feature)), discrete.feature[,2:(1+feature_number)]))
 sum.lkhd=discrete.feature[,1]*cova.matx%*%beta-baseline.mutation.before.cate*exp(cova.matx%*%beta)
  return(sum(sum.lkhd))
 }
@@ -178,7 +178,7 @@ sum.lkhd=discrete.feature[,1]*cova.matx%*%beta-baseline.mutation.before.cate*exp
 grr=function(beta)
 {
  partial.deriv=numeric(1+feature_number)
- cova.matx=cbind(rep(1, nrow(discrete.feature)), discrete.feature[,2:(1+feature_number)])
+ cova.matx=as.matrix(cbind(rep(1, nrow(discrete.feature)), discrete.feature[,2:(1+feature_number)]))
  for (i in 1:feature_number)
   {
     sum.fea=discrete.feature[,1]*discrete.feature[,(1+i)]-baseline.mutation.before.cate*discrete.feature[,(1+i)]*exp(cova.matx%*%beta)
@@ -339,46 +339,200 @@ title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE
 
 
 
+When  there are 2 covariates 
 
-```{r, echo=F}
-para.est=matrix(nrow=2, ncol=2)
-para.est[1,]=c(0.1023, 0.6902)
-para.est[2,]=c(0.1023, 0.6902)
-par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
-barCenters=barplot(para.est[,1], beside=F, ylim=c(0, 0.15), col=c("red", "darkblue"),  xlab="",  main=expression(paste(beta[0])))
-abline(h=beta0, lty=4)
-segments(barCenters, c(0.0763, 0.0763), barCenters,
-        c(0.1289, 0.1289) , lwd = 1.5)
 
-arrows(barCenters, c(0.0763, 0.0763), barCenters,
-        c(0.1289, 0.1289) , lwd = 1.5, angle = 90,
-       code = 3, length = 0.05)
 
-barcenters=barplot(para.est[,2], beside=F, ylim=c(0, 1.2), col=c("red", "darkblue"),  xlab="", legend=c("No cate", "With cate"), main=expression(paste(beta[1])))
-abline(h=beta1, lty=4)
-segments(barCenters, c(0.6531, 0.6531), barCenters,
-        c(0.7216, 0.7216) , lwd = 1.5)
-
-arrows(barCenters, c(0.6531, 0.6531), barCenters,
-        c(0.7216, 0.7216) , lwd = 1.5, angle = 90,
-       code = 3, length = 0.05)
-title(paste("Comparison of estimate averaged across 100 replicates with sample size of", n, sep=" "), cex.main=0.9  , outer=TRUE)
+```{r, echo=F, warning=FALSE, results='hide', cache=T}
+#rm(list=ls())
+set.seed(1000)
+n <- 1000000
+baseline.rate=0.01
+#regression coefficients
+ beta0 <- 0.1
+ beta1 <- log(2); beta2=log(5)
+#generate covariate values
+ x1 <- rbinom(n, 1, prob=0.5); x2=rbinom(n, 1, prob=0.2)
+#compute mu's
+mu <- exp(beta0 + beta1 * x1+beta2*x2)*baseline.rate
+#generate Y-values
+ y <- rpois(n=n, lambda=mu)
+   #data set
+ data <- data.frame(y=y, x1=x1, x2=x2)
+ y00=sum(data$y[data$x1==0 & data$x2==0]); y01=sum(data$y[data$x1==0 & data$x2==1])
+ y10=sum(data$y[data$x1==1 & data$x2==0]); y11=sum(data$y[data$x1==1 & data$x2==1])
+ cate.data=data.frame(y=c(y00,y01, y10, y11), x1=c(0,0,1,1), x2=c(0,1,0,1))
+ fit=glm(data$y~data$x1+data$x2+offset(log(rep(baseline.rate, n))), family=poisson())
+ offset.term=c(baseline.rate*nrow(data[data$x1==0 & data$x2==0,]), baseline.rate*nrow(data[data$x1==0 & data$x2==1,]), baseline.rate*nrow(data[data$x1==1 & data$x2==0,]), baseline.rate*nrow(data[data$x1==1 & data$x2==1,]))
+ cate.fit=glm(cate.data$y~cate.data$x1+cate.data$x2+offset(log(offset.term)), family=poisson())
+fit.conf=confint(fit)
+cate.fit.conf=confint(cate.fit)
 ```
 
 
-* when use true baseline mutation rate, GLM with categorization and without give mostly identical results and both results  are approaching to their true values when $n \geq 10^6$. 
+
+```{r, echo=F}
+para.est=matrix(nrow=2, ncol=2)
+para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
+para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])
+par(mfrow=c(1,3), oma = c(0, 0, 2, 0))
+barCenters1=barplot(para.est[,1], beside=F, ylim=c(0, 0.15), col=c("red", "darkblue"), legend=c("No cate", "With cate"),  xlab="",  main=expression(paste(beta[0])))
+abline(h=beta0, lty=4)
+segments(barCenters1, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters1,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5)
+
+arrows(barCenters1, c(fit.conf[1,1], cate.fit.conf[1,1]), barCenters1,
+        c(fit.conf[1,2], cate.fit.conf[1,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+
+######## estimate by optim 
+feature_number=2
+cate.matrix=cate.data
+baseline.mutation=offset.term
+baseline.mutation.before.cate=baseline.rate
+discrete.feature=data
+para.initial=rep(0.1, (1+feature_number))
+para.est.optim.cate=optim(para.initial, cate.fr, cate.grr, method="BFGS", control=list(fnscale=-1))
+para.est.optim.before.cate=optim(para.initial, fr, grr, method="BFGS", control=list(fnscale=-1))
+################
+beta1.est=matrix(nrow=length(method), ncol=1)
+beta1.est[1,]=fit$coefficients[2]
+beta1.est[2,]=cate.fit$coefficients[2]
+beta1.est[3,]=para.est.optim.before.cate$par[2]
+beta1.est[4,]=para.est.optim.cate$par[2]
+
+barcenters2=barplot(beta1.est, beside=T, ylim=c(0, 1.2), col=c("red", "darkblue", "green", "darkgreen"),  xlab="", legend=method, main=expression(paste(beta[1])), args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
+abline(h=beta1, lty=4)
+segments(barcenters2[1:2,1], c(fit.conf[2,1], cate.fit.conf[2,1]), barcenters2[1:2,1],
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barcenters2[1:2,], c(fit.conf[2,1], cate.fit.conf[2,1]), barcenters2[1:2,],
+        c(fit.conf[2,2], cate.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+
+
+################
+beta2.est=matrix(nrow=length(method), ncol=1)
+beta2.est[1,]=fit$coefficients[3]
+beta2.est[2,]=cate.fit$coefficients[3]
+beta2.est[3,]=para.est.optim.before.cate$par[3]
+beta2.est[4,]=para.est.optim.cate$par[3]
+
+barcenters3=barplot(beta2.est, beside=T, ylim=c(0, 2), col=c("red", "darkblue", "green", "darkgreen"),  xlab="", legend=method, main=expression(paste(beta[2])), args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
+abline(h=beta2, lty=4)
+segments(barcenters3[1:2,1], c(fit.conf[3,1], cate.fit.conf[3,1]), barcenters3[1:2,1],
+        c(fit.conf[3,2], cate.fit.conf[3,2]) , lwd = 1.5)
+
+arrows(barcenters3[1:2,], c(fit.conf[3,1], cate.fit.conf[3,1]), barcenters3[1:2,],
+        c(fit.conf[3,2], cate.fit.conf[3,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+
+```
+
+* sample size, i.e. number of windows $N=10^6$
+* baseline rate is constant across all windows $\mu_0=0.01$.
+* $\beta_0=0.1, \beta_1=log(2), \beta_2=log(5)$. 
+
+
+
+#####################################################
+#####################################################
+
+```{r, echo=F, warning=FALSE, results='hide', cache=T}
+#rm(list=ls())
+set.seed(1000)
+n <- 1000000
+baseline.rate=0.01
+#regression coefficients
+ beta0 <- 0.1
+ beta1 <- log(2); beta2=log(5)
+#generate covariate values
+ x1 <- rbinom(n, 1, prob=0.5); x2=rbinom(n, 1, prob=0.2)
+#compute mu's
+mu <- exp(beta0 + beta1 * x1+beta2*x2)*baseline.rate
+#generate Y-values
+ y <- rpois(n=n, lambda=mu)
+   #data set
+ data <- data.frame(y=y, x1=x1, x2=x2)
+ ####################
+ y00=sum(data$y[data$x1==0 & data$x2==0]); y01=sum(data$y[data$x1==0 & data$x2==1])
+ y10=sum(data$y[data$x1==1 & data$x2==0]); y11=sum(data$y[data$x1==1 & data$x2==1])
+ cate.data=data.frame(y=c(y00,y01, y10, y11), x1=c(0,0,1,1), x2=c(0,1,0,1))
+ fit=glm(data$y~data$x1+data$x2+offset(log(rep(baseline.rate, n))), family=poisson())
+ offset.term=c(baseline.rate*nrow(data[data$x1==0 & data$x2==0,]), baseline.rate*nrow(data[data$x1==0 & data$x2==1,]), baseline.rate*nrow(data[data$x1==1 & data$x2==0,]), baseline.rate*nrow(data[data$x1==1 & data$x2==1,]))
+ cate.fit=glm(cate.data$y~cate.data$x1+cate.data$x2+offset(log(offset.term)), family=poisson())
+fit.conf=confint(fit)
+cate.fit.conf=confint(cate.fit)
+#################### 
+data1=data[1:(n/2),]; data2=data[(1+n/2):n,]
+y00_1=sum(data1$y[data1$x1==0 & data1$x2==0]); y01_1=sum(data1$y[data1$x1==0 & data1$x2==1])
+y10_1=sum(data1$y[data1$x1==1 & data1$x2==0]); y11_1=sum(data1$y[data1$x1==1 & data1$x2==1])
+cate.data1=data.frame(y=c(y00_1,y01_1, y10_1, y11_1), x1=c(0,0,1,1), x2=c(0,1,0,1))
+y00_2=sum(data2$y[data2$x1==0 & data2$x2==0]); y01_2=sum(data2$y[data2$x1==0 & data2$x2==1])
+y10_2=sum(data2$y[data2$x1==1 & data2$x2==0]); y11_2=sum(data2$y[data2$x1==1 & data2$x2==1])
+cate.data2=data.frame(y=c(y00_2,y01_2, y10_2, y11_2), x1=c(0,0,1,1), x2=c(0,1,0,1))
+cate.data.split=rbind(cate.data1, cate.data2)
+
+offset.term1=c(baseline.rate*nrow(data1[data1$x1==0 & data1$x2==0,]), baseline.rate*nrow(data1[data1$x1==0 & data1$x2==1,]), baseline.rate*nrow(data1[data1$x1==1 & data1$x2==0,]), baseline.rate*nrow(data1[data1$x1==1 & data1$x2==1,]))
+
+offset.term2=c(baseline.rate*nrow(data2[data2$x1==0 & data2$x2==0,]), baseline.rate*nrow(data2[data2$x1==0 & data2$x2==1,]), baseline.rate*nrow(data2[data2$x1==1 & data2$x2==0,]), baseline.rate*nrow(data2[data2$x1==1 & data2$x2==1,]))
+cate.split.fit=glm(cate.data.split$y~cate.data.split$x1+cate.data.split$x2+offset(log(c(offset.term1, offset.term2))), family=poisson())
+cate.split.fit.conf=confint(cate.split.fit)
+```
+
+
+
+```{r, echo=F}
+par(mfrow=c(1,2), oma = c(0, 0, 2, 0))
+beta1.est=matrix(nrow=3, ncol=1)
+beta1.est[1,]=fit$coefficients[2]
+beta1.est[2,]=cate.fit$coefficients[2]
+beta1.est[3,]=cate.split.fit$coefficients[2]
+
+barcenters2=barplot(beta1.est, beside=T, ylim=c(0, 1.2), col=c("red", "blue", "green"),  xlab="", legend=c("No cate", "Cate", "SplitCateComb"), main=expression(paste(beta[1])), args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
+abline(h=beta1, lty=4)
+segments(barcenters2[1:3,1], c(fit.conf[2,1], cate.fit.conf[2,1], cate.split.fit.conf[2,1]),barcenters2[1:3,1], c(fit.conf[2,2], cate.fit.conf[2,2], cate.split.fit.conf[2,2]) , lwd = 1.5)
+
+arrows(barcenters2[1:3,1], c(fit.conf[2,1], cate.fit.conf[2,1], cate.split.fit.conf[2,1]),barcenters2[1:3,1], c(fit.conf[2,2], cate.fit.conf[2,2], cate.split.fit.conf[2,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+
+
+################
+beta2.est=matrix(nrow=3, ncol=1)
+beta2.est[1,]=fit$coefficients[3]
+beta2.est[2,]=cate.fit$coefficients[3]
+beta2.est[3,]=cate.split.fit$coefficients[3]
+
+barcenters3=barplot(beta2.est, beside=T, ylim=c(0, 2.2), col=c("red", "darkblue", "green"),  xlab="", legend=c("No cate", "Cate", "SplitCateComb"), main=expression(paste(beta[2])), args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
+abline(h=beta2, lty=4)
+segments(barcenters3[1:3,1], c(fit.conf[3,1], cate.fit.conf[3,1], cate.split.fit.conf[3,1]), barcenters3[1:3,1],
+        c(fit.conf[3,2], cate.fit.conf[3,2], cate.split.fit.conf[3,2]) , lwd = 1.5)
+
+arrows(barcenters3[1:3,1], c(fit.conf[3,1], cate.fit.conf[3,1], cate.split.fit.conf[3,1]), barcenters3[1:3,1],
+        c(fit.conf[3,2], cate.fit.conf[3,2], cate.split.fit.conf[3,2]) , lwd = 1.5, angle = 90,
+       code = 3, length = 0.05)
+title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
+
+```
+
+
+* This figure shows that three different manipulations of the data give the same estimate by GLM: (1) No categorization (2) use categorization (3) first split the original data into two sub data sets, for each sub-data, do categorization, then combine them together to use GLM. The third way allows to do categorization on each single chromosome, then combine them to use GLM.  
+
 
 #### Use estimated baseline mutation rate 
 
 In most cases, we never know the true baseline mutation rate, so we may have to use their estimates 
 
-```{r, echo=T}
+```{r, echo=T, eval=F}
 fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
 cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
  
 ```
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 para.est=matrix(nrow=2, ncol=2)
 para.est[1,]=c(fit$coefficients[1], fit$coefficients[2])
 para.est[2,]=c(cate.fit$coefficients[1], cate.fit$coefficients[2])

@@ -63,7 +63,7 @@ These features are from the [reference data][data]
 3 continuous features:
 
 * RR (recombination rate)
-* TIME (Replication timing, 2,386,623 sites)
+* TIME (Replication timing, 2,386,623 sites) Regions with negative values are later replicating retions. 
 * GC 
 
 Others: 
