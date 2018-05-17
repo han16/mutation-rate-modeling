@@ -108,28 +108,24 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 ### Data discretization and categorization
 
-* Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean 
-* use R function Split to cluster windows with similar features including discrete features and categorized features 
+* Continuous features are converted  into 50 binary discrete variables.  
+* use R function Split to cluster windows with similar binary (original and converted) features.  
 
 ### Model fitting for each mutation type separately 
 
-There are two ways to fit the model, GLM and optims. For each method, we can look at whole genome (three discrete featuree at most because of memory issue) and thus need to use categorization trick to speed up the computation. Both ways (with or without categorization) will give same results.  
+There are two ways to fit the model, GLM and optims. Both methods give the same esrimate either for whole genome or categorized windows as whown in simulations. Here only present the result by GLM with categorization,   
 
 * GLM (use R function GLM) with offset term
   
   $$y\sim Pois( e^{\mu+X^T\beta})$$
- 
-  (1) Without categorization, $y$ is number of mutations in every window, features and baseline mutations are also at window level (denote M11)
+
   
-  (1) With categorization,  response   $y$ is the ** number of mutations ** from all windows  within a category and covariate feature, baseline mutations are also category level (dneote M12)
+  (1) With categorization,  response   $y$ is the ** number of mutations ** from all windows  within a category and covariate feature
+  (2) offset term uses 7-mer ERV baseline mutation rate, which is sum of 7mer-mutation rate in a window for each mutation type, e.g. for A->C, sum over all 7-mer mutation rate with A->C in the center.     
   
   (2) intercept is included and the same across all categories
   (3) confidence interval could be obtained as well
 
-* use R function optim to fit the model (M2 method)
-
- (1)  use estimated baseline mutation rate in the model. 
- (2)  There is a singularity problem for hessian matrix when getting the confidence interval by optim. 
 
 
 
@@ -138,95 +134,37 @@ There are two ways to fit the model, GLM and optims. For each method, we can loo
 The window length is set 100 bp. Use GLN to fit the model, and stated otherwise. 
 
 
-### Test different methods on chr20 for mutation A->C
+### Whole genome-7 features 
+
 
 ```{r, echo=F}
-method=c("M11", "M12", "M21", "M22")
-cova=c( "DHS", "CpGisland", "Lamin", "GC", "RT")
-mutation=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon")
 ```
 
-```{r, echo=F}
-chr20_AtoC=loadRData("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\chr20_mutation.A_to_C.para.est.RData")
-chr20_para_est=matrix(nrow=length(method), ncol=length(cova))
-chr20_para_est[1,]=chr20_AtoC$glm.before.cate[2:6]
-chr20_para_est[2,]=chr20_AtoC$glm.cate[2:6]
-chr20_para_est[3,]=chr20_AtoC$optim.before.cate
-chr20_para_est[4,]=chr20_AtoC$optim.cate
-rownames(chr20_para_est)=method
-colnames(chr20_para_est)=cova
-
-plot(chr20_para_est[1,], ylim=c(min(chr20_para_est)-1, max(chr20_para_est)+1), type="o", xaxt='n', xlab="Covariate features", ylab=expression(paste(widehat(beta))), col=1, main="mutation A->C on chr20", cex=0.8, lty=1, pch=15)
-lines(chr20_para_est[2,], col=1, type="o", lty=2, pch=16)
-lines(chr20_para_est[3,], col=2, type="o", lty=1, pch=15)
-lines(chr20_para_est[4,], col=2, type="o", lty=2, pch=16)
-legend(4, -4, method, col=c(1,1,2,2), lty=c(1,2,1,2), pch=c(15, 16, 15, 16))
-axis.labels <-cova
-axis(1, at=seq(1,5), labels=axis.labels)
-
-```
-
-
-* other than CpG island, 4 different methods give same results. 
-
-
-### Whole genome with categorization-one feature
-
-```{r, echo=F}
-single.feature=loadRData("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\mutation.A_to_C.para.est.single.feature.RData")
-single.fea.para.est=data.frame(optim.cate=single.feature$optim.cate, optim.no.cate=single.feature$optim.before.cate, glm.cate=single.feature$glm.cate[,2], glm.cate.conf.lower=single.feature$glm.cate.conf[c(2,4,6,8,10),1], glm.cate.conf.upper=single.feature$glm.cate.conf[c(2,4,6,8,10),2])
-
-glm.fit=matrix(nrow=1, ncol=5)
-glm.fit[1,]=t(single.fea.para.est[,3])
-colnames(glm.fit)=rownames(single.fea.para.est)
-barcenters=barplot(glm.fit, beside=T, col=c("red"), legend=c("M12"),
-ylab=expression(paste(beta)), main="mutation A_to_C",  cex.names=1)
-
-
-
-segments(barcenters, c(single.fea.para.est$glm.cate.conf.lower), barcenters,
-        c(single.fea.para.est$glm.cate.conf.upper) , lwd = 1.5)
-
-arrows(barcenters, c(single.fea.para.est$glm.cate.conf.lower), barcenters,
-        c(single.fea.para.est$glm.cate.conf.upper) , lwd = 1.5, angle = 90,
-       code = 3, length = 0.05)
-
-```
-
-* Fit method M12 to the model for each covariate at a time, while M11 doesn't work 
-
-
-
-
-### Whole genome-5 features 
 
 ```{r, echo=F}
 all.para.est=list()
-for (i in 1:length(mutation))
-  all.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\mutation", mutation[i], "para.est.RData", sep="."))
-names(all.para.est)=mutation
+for (i in 1:length(mut.type))
+  all.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Wong_NC_2016_693_control_SNV_100bp.window_mutation", mut.type[i], "RData", sep="."))
+names(all.para.est)=mut.type
 ```
 
-```{r DHS, echo=F}
-for (cova.index in 1:5)
+```{r, echo=F}
+for (cova.index in 1:length(cova))
 {
-cova.across.mut=matrix(nrow=3, ncol=length(mutation))
-conf.inter=matrix(nrow=length(mutation), ncol=2)
+cova.across.mut=matrix(nrow=1, ncol=length(mut.type))
+conf.inter=matrix(nrow=length(mut.type), ncol=2)
 colnames(conf.inter)=c("lower", "upper")
 rownames(conf.inter)=names(all.para.est)
-for (i in 1:length(mutation))
+for (i in 1:length(mut.type))
 {
-  cova.across.mut[1,i]=all.para.est[[i]]$glm.cate[cova.index+1]
-  cova.across.mut[2,i]=all.para.est[[i]]$optim.before.cate[cova.index]
-  cova.across.mut[3,i]=all.para.est[[i]]$optim.cate[cova.index]
-  conf.inter[i,]=all.para.est[[i]]$glm.cate.conf[cova.index+1,]
+  cova.across.mut[1,i]=all.para.est[[i]]$para.est[cova.index+1]
+  conf.inter[i,]=all.para.est[[i]]$para.conf[cova.index+1,]
 }
-rownames(cova.across.mut)=method[2:4]
 colnames(cova.across.mut)=names(all.para.est)
 
-
-
-barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "darkblue", "black"), legend=method[2:4], main=cova[cova.index],  cex.names=1, args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8))
+barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red"), ylim=c(min(conf.inter, cova.across.mut), max(conf.inter, cova.across.mut)),  main=cova[cova.index],  cex.names=1, args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8), xpd = FALSE)
 
 
 segments(barcenters[1,], conf.inter[,1], barcenters[1,],conf.inter[,2], lwd = 1.5)
@@ -237,11 +175,10 @@ arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.
 ```
 
 
-* Fit three different ways to data for five covariate features simultaneously.
+* Fit 7 covariate features simultaneously.
 
-* 95% confidence interval by GLM (M12) is big, while M11 (without categorization) fails.  
+* 95% confidence interval by GLM is often big.  
 
-* optim with categorization and without give same estimates, while estimate by GLM is slightly different 
 
 
 
@@ -249,14 +186,14 @@ arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.
 ## Jonsson_Yuen2017
 
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 all.para.est=list()
-for (i in 1:length(mutation))
-  all.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\mutation", mutation[i], "para.est.RData", sep="."))
+for (i in 1:length(mut.type))
+  all.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\mutation", mut.type[i], "para.est.RData", sep="."))
 names(all.para.est)=mutation
 ```
 
-```{r, echo=F}
+```{r, echo=F,eval=F}
 for (cova.index in 1:5)
 {
 cova.across.mut=matrix(nrow=3, ncol=length(mutation))

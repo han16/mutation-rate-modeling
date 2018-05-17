@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-04-20</p>
+<p><strong>Last updated:</strong> 2018-05-17</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> d7b2ffa</p>
+<p><strong>Code version:</strong> 27b6edd</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -484,68 +484,46 @@ shared across the workflowr files. -->
 <div id="data-discretization-and-categorization" class="section level3">
 <h3>Data discretization and categorization</h3>
 <ul>
-<li>Continuous features are categorized into 50 quantile intervals, and observations in every interval use the same discretized value of the mean</li>
-<li>use R function Split to cluster windows with similar features including discrete features and categorized features</li>
+<li>Continuous features are converted into 50 binary discrete variables.<br />
+</li>
+<li>use R function Split to cluster windows with similar binary (original and converted) features.</li>
 </ul>
 </div>
 <div id="model-fitting-for-each-mutation-type-separately" class="section level3">
 <h3>Model fitting for each mutation type separately</h3>
-<p>There are two ways to fit the model, GLM and optims. For each method, we can look at whole genome (three discrete featuree at most because of memory issue) and thus need to use categorization trick to speed up the computation. Both ways (with or without categorization) will give same results.</p>
+<p>There are two ways to fit the model, GLM and optims. Both methods give the same esrimate either for whole genome or categorized windows as whown in simulations. Here only present the result by GLM with categorization,</p>
 <ul>
 <li>GLM (use R function GLM) with offset term</li>
 </ul>
 <p><span class="math display">\[y\sim Pois( e^{\mu+X^T\beta})\]</span></p>
 <ol style="list-style-type: decimal">
-<li><p>Without categorization, <span class="math inline">\(y\)</span> is number of mutations in every window, features and baseline mutations are also at window level (denote M11)</p></li>
-<li><p>With categorization, response <span class="math inline">\(y\)</span> is the ** number of mutations ** from all windows within a category and covariate feature, baseline mutations are also category level (dneote M12)</p></li>
+<li>With categorization, response <span class="math inline">\(y\)</span> is the ** number of mutations ** from all windows within a category and covariate feature</li>
+<li><p>offset term uses 7-mer ERV baseline mutation rate, which is sum of 7mer-mutation rate in a window for each mutation type, e.g. for A-&gt;C, sum over all 7-mer mutation rate with A-&gt;C in the center.</p></li>
 <li>intercept is included and the same across all categories</li>
 <li><p>confidence interval could be obtained as well</p></li>
-</ol>
-<ul>
-<li>use R function optim to fit the model (M2 method)</li>
-</ul>
-<ol style="list-style-type: decimal">
-<li>use estimated baseline mutation rate in the model.</li>
-<li>There is a singularity problem for hessian matrix when getting the confidence interval by optim.</li>
 </ol>
 </div>
 </div>
 <div id="wong_nc_2016_693_control_snv" class="section level2">
 <h2>Wong_NC_2016_693_control_SNV</h2>
 <p>The window length is set 100 bp. Use GLN to fit the model, and stated otherwise.</p>
-<div id="test-different-methods-on-chr20-for-mutation-a-c" class="section level3">
-<h3>Test different methods on chr20 for mutation A-&gt;C</h3>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="whole-genome-7-features" class="section level3">
+<h3>Whole genome-7 features</h3>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-7.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li>other than CpG island, 4 different methods give same results.</li>
-</ul>
-</div>
-<div id="whole-genome-with-categorization-one-feature" class="section level3">
-<h3>Whole genome with categorization-one feature</h3>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<ul>
-<li>Fit method M12 to the model for each covariate at a time, while M11 doesn’t work</li>
-</ul>
-</div>
-<div id="whole-genome-5-features" class="section level3">
-<h3>Whole genome-5 features</h3>
-<p><img src="figure/denovo-data.Rmd/dhs-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/dhs-5.png" width="672" style="display: block; margin: auto;" /></p>
-<ul>
-<li><p>Fit three different ways to data for five covariate features simultaneously.</p></li>
-<li><p>95% confidence interval by GLM (M12) is big, while M11 (without categorization) fails.</p></li>
-<li><p>optim with categorization and without give same estimates, while estimate by GLM is slightly different</p></li>
+<li><p>Fit 7 covariate features simultaneously.</p></li>
+<li><p>95% confidence interval by GLM is often big.</p></li>
 </ul>
 </div>
 </div>
 <div id="jonsson_yuen2017-1" class="section level2">
 <h2>Jonsson_Yuen2017</h2>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <!-- Insert the session information into the document -->
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.4.3 (2017-11-30)
+<pre><code>R version 3.5.0 (2018-04-23)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -562,13 +540,13 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] knitr_1.17
+[1] knitr_1.20
 
 loaded via a namespace (and not attached):
- [1] compiler_3.4.3  backports_1.0.5 magrittr_1.5    rprojroot_1.3-1
- [5] tools_3.4.3     htmltools_0.3.5 yaml_2.1.16     Rcpp_0.12.10   
- [9] stringi_1.1.5   rmarkdown_1.8   git2r_0.21.0    stringr_1.2.0  
-[13] digest_0.6.12   evaluate_0.10  </code></pre>
+ [1] compiler_3.5.0  backports_1.1.2 magrittr_1.5    rprojroot_1.3-2
+ [5] tools_3.5.0     htmltools_0.3.6 yaml_2.1.19     Rcpp_0.12.16   
+ [9] stringi_1.1.7   rmarkdown_1.9   git2r_0.21.0    stringr_1.3.0  
+[13] digest_0.6.15   evaluate_0.10.1</code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
