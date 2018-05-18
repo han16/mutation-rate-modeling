@@ -108,7 +108,7 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 ### Data discretization and categorization
 
-* Continuous features are converted  into 50 binary discrete variables.  
+* Continuous features are converted  into  binary discrete variables.  
 * use R function Split to cluster windows with similar binary (original and converted) features.  
 
 ### Model fitting for each mutation type separately 
@@ -131,7 +131,7 @@ There are two ways to fit the model, GLM and optims. Both methods give the same 
 
 ## Wong_NC_2016_693_control_SNV 
 
-The window length is set 100 bp. Use GLN to fit the model, and stated otherwise. 
+The window length is set 100 bp. Use GLM to fit the model, and stated otherwise. 
 
 
 ### Whole genome-7 features 

@@ -526,7 +526,7 @@ title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE
 
 In most cases, we never know the true baseline mutation rate, so we may have to use their estimates 
 
-```{r, echo=T, eval=F}
+```{r, echo=F, eval=F}
 fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
 cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
  
@@ -620,14 +620,16 @@ arrows(barCenters, c(fit.conf[2,1], cate.fit.conf[2,1]), barCenters,
 title(paste("Estimate comparison with sample size of", n, sep=" ")  , outer=TRUE)
 ```
 
-#### use estimated baseline mutation rate 
+#### use randomly generated  baseline mutation rate 
 
 
 
 ```{r, echo=T}
-fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
-cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
- 
+#fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
+fit=glm(data$y~data$x+offset(log(rbeta(n,1, 100))), family=poisson())
+#cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
+cate.fit=glm(cate.data$y~cate.data$x+offset(log(rbeta(2,1,100 ))), family=poisson()) 
+
 ```
 
 ```{r, echo=F}
