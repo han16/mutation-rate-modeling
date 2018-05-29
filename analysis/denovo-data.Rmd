@@ -127,6 +127,17 @@ There are two ways to fit the model, GLM and optims. Both methods give the same 
   (3) confidence interval could be obtained as well
 
 
+## ERV baseline mutation rate 
+
+index  | mutation type |  mutations rate  
+----|-------|-------|---
+1 | A->C | $1.6627\times 10^{-9}$   
+2 | A->G | $6.1805 \times 10^{-9}$
+3 | A->T | $1.5633 \times 10^{-9}$
+4 | C->G | $2.8075 \times 10^{-9}$
+5 | C->T | $1.2885 \times 10^{-8}$
+6 | C->A | $3.3977 \times 10^{-9}$
+Table: Average 
 
 
 ## Wong_NC_2016_693_control_SNV 
@@ -134,12 +145,12 @@ There are two ways to fit the model, GLM and optims. Both methods give the same 
 The window length is set 100 bp. Use GLM to fit the model, and stated otherwise. 
 
 
-### Whole genome-7 features 
+### Whole genome-14 features 
 
 
 ```{r, echo=F}
-mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
-cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon")
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG","C_to_A.nonCpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
 ```
 
 
@@ -164,7 +175,7 @@ for (i in 1:length(mut.type))
 }
 colnames(cova.across.mut)=names(all.para.est)
 
-barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red"), ylim=c(min(conf.inter, cova.across.mut), max(conf.inter, cova.across.mut)),  main=cova[cova.index],  cex.names=1, args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8), xpd = FALSE)
+barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red"), ylim=c(min(conf.inter, cova.across.mut), max(conf.inter, cova.across.mut)),  main=cova[cova.index],  cex.names=0.65, args.legend = list(x ='topright', bty='n', inset=c(-0.07,0), cex=0.8), xpd = FALSE, las=2)
 
 
 segments(barcenters[1,], conf.inter[,1], barcenters[1,],conf.inter[,2], lwd = 1.5)
@@ -175,7 +186,7 @@ arrows(barcenters[1,], conf.inter[,1], barcenters[1,], conf.inter[,2] , lwd = 1.
 ```
 
 
-* Fit 7 covariate features simultaneously.
+* Fit 14 covariate features simultaneously.
 
 * 95% confidence interval by GLM is often big.  
 
