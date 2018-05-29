@@ -137,7 +137,7 @@ index  | mutation type |  mutations rate
 4 | C->G | $2.8075 \times 10^{-9}$
 5 | C->T | $1.2885 \times 10^{-8}$
 6 | C->A | $3.3977 \times 10^{-9}$
-Table: Average 
+Table: Average mutation rate of different mutation types in ERV paper. 
 
 
 ## Wong_NC_2016_693_control_SNV 
