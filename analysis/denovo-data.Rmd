@@ -149,7 +149,7 @@ The window length is set 100 bp. Use GLM to fit the model, and stated otherwise.
 
 
 ```{r, echo=F}
-mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG","C_to_A.nonCpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG","C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
 ```
 
