@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-05-29</p>
+<p><strong>Last updated:</strong> 2018-06-04</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 09f8ca7</p>
+<p><strong>Code version:</strong> b7cf568</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -432,9 +432,9 @@ shared across the workflowr files. -->
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>There are 585,017,944 C’s and 844,868,045 A’s in hg19.</p>
 </div>
-<div id="jonsson_yuen2017" class="section level3">
-<h3>Jonsson_Yuen2017</h3>
-<p>De novo WGS of the combination of 1629 ASD cases and 1548 controls.</p>
+<div id="jonsson" class="section level3">
+<h3>Jonsson</h3>
+<p>De novo WGS of Jonsson data has 1548 controls.</p>
 <table>
 <thead>
 <tr class="header">
@@ -447,36 +447,82 @@ shared across the workflowr files. -->
 <tr class="odd">
 <td>1</td>
 <td>A-&gt;C</td>
-<td>7,821</td>
+<td>3,582</td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>A-&gt;G</td>
-<td>29,370</td>
+<td>13,477</td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>A-&gt;T</td>
-<td>7,417</td>
+<td>3,331</td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>C-&gt;G</td>
-<td>10,255</td>
+<td>4,822</td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>C-&gt;T</td>
-<td>45,638</td>
+<td>21,220</td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td>C-&gt;A</td>
-<td>9,804</td>
+<td>3,862</td>
 </tr>
 </tbody>
 </table>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="simons-control" class="section level3">
+<h3>Simons-control</h3>
+<p>WGS Simons control data</p>
+<table>
+<thead>
+<tr class="header">
+<th>index</th>
+<th>mutation type</th>
+<th># mutations</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>A-&gt;C</td>
+<td>3,899</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>A-&gt;G</td>
+<td>15,083</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>A-&gt;T</td>
+<td>3,664</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>C-&gt;G</td>
+<td>5,393</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>C-&gt;T</td>
+<td>23,977</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>C-&gt;A</td>
+<td>5,404</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="data-processing-and-model-fitting" class="section level2">
@@ -549,20 +595,14 @@ shared across the workflowr files. -->
 </tbody>
 </table>
 </div>
-<div id="wong_nc_2016_693_control_snv" class="section level2">
-<h2>Wong_NC_2016_693_control_SNV</h2>
+<div id="whole-genome-fit-14-features-simultaneously" class="section level2">
+<h2>Whole genome-fit 14 features simultaneously</h2>
 <p>The window length is set 100 bp. Use GLM to fit the model, and stated otherwise.</p>
-<div id="whole-genome-14-features" class="section level3">
-<h3>Whole genome-14 features</h3>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-12.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-6-14.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-12.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-7-14.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li><p>Fit 14 covariate features simultaneously.</p></li>
 <li><p>95% confidence interval by GLM is often big.</p></li>
 </ul>
-</div>
-</div>
-<div id="jonsson_yuen2017-1" class="section level2">
-<h2>Jonsson_Yuen2017</h2>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
