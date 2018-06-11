@@ -128,6 +128,40 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
   	main="Percentage of mutation types in Simons control data ")
 ```
 
+### Yuen data 
+
+WGS Simons control data
+
+index    | mutation type | \# mutations
+----|-------|-------|---
+1 | A->C | 4,239
+2 | A->G | 15,893  
+3 | A->T | 4,086
+4 | C->G | 5,433
+5 | C->T | 24,418 
+6 | C->A | 5,942
+
+```{r, echo=F}
+slices <- c(4239, 15893, 4086, 5433, 24418, 5942) 
+lbls <- c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) # add percents to labels 
+lbls <- paste(lbls,"%",sep="") # ad % to labels 
+pie(slices,labels = lbls, col=rainbow(length(lbls)),
+  	main="Percentage of mutation types in Yuen data ")
+```
+
+### Sample summary
+
+index    | mutation type |  Wong-control| Jonsson | simons-control| Yuen
+----|-------|-------|------------|-----------|-
+1 | A->C | 990 (3.65%) |  3,582 | 3,899 | 4,239
+2 | A->G | 3,812 (14.07%) |13,477 | 15,083 | 15,893
+3 | A->T | 815 (3.01%) | 3,331 | 3,664 | 4,086
+4 | C->G | 1,274 (4.70%) |4,822 | 5,393 | 5,433
+5 | C->T | 5,314 (19.61%) | 21,220 | 23,977 | 24,418
+6 | C->A | 1,298 (4.79%) | 3,862 | 5,404 | 5,942
+
 
 ## Data processing and model fitting 
 
@@ -180,22 +214,26 @@ cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27m
 
 ```{r, echo=F}
 wong.control.para.est=list(); simons.control.para.est=list(); jonsson.para.est=list()
+yuen.para.est=list()
 for (i in 1:length(mut.type))
 {
   wong.control.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Wong_NC_2016_693_control_SNV_100bp.window_mutation", mut.type[i], "RData", sep="."))
   simons.control.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
   jonsson.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\comb_SNPs_Jonsson.mutation", mut.type[i], "RData", sep="."))
+  yuen.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\comb_SNPs_Yuen.mutation", mut.type[i], "RData", sep="."))
 }
 names(wong.control.para.est)=mut.type
 names(simons.control.para.est)=mut.type
 names(jonsson.para.est)=mut.type
+names(yuen.para.est)=mut.type
 ```
 
 ```{r, echo=F}
 for (cova.index in 1:length(cova))
 {
 #  cova.index=1
-cova.across.mut=matrix(nrow=3, ncol=length(mut.type))
+cova.across.mut=matrix(nrow=4, ncol=length(mut.type))
+
 wong.control.conf.inter=matrix(nrow=length(mut.type), ncol=2)
 colnames(wong.control.conf.inter)=c("lower", "upper")
 rownames(wong.control.conf.inter)=names(wong.control.para.est)
@@ -208,6 +246,10 @@ jonsson.conf.inter=matrix(nrow=length(mut.type), ncol=2)
 colnames(jonsson.conf.inter)=c("lower", "upper")
 rownames(jonsson.conf.inter)=names(jonsson.para.est)
 
+yuen.conf.inter=matrix(nrow=length(mut.type), ncol=2)
+colnames(yuen.conf.inter)=c("lower", "upper")
+rownames(yuen.conf.inter)=names(yuen.para.est)
+
 for (i in 1:length(mut.type))
 {
   cova.across.mut[1,i]=wong.control.para.est[[i]]$para.est[cova.index+1]
@@ -219,15 +261,18 @@ for (i in 1:length(mut.type))
   cova.across.mut[3,i]=jonsson.para.est[[i]]$para.est[cova.index+1]
   jonsson.conf.inter[i,]=jonsson.para.est[[i]]$para.conf[cova.index+1, ]
   
+  cova.across.mut[4,i]=yuen.para.est[[i]]$para.est[cova.index+1]
+  yuen.conf.inter[i,]=yuen.para.est[[i]]$para.conf[cova.index+1, ]
+  
 }
 colnames(cova.across.mut)=names(wong.control.para.est)
 
-barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "blue", "green"), legend=c("Wong_contr", "simons_contr", "jonsson"), ylim=c(min(wong.control.conf.inter, simons.control.conf.inter, jonsson.conf.inter, cova.across.mut), max(wong.control.conf.inter, simons.control.conf.inter, jonsson.conf.inter,cova.across.mut)),  main=cova[cova.index],  cex.names=0.65, args.legend = list(x ='topright', bty='n', inset=c(-0.005,0), cex=0.8), xpd = FALSE, las=2)
+barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "blue", "green", "yellow"), legend=c("Wong_contr", "simons_contr", "jonsson", "yuen"), ylim=c(min(wong.control.conf.inter, simons.control.conf.inter, jonsson.conf.inter, yuen.conf.inter, cova.across.mut), max(wong.control.conf.inter, simons.control.conf.inter, jonsson.conf.inter, yuen.conf.inter,cova.across.mut)),  main=cova[cova.index],  cex.names=0.65, args.legend = list(x ='topright', bty='n', inset=c(-0.005,0), cex=0.8), xpd = FALSE, las=2)
 
 
-segments(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[,1], jonsson.conf.inter[,1]), barcenters,rbind(wong.control.conf.inter[,2], simons.control.conf.inter[,2], jonsson.conf.inter[,2]), lwd = 1.5)
+segments(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[,1], jonsson.conf.inter[,1], yuen.conf.inter[,1]), barcenters,rbind(wong.control.conf.inter[,2], simons.control.conf.inter[,2], jonsson.conf.inter[,2], yuen.conf.inter[,2]), lwd = 1.5)
 
-arrows(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[,1], jonsson.conf.inter[,1]), barcenters,rbind(wong.control.conf.inter[,2], simons.control.conf.inter[,2], jonsson.conf.inter[,2]), lwd = 1.5, angle = 90,code = 3, length = 0.05)
+arrows(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[,1], jonsson.conf.inter[,1], yuen.conf.inter[,1]), barcenters,rbind(wong.control.conf.inter[,2], simons.control.conf.inter[,2], jonsson.conf.inter[,2], yuen.conf.inter[,2]), lwd = 1.5, angle = 90,code = 3, length = 0.05)
 } # end of cova.index
 ```
 
@@ -237,7 +282,10 @@ arrows(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[
 * 95% confidence interval by GLM is often big.  
 
 
+## Fitting diagnostic 
 
+
+## Cross validation 
 
 
 
