@@ -10,6 +10,10 @@ shared across the workflowr files. -->
 ```{r read-chunk, include=FALSE, cache=FALSE}
 knitr::read_chunk("chunks.R")
 library(knitr)
+library(kableExtra)
+library(RColorBrewer)
+library(gplots)
+set.seed(123)
 ```
 
 <!-- Update knitr chunk options -->
@@ -282,8 +286,42 @@ arrows(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[
 * 95% confidence interval by GLM is often big.  
 
 
-## Fitting diagnostic 
+## Fitting diagnostic
 
+### Whole genome  
+
+![Genome-wide residual](figure/igv_residual_first.half.mut_wholegenome.png)
+
+
+
+![Genome-wide residual](figure/igv_residual_second.half.mut_wholegenome.png)
+
+### Sinlge chromosome 
+
+
+![residual on single chromsome](figure/igv_residual_first.half.mut_chr1.png)
+
+
+![residual on single chromosome](figure/igv_residual_second.half.mut_chr2.png)
+
+
+###  large regions
+
+
+![residual in large regions](figure/igv_residual_first.half.mut_chr1_region.png)
+
+
+![residual in large regions](figure/igv_residual_second.half.mut_chr2_region.png)
+
+
+
+
+* For every 100bp window, plug in estimated parameters to calculate estimated mutation rate, then generate mutation counts via poisson distribution as estimated mutations. Windows with different number of observed mutation and estimated mutations are visualized in IGV. 
+* In every window with estmiated mutation count different from observed, the difference could be 1, or -1. Thus every mutation type has two sets of windows, e.g. A->C_1 and A->C_2.   
+
+* Regions covering a set of neighboring windows with residuals with same sign (always positive or negative) indicate some correlation. 
+
+* There might be correlated residuals if looking at whole genome, but if zoom in on single chromsome or even large regions (~1000kb), residuals are like randomly scattered.  
 
 ## Cross validation 
 
