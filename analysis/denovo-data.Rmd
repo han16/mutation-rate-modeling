@@ -286,7 +286,7 @@ arrows(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[
 * 95% confidence interval by GLM is often big.  
 
 
-## Fitting diagnostic
+## Fitting diagnostic-Simons-control
 
 ### Whole genome  
 
