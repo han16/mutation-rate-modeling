@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-06-19</p>
+<p><strong>Last updated:</strong> 2018-06-25</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> ceacf34</p>
+<p><strong>Code version:</strong> e15e1c0</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -714,47 +714,72 @@ shared across the workflowr files. -->
 <li><p>Fit 14 covariate features simultaneously.</p></li>
 <li><p>95% confidence interval by GLM is often big.</p></li>
 </ul>
+<div id="parameter-estimate-comparison" class="section level4">
+<h4>Parameter estimate comparison</h4>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-12.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-14.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="fitting-diagnostic-simons-control" class="section level2">
 <h2>Fitting diagnostic-Simons-control</h2>
-<div id="whole-genome" class="section level3">
-<h3>Whole genome</h3>
-<div class="figure">
-<img src="figure/igv_residual_first.half.mut_wholegenome.png" alt="Genome-wide residual" />
-<p class="caption">Genome-wide residual</p>
-</div>
-<div class="figure">
-<img src="figure/igv_residual_second.half.mut_wholegenome.png" alt="Genome-wide residual" />
-<p class="caption">Genome-wide residual</p>
-</div>
-</div>
-<div id="sinlge-chromosome" class="section level3">
-<h3>Sinlge chromosome</h3>
-<div class="figure">
-<img src="figure/igv_residual_first.half.mut_chr1.png" alt="residual on single chromsome" />
-<p class="caption">residual on single chromsome</p>
-</div>
-<div class="figure">
-<img src="figure/igv_residual_second.half.mut_chr2.png" alt="residual on single chromosome" />
-<p class="caption">residual on single chromosome</p>
-</div>
-</div>
-<div id="large-regions" class="section level3">
-<h3>large regions</h3>
-<div class="figure">
-<img src="figure/igv_residual_first.half.mut_chr1_region.png" alt="residual in large regions" />
-<p class="caption">residual in large regions</p>
-</div>
-<div class="figure">
-<img src="figure/igv_residual_second.half.mut_chr2_region.png" alt="residual in large regions" />
-<p class="caption">residual in large regions</p>
-</div>
+<div id="standardized-residual" class="section level3">
+<h3>Standardized residual</h3>
+<div id="simons-control-1" class="section level4">
+<h4>Simons-control</h4>
 <ul>
-<li>For every 100bp window, plug in estimated parameters to calculate estimated mutation rate, then generate mutation counts via poisson distribution as estimated mutations. Windows with different number of observed mutation and estimated mutations are visualized in IGV.</li>
-<li><p>In every window with estmiated mutation count different from observed, the difference could be 1, or -1. Thus every mutation type has two sets of windows, e.g. A-&gt;C_1 and A-&gt;C_2.</p></li>
-<li><p>Regions covering a set of neighboring windows with residuals with same sign (always positive or negative) indicate some correlation.</p></li>
-<li><p>There might be correlated residuals if looking at whole genome, but if zoom in on single chromsome or even large regions (~1000kb), residuals are like randomly scattered.</p></li>
+<li>100 bp windows</li>
 </ul>
+<table>
+<thead>
+<tr class="header">
+<th>index</th>
+<th>mutation type</th>
+<th># total windows</th>
+<th># window <span class="math inline">\(p.val&lt;0.05\)</span></th>
+<th># window <span class="math inline">\(p.val=0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>A-&gt;C</td>
+<td>26,839,568</td>
+<td>3,899</td>
+<td>3,870</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>A-&gt;G</td>
+<td>15,067</td>
+<td>15,067</td>
+<td>10,806</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>A-&gt;T</td>
+<td>26,839,598</td>
+<td>3,656</td>
+<td>3,649</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>100k windows</li>
+</ul>
+<p><img src="figure/denovo-data.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-6.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>use parameter estimated for 100kb windows to calculate residuals and estimate from 100 bp windows are not applicable because covariates have changed.</p></li>
+<li><p>shown are only windows with numercial residuals and windows with both zero observed and expected mutation leading to NA residuals are removed. So neighbor windows in this plot may not be phisically close in chromosome.</p></li>
+<li><p>View via IGV</p></li>
+</ul>
+<div class="figure">
+<img src="figure/Simons_100kWindow.png" alt="Residuals of 100kb windows with p value less than 0.05 in whole genome" />
+<p class="caption">Residuals of 100kb windows with p value less than 0.05 in whole genome</p>
+</div>
+<div class="figure">
+<img src="figure/Simons_100kWindow_largechunk.png" alt="Residuals of 100kb windows with p values less than 0.05 in large chunks" />
+<p class="caption">Residuals of 100kb windows with p values less than 0.05 in large chunks</p>
+</div>
+</div>
 </div>
 </div>
 <div id="cross-validation" class="section level2">

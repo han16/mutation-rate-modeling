@@ -286,42 +286,132 @@ arrows(barcenters, rbind(wong.control.conf.inter[,1], simons.control.conf.inter[
 * 95% confidence interval by GLM is often big.  
 
 
+
+#### Parameter estimate comparison 
+
+
+
+```{r, echo=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T")
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
+```
+
+
+```{r, echo=F}
+simons.control.para.est.100bp=list(); simons.control.para.est.100k=list()
+for (i in 1:length(mut.type))
+{
+  simons.control.para.est.100bp[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
+ simons.control.para.est.100k[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep=".")) 
+}
+names(simons.control.para.est.100bp)=mut.type
+names(simons.control.para.est.100k)=mut.type
+```
+
+```{r, echo=F}
+for (cova.index in 1:length(cova))
+{
+#  cova.index=1
+cova.across.mut=matrix(nrow=2, ncol=length(mut.type))
+
+
+simons.control.conf.inter=matrix(nrow=length(mut.type), ncol=2)
+colnames(simons.control.conf.inter)=c("lower", "upper")
+rownames(simons.control.conf.inter)=names(simons.control.para.est.100bp)
+
+simons.control.conf.inter.100k=matrix(nrow=length(mut.type), ncol=2)
+colnames(simons.control.conf.inter.100k)=c("lower", "upper")
+rownames(simons.control.conf.inter.100k)=names(simons.control.para.est.100k)
+
+
+for (i in 1:length(mut.type))
+{
+  
+  cova.across.mut[1,i]=simons.control.para.est.100bp[[i]]$para.est[cova.index+1]
+  simons.control.conf.inter[i,]=simons.control.para.est.100bp[[i]]$para.conf[cova.index+1,]
+  
+  cova.across.mut[2,i]=simons.control.para.est.100k[[i]]$para.est[cova.index+1]
+  simons.control.conf.inter.100k[i,]=simons.control.para.est.100k[[i]]$para.conf[cova.index+1,]
+  
+  
+  
+}
+colnames(cova.across.mut)=names(simons.control.para.est.100bp)
+
+barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "blue"), legend=c("simons_contr_100bp", "simons_contr_100k"), ylim=c(min(simons.control.conf.inter, simons.control.conf.inter.100k), max(simons.control.conf.inter, simons.control.conf.inter.100k)),  main=cova[cova.index],  cex.names=0.65, args.legend = list(x ='topright', bty='n', inset=c(-0.005,0), cex=0.8), xpd = FALSE, las=2)
+
+
+segments(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inter.100k[,1]), barcenters,rbind(simons.control.conf.inter[,2], simons.control.conf.inter.100k[,2]), lwd = 1.5)
+
+arrows(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inter.100k[,1]), barcenters,rbind(simons.control.conf.inter[,2], simons.control.conf.inter.100k[,2]), lwd = 1.5, angle = 90,code = 3, length = 0.05)
+} # end of cova.index
+```
+
+
 ## Fitting diagnostic-Simons-control
 
-### Whole genome  
 
-![Genome-wide residual](figure/igv_residual_first.half.mut_wholegenome.png)
-
+### Standardized residual
 
 
-![Genome-wide residual](figure/igv_residual_second.half.mut_wholegenome.png)
+#### Simons-control 
 
-### Sinlge chromosome 
-
-
-![residual on single chromsome](figure/igv_residual_first.half.mut_chr1.png)
+* 100 bp windows 
 
 
-![residual on single chromosome](figure/igv_residual_second.half.mut_chr2.png)
-
-
-###  large regions
-
-
-![residual in large regions](figure/igv_residual_first.half.mut_chr1_region.png)
-
-
-![residual in large regions](figure/igv_residual_second.half.mut_chr2_region.png)
+index  | mutation type | # total windows |# window $p.val<0.05$ |  # window $p.val=0$
+----|-------|-------|---|-----------
+1 | A->C | 26,839,568 | 3,899 |   3,870
+2 | A->G | 15,067 | 15,067 | 10,806
+3 | A->T | 26,839,598 | 3,656 | 3,649
 
 
 
 
-* For every 100bp window, plug in estimated parameters to calculate estimated mutation rate, then generate mutation counts via poisson distribution as estimated mutations. Windows with different number of observed mutation and estimated mutations are visualized in IGV. 
-* In every window with estmiated mutation count different from observed, the difference could be 1, or -1. Thus every mutation type has two sets of windows, e.g. A->C_1 and A->C_2.   
+* 100k windows 
 
-* Regions covering a set of neighboring windows with residuals with same sign (always positive or negative) indicate some correlation. 
 
-* There might be correlated residuals if looking at whole genome, but if zoom in on single chromsome or even large regions (~1000kb), residuals are like randomly scattered.  
+
+```{r, echo=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
+```
+
+
+
+```{r, echo=F}
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+for (i in 1:length(mut.type))
+{
+simons_control_100k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
+simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+y.min=min(simons_control_100k[,6])-1; y.max=max(simons_control_100k[,6])+1
+
+op <- par(mar = c(5,6,4,2) + 0.1)
+plot(simons_control_100k[,6], type="l", ylim=c(y.min, y.max), ylab="", xlab="window index", main=mut.type[i])
+abline(h=1.75, col="red")
+#axis(2,cex.axis=1.2)
+mtext(expression(frac(y[i]-hat(mu)[i], sqrt(hat(mu)[i]))), side=2, line=2.2, cex=1.2)
+par(op)
+}
+
+
+```
+
+* use parameter estimated for 100kb windows to calculate residuals and estimate from 100 bp windows are not applicable because covariates have changed. 
+
+* shown are only windows with numercial residuals and windows with both zero observed and expected mutation leading to NA residuals are removed. So neighbor windows in this plot may not be phisically close in chromosome.  
+
+* View via IGV 
+
+![ Residuals of 100kb windows with p value less than 0.05  in whole genome ](figure/Simons_100kWindow.png)
+
+
+
+![ Residuals of 100kb windows with p values less than 0.05 in large chunks ](figure/Simons_100kWindow_largechunk.png)
+
+
+
 
 ## Cross validation 
 
