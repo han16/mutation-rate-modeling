@@ -13,6 +13,7 @@ library(knitr)
 library(kableExtra)
 library(RColorBrewer)
 library(gplots)
+library(ape)
 set.seed(123)
 ```
 
@@ -429,6 +430,48 @@ plotQQ.unif(simons_control_100k[,7])
 ![ Residuals of 100kb windows with p values less than 0.05 in large chunks ](figure/Simons_100kWindow_largechunk.png)
 
 
+* 100k window-auto correlation Moran.I 
+
+
+```{r, echo=F}
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+chrom=paste("chr", seq(1,22), sep="")
+all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
+for (i in 1:length(mut.type))
+{
+#  i=1
+simons_control_100k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
+simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+auto.pval=numeric()
+num.chrom=length(chrom)
+for (ii in 1:num.chrom)
+{
+  chrom.data=simons_control_100k[simons_control_100k[,1]==chrom[ii],]
+  dist=as.matrix(dist(seq(1, nrow(chrom.data)))) # neighborhood windows have 1 unit    distance 
+  dist.inv=1/dist
+  diag(dist.inv)=0
+  moran=Moran.I(chrom.data[,6], dist.inv)
+  auto.pval[ii]=moran$p.value
+  auto.pval[auto.pval==0]=10^(-20) # set zero pvalue to 10^{-10}
+} # end of ii
+all.pval[i,]=auto.pval
+} # end of i 
+max.pval=max(1.5 -log(all.pval, base=10))
+plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="l", pch=1, lty=1, col=1))
+abline(h=1.3, col="red", lty=3)
+axis.labels=seq(1,22)
+axis(1, at=seq(1,22), labels=axis.labels, cex.axis=0.8)
+for (i in 2:length(mut.type))
+ lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="scan index", ylab="", type="o", pch=i, lty=1, col=i) 
+legend(1, 20, mut.type, col=seq(1, length(mut.type)), lty=1, pch=seq(1, length(mut.type)), cex=0.8 )  
+
+```
+
+* on every chromsome, calculate residual auto-spatial correlation by Moran.I function
+* to build distance matrix, any neighbor windows has one unit distance. There is room to define more refined distance matrix 
+* zero p values are set to $10^{-20}$ and thus points reaching 20 are with zero p values. 
+* significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types 
 
 
 ## Cross validation 
