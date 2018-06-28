@@ -350,9 +350,9 @@ colnames(cova.across.mut)=names(simons.control.para.est.100bp)
 barcenters=barplot(cova.across.mut, beside=T,ylab=expression(paste(beta)),col=c("red", "blue", "green"), legend=c("simons_contr_100bp", "simons_contr_10k", "simons_contr_100k"), ylim=c(min(simons.control.conf.inter, simons.control.conf.inter.100k, simons.control.conf.inter.10k), max(simons.control.conf.inter, simons.control.conf.inter.100k, simons.control.conf.inter.10k)),  main=cova[cova.index],  cex.names=0.65, args.legend = list(x ='topright', bty='n', inset=c(-0.005,0), cex=0.8), xpd = FALSE, las=2)
 
 
-segments(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inter.100k[,1], simons.control.conf.inter.10k[,1]), barcenters,rbind(simons.control.conf.inter[,2], simons.control.conf.inter.100k[,2], simons.control.conf.inter.10k[,2]), lwd = 1.5)
+segments(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inter.10k[,1], simons.control.conf.inter.100k[,1]), barcenters,rbind(simons.control.conf.inter[,2], simons.control.conf.inter.10k[,2], simons.control.conf.inter.100k[,2]), lwd = 1.5)
 
-arrows(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inter.100k[,1], simons.control.conf.inter.10k[,1]), barcenters,rbind(simons.control.conf.inter[,2], simons.control.conf.inter.100k[,2], simons.control.conf.inter.10k[,2]), lwd = 1.5, angle = 90,code = 3, length = 0.05)
+arrows(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inter.10k[,1], simons.control.conf.inter.100k[,1]), barcenters,rbind(simons.control.conf.inter[,2], simons.control.conf.inter.10k[,2], simons.control.conf.inter.100k[,2]), lwd = 1.5, angle = 90,code = 3, length = 0.05)
 } # end of cova.index
 ```
 
