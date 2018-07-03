@@ -1,0 +1,399 @@
+---
+title: "Fitting Diagnostic"
+author: "Shengtong  Han"
+date: YYYY-MM-DD
+output: html_document
+---
+
+<!-- The file analysis/chunks.R contains chunks that define default settings
+shared across the workflowr files. -->
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+library(knitr)
+library(kableExtra)
+library(RColorBrewer)
+library(gplots)
+library(ape)
+set.seed(123)
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=F}
+loadRData <- function(fileName){
+#loads an RData file, and returns it
+    load(fileName)
+    get(ls()[ls() != "fileName"])
+}
+```
+
+
+
+## Simons-control 
+
+###  100 bp windows 
+
+
+index  | mutation type | # total windows |# window $p.val<0.05$ |  # window $p.val=0$
+----|-------|-------|---|-----------
+1 | A->C | 26,839,568 | 3,899 |   3,870
+2 | A->G | 15,067 | 15,067 | 10,806
+3 | A->T | 26,839,598 | 3,656 | 3,649
+
+
+
+### 10k windows 
+
+
+```{r, echo=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T")
+plotQQ.unif <- function(p.obs) {
+  obs <- (p.obs)
+  theo <- (ppoints(length(obs)))
+  qqplot(-log(theo, base=10), -log(obs, base=10), xlab=expression(paste("Theoretical ",-log[10], "(p-values)")), ylab=expression(paste("Observed ", -log[10], "(p-values)")))
+  abline(0,1,col='red')
+}
+```
+
+
+
+```{r, echo=F}
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+for (i in 1:length(mut.type))
+{
+#  i=1
+simons_control_10k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
+simons_control_10k=simons_control_10k[complete.cases(simons_control_10k), ]
+y.min=min(simons_control_10k[,6])-1; y.max=max(simons_control_10k[,6])+1
+par(mfrow=c(1,2))
+
+op <- par(mar = c(5,6,4,2) + 0.1)
+plot(simons_control_10k[,6], type="l", ylim=c(y.min, y.max), ylab="", xlab="window index", main=mut.type[i])
+abline(h=1.75, col="red")
+grid()
+mtext(expression(frac(y[i]-hat(mu)[i], sqrt(hat(mu)[i]))), side=2, line=2.2, cex=1.2)
+par(op)
+
+plotQQ.unif(simons_control_10k[,7])
+grid()
+}
+```
+
+
+
+```{r, echo=F, eval=F}
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
+#prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+#chrom=paste("chr", seq(1,22), sep="")
+#all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
+#for (i in 1:length(mut.type))
+{
+#  i=1
+#simons_control_10k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
+#simons_control_10k=simons_control_100k[complete.cases(simons_control_10k), ]
+#auto.pval=numeric()
+#num.chrom=length(chrom)
+#for (ii in 1:num.chrom)
+{
+#  chrom.data=simons_control_10k[simons_control_10k[,1]==chrom[ii],]
+#  dist=as.matrix(dist(seq(1, nrow(chrom.data)))) # neighborhood windows have 1 unit    distance 
+#  dist.inv=1/dist
+#  diag(dist.inv)=0
+#  moran=Moran.I(chrom.data[,6], dist.inv)
+#  auto.pval[ii]=moran$p.value
+#  auto.pval[auto.pval==0]=10^(-20) # set zero pvalue to 10^{-10}
+} # end of ii
+#all.pval[i,]=auto.pval
+} # end of i 
+#max.pval=max(1.5 -log(all.pval, base=10))
+#plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="l", pch=1, lty=1, col=1))
+#abline(h=1.3, col="red", lty=3)
+#axis.labels=seq(1,22)
+#axis(1, at=seq(1,22), labels=axis.labels, cex.axis=0.8)
+#for (i in 2:length(mut.type))
+# lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="scan index", ylab="", type="o", pch=i, lty=1, col=i) 
+#legend(1, 20, mut.type, col=seq(1, length(mut.type)), lty=1, pch=seq(1, length(mut.type)), cex=0.8 )  
+```
+
+
+
+
+### 100k windows 
+
+
+
+#### add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows. 
+
+
+
+
+```{r, echo=F, warning=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T")
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+
+
+for (i in 1:length(mut.type))
+{
+#  i=2
+simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+
+stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
+pval=pnorm(stand.diff, 0, 1, lower.tail=F)
+simons_control_100k=cbind(simons_control, stand.diff, pval)
+simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+y.min=min(simons_control_100k[,6])-1; y.max=max(simons_control_100k[,6])+1
+par(mfrow=c(1,2))
+
+op <- par(mar = c(5,6,4,2) + 0.1)
+plot(simons_control_100k[,6], type="l", ylim=c(y.min, y.max), ylab="", xlab="window index", main=mut.type[i])
+abline(h=1.75, col="red")
+mtext(expression(frac(y[i]-hat(mu)[i], sqrt(hat(mu)[i]))), side=2, line=2.2, cex=1.2)
+grid()
+par(op)
+
+plotQQ.unif(simons_control_100k[,7])
+grid()
+}
+
+```
+
+
+* scatter plot 
+
+
+```{r, echo=F, warning=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T")
+chr=paste("chr", seq(1,22), sep="")
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+
+
+#for (i in 1:length(mut.type))
+{
+  i=1
+simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+#par(mfrow=c(,1))
+#for (ii in 1:length(chr))
+for (ii in 1:3)  
+{
+#  ii=1
+##########
+scatter.matrix=cbind(as.numeric(as.character(simons_control[simons_control[,1]==chr[ii],4])), as.numeric(as.character(simons_control[simons_control[,1]==chr[ii],5])))
+scatter=scatter.matrix[complete.cases(scatter.matrix),]
+plot(as.numeric(as.character(scatter[,1])), as.numeric(as.character(scatter[,2])), main=paste(mut.type[i], chr[ii], sep="_"), xlab="Observed", ylab="Expected", type="p", pch=16)
+grid()
+#########
+} # end of ii
+
+} # end of i 
+
+```
+
+
+
+* Relative risk of each window
+
+
+
+```{r, echo=F, warning=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T")
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+
+
+for (i in 1:length(mut.type))
+{
+#  i=3
+simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+
+relative.risk=as.numeric(as.character(simons_control[,4]))/as.numeric(as.character(simons_control[,5]))
+simons_control_RR=cbind(simons_control, relative.risk)
+y.min=min(relative.risk, na.rm=T); y.max=max(relative.risk, na.rm=T)
+
+op <- par(mar = c(5,6,4,2) + 0.1)
+cutoff=4
+win.ratio=sum(relative.risk>cutoff, na.rm=T)/length(relative.risk)
+plot(simons_control_RR[,6], type="p", pch=16, ylim=c(y.min, y.max), ylab="", xlab="window index", main=mut.type[i])
+abline(h=cutoff, col="red")
+mtext(expression(frac(y[i], hat(mu)[i])), side=2, line=2.2, cex=1.2)
+grid()
+par(op)
+
+}
+```
+
+
+* A_to_C: 11.31% windows have $Z>4$
+* A_to_G: 2.65%
+* A_to_T: 10.89% 
+
+
+
+* Moran's I  
+
+
+
+```{r, echo=F}
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+chrom=paste("chr", seq(1,22), sep="")
+all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
+for (i in 1:length(mut.type))
+{
+cat(i, "is running", "\n")
+simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
+simons_control_100k=cbind(simons_control, stand.diff)
+
+simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+auto.pval=numeric()
+num.chrom=length(chrom)
+for (ii in 1:num.chrom)
+{
+#  ii=1
+  chrom.data=simons_control_100k[simons_control_100k[,1]==chrom[ii],]
+  dist.inv=matrix(0, nrow=nrow(chrom.data), ncol=nrow(chrom.data))
+  for (aa in 1:nrow(dist.inv))
+    for (bb in 1:ncol(dist.inv))
+      if (abs(aa-bb)==1)
+        dist.inv[aa,bb]=1
+  moran=Moran.I(chrom.data[,6], dist.inv)
+  auto.pval[ii]=moran$p.value
+  auto.pval[auto.pval==0]=10^(-20) # set zero pvalue to 10^{-10}
+} # end of ii
+all.pval[i,]=auto.pval
+} # end of i 
+max.pval=max(1.5 -log(all.pval, base=10))
+plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="o", pch=1, lty=1, col=1))
+abline(h=1.3, col="red", lty=3)
+axis.labels=seq(1,22)
+axis(1, at=seq(1,22), labels=axis.labels, cex.axis=0.8)
+for (i in 2:length(mut.type))
+ lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="", ylab="", type="o", pch=i, lty=1, col=i) 
+legend(1, 4, mut.type, col=seq(1, length(mut.type)), lty=1, pch=seq(1, length(mut.type)), cex=0.8 )  
+grid()
+```
+
+* on every chromsome, calculate residual auto-spatial correlation by Moran.I function
+* to build distance matrix, any neighbor windows has one unit distance.  
+* zero p values by Moran test  are set to $10^{-20}$ and thus points reaching 20 are with zero p values. 
+* significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types 
+
+
+
+
+
+####  use parameters estimated for 100k windows 
+
+```{r, echo=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+for (i in 1:length(mut.type))
+{
+#  i=1
+simons_control_100k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
+simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+y.min=min(simons_control_100k[,6])-1; y.max=max(simons_control_100k[,6])+1
+par(mfrow=c(1,2))
+
+op <- par(mar = c(5,6,4,2) + 0.1)
+plot(simons_control_100k[,6], type="l", ylim=c(y.min, y.max), ylab="", xlab="window index", main=mut.type[i])
+abline(h=1.75, col="red")
+mtext(expression(frac(y[i]-hat(mu)[i], sqrt(hat(mu)[i]))), side=2, line=2.2, cex=1.2)
+par(op)
+
+plotQQ.unif(simons_control_100k[,7])
+}
+
+
+```
+
+* use parameter estimated for 100kb windows to calculate residuals and estimate from 100 bp windows are not applicable because covariates have changed. 
+
+* shown are only windows with numercial residuals and windows with both zero observed and expected mutation leading to NA residuals are removed. So neighbor windows in this plot may not be phisically close in chromosome.  
+
+* View via IGV 
+
+![ Residuals of 100kb windows with p value less than 0.05  in whole genome ](figure/Simons_100kWindow.png)
+
+
+![ Residuals of 100kb windows with p values less than 0.05 in large chunks ](figure/Simons_100kWindow_largechunk.png)
+
+
+
+
+
+* 100k window-auto correlation Moran.I 
+
+
+```{r, echo=F}
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+chrom=paste("chr", seq(1,22), sep="")
+all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
+for (i in 1:length(mut.type))
+{
+#  i=1
+simons_control_100k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
+simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+auto.pval=numeric()
+num.chrom=length(chrom)
+for (ii in 1:num.chrom)
+{
+#  ii=1
+  chrom.data=simons_control_100k[simons_control_100k[,1]==chrom[ii],]
+  dist=as.matrix(dist(seq(1, nrow(chrom.data)))) # neighborhood windows have 1 unit distance 
+  dist.inv=1/dist
+  diag(dist.inv)=0
+  moran=Moran.I(chrom.data[,6], dist.inv)
+  auto.pval[ii]=moran$p.value
+  auto.pval[auto.pval==0]=10^(-20) # set zero pvalue to 10^{-10}
+} # end of ii
+all.pval[i,]=auto.pval
+} # end of i 
+max.pval=max(1.5 -log(all.pval, base=10))
+plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="l", pch=1, lty=1, col=1))
+abline(h=1.3, col="red", lty=3)
+axis.labels=seq(1,22)
+axis(1, at=seq(1,22), labels=axis.labels, cex.axis=0.8)
+for (i in 2:length(mut.type))
+ lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="scan index", ylab="", type="o", pch=i, lty=1, col=i) 
+legend(1, 20, mut.type, col=seq(1, length(mut.type)), lty=1, pch=seq(1, length(mut.type)), cex=0.8 )  
+
+```
+
+* on every chromsome, calculate residual auto-spatial correlation by Moran.I function
+* to build distance matrix, any neighbor windows has one unit distance. There is room to define more refined distance matrix 
+* zero p values are set to $10^{-20}$ and thus points reaching 20 are with zero p values. 
+* significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types 
+
+
+
+
+
+## Cross validation 
+
+
+
+## Session information
+
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
+
+

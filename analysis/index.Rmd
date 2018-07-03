@@ -8,7 +8,10 @@ output:
 
 * modeling part is [here](modeling.html)
 
-* de novo mutations is [here](denovo-data.html)
+* Parameter estimation of de novo mutations is [here](denovo-data.html)
+
+* [Fitting diagnostic](FittingDiagnostic.html) 
 
 * genomic features is [here](genomic-feature.html)
+
 

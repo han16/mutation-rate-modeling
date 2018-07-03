@@ -320,10 +320,10 @@ div.section {
 shared across the workflowr files. -->
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-06-28</p>
+<p><strong>Last updated:</strong> 2018-07-02</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> d7436a5</p>
+<p><strong>Code version:</strong> ef90229</p>
 <div id="samples" class="section level2">
 <h2>Samples</h2>
 <div id="case-samples" class="section level3">
@@ -718,82 +718,6 @@ shared across the workflowr files. -->
 <h4>Parameter estimate comparison</h4>
 <p><img src="figure/denovo-data.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-12.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-11-14.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-</div>
-<div id="fitting-diagnostic-simons-control" class="section level2">
-<h2>Fitting diagnostic-Simons-control</h2>
-<div id="standardized-residual" class="section level3">
-<h3>Standardized residual</h3>
-<div id="simons-control-1" class="section level4">
-<h4>Simons-control</h4>
-<ul>
-<li>100 bp windows</li>
-</ul>
-<table>
-<thead>
-<tr class="header">
-<th>index</th>
-<th>mutation type</th>
-<th># total windows</th>
-<th># window <span class="math inline">\(p.val&lt;0.05\)</span></th>
-<th># window <span class="math inline">\(p.val=0\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>A-&gt;C</td>
-<td>26,839,568</td>
-<td>3,899</td>
-<td>3,870</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>A-&gt;G</td>
-<td>15,067</td>
-<td>15,067</td>
-<td>10,806</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>A-&gt;T</td>
-<td>26,839,598</td>
-<td>3,656</td>
-<td>3,649</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>100k windows</li>
-</ul>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/denovo-data.Rmd/unnamed-chunk-13-6.png" width="672" style="display: block; margin: auto;" /></p>
-<ul>
-<li><p>use parameter estimated for 100kb windows to calculate residuals and estimate from 100 bp windows are not applicable because covariates have changed.</p></li>
-<li><p>shown are only windows with numercial residuals and windows with both zero observed and expected mutation leading to NA residuals are removed. So neighbor windows in this plot may not be phisically close in chromosome.</p></li>
-<li><p>View via IGV</p></li>
-</ul>
-<div class="figure">
-<img src="figure/Simons_100kWindow.png" alt="Residuals of 100kb windows with p value less than 0.05 in whole genome" />
-<p class="caption">Residuals of 100kb windows with p value less than 0.05 in whole genome</p>
-</div>
-<div class="figure">
-<img src="figure/Simons_100kWindow_largechunk.png" alt="Residuals of 100kb windows with p values less than 0.05 in large chunks" />
-<p class="caption">Residuals of 100kb windows with p values less than 0.05 in large chunks</p>
-</div>
-<ul>
-<li>100k window-auto correlation Moran.I</li>
-</ul>
-<p><img src="figure/denovo-data.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
-<ul>
-<li>on every chromsome, calculate residual auto-spatial correlation by Moran.I function</li>
-<li>to build distance matrix, any neighbor windows has one unit distance. There is room to define more refined distance matrix</li>
-<li>zero p values are set to <span class="math inline">\(10^{-20}\)</span> and thus points reaching 20 are with zero p values.</li>
-<li>significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types</li>
-</ul>
-</div>
-</div>
-</div>
-<div id="cross-validation" class="section level2">
-<h2>Cross validation</h2>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
