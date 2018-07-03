@@ -323,7 +323,7 @@ shared across the workflowr files. -->
 <p><strong>Last updated:</strong> 2018-07-03</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> ef90229</p>
+<p><strong>Code version:</strong> 46dc9c0</p>
 <div id="simons-control" class="section level2">
 <h2>Simons-control</h2>
 <div id="bp-windows" class="section level3">
@@ -407,10 +407,9 @@ Warning: NAs introduced by coercion</code></pre>
 <p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li>on every chromsome, calculate residual auto-spatial correlation by Moran.I function</li>
-<li>to build distance matrix, any neighbor windows has one unit distance.<br />
+<li>use incidence matrix<br />
 </li>
-<li>zero p values by Moran test are set to <span class="math inline">\(10^{-20}\)</span> and thus points reaching 20 are with zero p values.</li>
-<li>significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types</li>
+<li>significant spatial correlations are observed on chromsome 3, 8, 14, and 20</li>
 </ul>
 </div>
 <div id="use-parameters-estimated-for-100k-windows" class="section level4">
@@ -430,14 +429,11 @@ Warning: NAs introduced by coercion</code></pre>
 <p class="caption">Residuals of 100kb windows with p values less than 0.05 in large chunks</p>
 </div>
 <ul>
-<li>100k window-auto correlation Moran.I</li>
-</ul>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<ul>
+<li><p>100k window-auto correlation Moran.I</p></li>
 <li>on every chromsome, calculate residual auto-spatial correlation by Moran.I function</li>
 <li>to build distance matrix, any neighbor windows has one unit distance. There is room to define more refined distance matrix</li>
 <li>zero p values are set to <span class="math inline">\(10^{-20}\)</span> and thus points reaching 20 are with zero p values.</li>
-<li>significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types</li>
+<li><p>significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types</p></li>
 </ul>
 </div>
 </div>

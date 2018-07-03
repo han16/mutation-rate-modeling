@@ -288,9 +288,8 @@ grid()
 ```
 
 * on every chromsome, calculate residual auto-spatial correlation by Moran.I function
-* to build distance matrix, any neighbor windows has one unit distance.  
-* zero p values by Moran test  are set to $10^{-20}$ and thus points reaching 20 are with zero p values. 
-* significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types 
+* use incidence matrix   
+* significant spatial correlations are observed on chromsome 3, 8, 14, and 20  
 
 
 
@@ -340,7 +339,7 @@ plotQQ.unif(simons_control_100k[,7])
 * 100k window-auto correlation Moran.I 
 
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 chrom=paste("chr", seq(1,22), sep="")
