@@ -132,19 +132,15 @@ grid()
 
 ### 100k windows 
 
+add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows. 
 
 
-#### add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows. 
-
-
-
+#### Residual distribution and QQ plot of p values 
 
 ```{r, echo=F, warning=F}
-mut.type=c("A_to_C", "A_to_G", "A_to_T")
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
-
-
 for (i in 1:length(mut.type))
 {
 #  i=2
@@ -154,6 +150,7 @@ stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character
 pval=pnorm(stand.diff, 0, 1, lower.tail=F)
 simons_control_100k=cbind(simons_control, stand.diff, pval)
 simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
+simons_control_100k[simons_control_100k==Inf]=10^{20}
 y.min=min(simons_control_100k[,6])-1; y.max=max(simons_control_100k[,6])+1
 par(mfrow=c(1,2))
 
@@ -171,45 +168,141 @@ grid()
 ```
 
 
-* scatter plot 
+#### Windows with verh high expected mutation rate 
+
+
+```{r, echo=F}
+cutoff=-5
+high.mut.region=c(NA)
+high.mut.type=c(NA)
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+for (i in 1:length(mut.type))
+{
+#  i=1
+simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
+high.mut.region=rbind(high.mut.region, simons_control[which(stand.diff<(cutoff)),])
+if (length(which(stand.diff<(cutoff)))>0)
+  high.mut.type=rbind(high.mut.type, mut.type[i])
+}
+
+high.mut.region=high.mut.region[-1,]
+rownames(high.mut.region)=high.mut.type[-1]
+colnames(high.mut.region)=c("chr", "start", "end", "observed", "expected")
+```
+
+
+```{r, echo=F}
+kable(high.mut.region, caption = "windows with standardized residual less than -5")
+```
+
+
+```{r, echo=F}
+high.mut.chr8=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.ExpObsVar.bed.139200000-139300000")
+par(mfrow=c(1,2),oma = c(0, 0, 2, 0))
+
+plot(high.mut.chr8[,5], high.mut.chr8[,4], xlab="Expected", ylab="Observed", type="p", pch=16, main="A_to_C")
+abline(0,1, col="red")
+grid()
+
+op <- par(mar = c(5,6,4,2) + 0.1)
+plot(high.mut.chr8[,6], type="l", xlab="100 bp windows", main="A_to_C", ylab="")
+mtext(expression(frac(y[i]-hat(mu)[i], sqrt(hat(mu)[i]))), side=2, line=2.2, cex=1.2)
+grid()
+par(op)
+mtext("100 bp windows for chr8:139200000-139300000", outer = TRUE, cex = 1.5)
+```
+
+
+
+#### hotspot detection and neighborhood correlation 
+
+
+One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected 'hotspot' windows. 
 
 
 ```{r, echo=F, warning=F}
-mut.type=c("A_to_C", "A_to_G", "A_to_T")
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
+cutoff=c(2,3,4)
+path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+for (i in 1:length(mut.type))
+{
+#  i=2
+simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+
+stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
+count=matrix(nrow=4, ncol=length(cutoff))
+for (ii in 1:length(cutoff))
+{
+simons_control_hotspot=simons_control[which(stand.diff>cutoff[ii]),]
+wind.index=as.numeric(rownames(simons_control_hotspot))
+wind.result=rle(diff(wind.index))
+wind.iso=sum(wind.result$values>1)+1
+wind.2neighbor=sum(wind.result$lengths==2 & wind.result$values==1)
+wind.3neighbor=sum(wind.result$lengths==3 & wind.result$values==1)
+wind.3moreneighbor=sum(wind.result$lengths>3 & wind.result$values==1)
+count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor))
+}
+
+rownames(count)=c(0,1,2, ">2")
+colnames(count)=cutoff
+barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,2), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consective windows"))
+}
+```
+
+
+
+* No.consecutive windows: 0 means 'isolated' windows , 1 means two-consecutive windows, and etc.  
+* with cutoff of 4, all "hotsopt" are isolated and consecutive hotspots are clearly observed until cutoff reduces to 2. 
+
+
+####  scatter plot 
+
+
+```{r, echo=F, warning=F}
+par(mfrow=c(3,3))
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 chr=paste("chr", seq(1,22), sep="")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 
 
-#for (i in 1:length(mut.type))
+for (i in 1:length(mut.type))
 {
-  i=1
+#  i=1
 simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
-#par(mfrow=c(,1))
-#for (ii in 1:length(chr))
-for (ii in 1:3)  
+chrom.scatter=matrix(nrow=length(chr), ncol=2)
+for (ii in 1:length(chr))
 {
 #  ii=1
 ##########
 scatter.matrix=cbind(as.numeric(as.character(simons_control[simons_control[,1]==chr[ii],4])), as.numeric(as.character(simons_control[simons_control[,1]==chr[ii],5])))
 scatter=scatter.matrix[complete.cases(scatter.matrix),]
-plot(as.numeric(as.character(scatter[,1])), as.numeric(as.character(scatter[,2])), main=paste(mut.type[i], chr[ii], sep="_"), xlab="Observed", ylab="Expected", type="p", pch=16)
+chrom.scatter[ii,]=colSums(scatter)
+}
+plot(as.numeric(as.character(chrom.scatter[,2])), as.numeric(as.character(chrom.scatter[,1])), main=mut.type[i], xlab="Expected", ylab="Observed", type="p", pch=16)
+abline(0,1, col="red")
 grid()
 #########
-} # end of ii
+ # end of ii
 
 } # end of i 
 
 ```
 
 
-
-* Relative risk of each window
-
+* Every point is one chromosome where expected mutation rate and observed mutation count in each  100k window are added up. 
 
 
-```{r, echo=F, warning=F}
-mut.type=c("A_to_C", "A_to_G", "A_to_T")
+
+
+
+```{r, echo=F, warning=F, eval=F}
+#### Relative risk of each window
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 
@@ -221,6 +314,8 @@ simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.a
 
 relative.risk=as.numeric(as.character(simons_control[,4]))/as.numeric(as.character(simons_control[,5]))
 simons_control_RR=cbind(simons_control, relative.risk)
+relative.risk[relative.risk==Inf]=10^20
+
 y.min=min(relative.risk, na.rm=T); y.max=max(relative.risk, na.rm=T)
 
 op <- par(mar = c(5,6,4,2) + 0.1)
@@ -233,27 +328,31 @@ grid()
 par(op)
 
 }
+
+
+# A_to_C: 11.31% windows have $Z>4$
+# A_to_G: 2.65%
+# A_to_T: 10.89% 
 ```
 
 
-* A_to_C: 11.31% windows have $Z>4$
-* A_to_G: 2.65%
-* A_to_T: 10.89% 
 
 
 
-* Moran's I  
 
 
 
-```{r, echo=F}
+```{r, echo=F, warning=F, eval=F}
+# Moran's I 
+mut.type=c("A_to_C", "A_to_G", "A_to_T")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 chrom=paste("chr", seq(1,22), sep="")
 all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
 for (i in 1:length(mut.type))
-{
-cat(i, "is running", "\n")
+{ 
+#  i=1
+#cat(i, "is running", "\n")
 simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
 stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
 simons_control_100k=cbind(simons_control, stand.diff)
@@ -265,98 +364,10 @@ for (ii in 1:num.chrom)
 {
 #  ii=1
   chrom.data=simons_control_100k[simons_control_100k[,1]==chrom[ii],]
-  dist.inv=matrix(0, nrow=nrow(chrom.data), ncol=nrow(chrom.data))
-  for (aa in 1:nrow(dist.inv))
-    for (bb in 1:ncol(dist.inv))
-      if (abs(aa-bb)==1)
-        dist.inv[aa,bb]=1
-  moran=Moran.I(chrom.data[,6], dist.inv)
-  auto.pval[ii]=moran$p.value
-  auto.pval[auto.pval==0]=10^(-20) # set zero pvalue to 10^{-10}
-} # end of ii
-all.pval[i,]=auto.pval
-} # end of i 
-max.pval=max(1.5 -log(all.pval, base=10))
-plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="o", pch=1, lty=1, col=1))
-abline(h=1.3, col="red", lty=3)
-axis.labels=seq(1,22)
-axis(1, at=seq(1,22), labels=axis.labels, cex.axis=0.8)
-for (i in 2:length(mut.type))
- lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="", ylab="", type="o", pch=i, lty=1, col=i) 
-legend(1, 4, mut.type, col=seq(1, length(mut.type)), lty=1, pch=seq(1, length(mut.type)), cex=0.8 )  
-grid()
-```
-
-* on every chromsome, calculate residual auto-spatial correlation by Moran.I function
-* use incidence matrix   
-* significant spatial correlations are observed on chromsome 3, 8, 14, and 20  
-
-
-
-
-
-####  use parameters estimated for 100k windows 
-
-```{r, echo=F}
-mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A", "C_to_G", "C_to_T")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
-prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
-for (i in 1:length(mut.type))
-{
-#  i=1
-simons_control_100k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
-simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
-y.min=min(simons_control_100k[,6])-1; y.max=max(simons_control_100k[,6])+1
-par(mfrow=c(1,2))
-
-op <- par(mar = c(5,6,4,2) + 0.1)
-plot(simons_control_100k[,6], type="l", ylim=c(y.min, y.max), ylab="", xlab="window index", main=mut.type[i])
-abline(h=1.75, col="red")
-mtext(expression(frac(y[i]-hat(mu)[i], sqrt(hat(mu)[i]))), side=2, line=2.2, cex=1.2)
-par(op)
-
-plotQQ.unif(simons_control_100k[,7])
-}
-
-
-```
-
-* use parameter estimated for 100kb windows to calculate residuals and estimate from 100 bp windows are not applicable because covariates have changed. 
-
-* shown are only windows with numercial residuals and windows with both zero observed and expected mutation leading to NA residuals are removed. So neighbor windows in this plot may not be phisically close in chromosome.  
-
-* View via IGV 
-
-![ Residuals of 100kb windows with p value less than 0.05  in whole genome ](figure/Simons_100kWindow.png)
-
-
-![ Residuals of 100kb windows with p values less than 0.05 in large chunks ](figure/Simons_100kWindow_largechunk.png)
-
-
-
-
-
-* 100k window-auto correlation Moran.I 
-
-
-```{r, echo=F, eval=F}
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
-prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
-chrom=paste("chr", seq(1,22), sep="")
-all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
-for (i in 1:length(mut.type))
-{
-#  i=1
-simons_control_100k=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed", sep=""), header=F)
-simons_control_100k=simons_control_100k[complete.cases(simons_control_100k), ]
-auto.pval=numeric()
-num.chrom=length(chrom)
-for (ii in 1:num.chrom)
-{
-#  ii=1
-  chrom.data=simons_control_100k[simons_control_100k[,1]==chrom[ii],]
-  dist=as.matrix(dist(seq(1, nrow(chrom.data)))) # neighborhood windows have 1 unit distance 
-  dist.inv=1/dist
+  dist=matrix(0, nrow=nrow(chrom.data), ncol=nrow(chrom.data))
+  for (aa in 1:(nrow(dist)-1))
+    dist[aa,aa+1]=1
+  dist.inv=dist+t(dist)
   diag(dist.inv)=0
   moran=Moran.I(chrom.data[,6], dist.inv)
   auto.pval[ii]=moran$p.value
@@ -365,26 +376,35 @@ for (ii in 1:num.chrom)
 all.pval[i,]=auto.pval
 } # end of i 
 max.pval=max(1.5 -log(all.pval, base=10))
-plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="l", pch=1, lty=1, col=1))
+plot(seq(1,22), -log(all.pval[1,], base=10), main="", ylim=c(0, max.pval), xlab="chr", xaxt='n', ylab=expression(paste(-log[10](pval)), type="o", lty="solid", col=1))
 abline(h=1.3, col="red", lty=3)
 axis.labels=seq(1,22)
 axis(1, at=seq(1,22), labels=axis.labels, cex.axis=0.8)
 for (i in 2:length(mut.type))
- lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="scan index", ylab="", type="o", pch=i, lty=1, col=i) 
-legend(1, 20, mut.type, col=seq(1, length(mut.type)), lty=1, pch=seq(1, length(mut.type)), cex=0.8 )  
+ lines(-log(all.pval[i,], base=10), main="", ylim=c(0, max.pval), xlab="", ylab="", type="o", pch=i, lty=1, col=i) 
+legend(1, 4, mut.type, col=seq(1, length(mut.type)), lty=rep(1, length(mut.type)), pch=seq(1, length(mut.type)), cex=0.8 )  
+grid()
+
+# on every chromsome, calculate residual auto-spatial correlation by Moran.I function
+# use incidence matrix-only neighbor windows has distance of 1, 0 otherwise.   
+# significant spatial correlations are observed on chromsome 3, 8, 14, and 20  
 
 ```
 
-* on every chromsome, calculate residual auto-spatial correlation by Moran.I function
-* to build distance matrix, any neighbor windows has one unit distance. There is room to define more refined distance matrix 
-* zero p values are set to $10^{-20}$ and thus points reaching 20 are with zero p values. 
-* significant spatial correlations are observed on chromsome 8.9 and 16 across many mutation types 
 
 
 
 
 
-## Cross validation 
+
+
+
+
+
+
+
+
+
 
 
 
