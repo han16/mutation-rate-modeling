@@ -359,9 +359,58 @@ arrows(barcenters, rbind(simons.control.conf.inter[,1], simons.control.conf.inte
 
 
 
+## Parameter estimate with variable selection
 
 
 
+```{r, echo=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG","C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
+```
+
+```{r, echo=F}
+simons.control.para.est=list()
+for (i in 1:length(mut.type))
+{
+  simons.control.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100bpwindow_varselection\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "var.selection.RData", sep="."))
+}
+```
+
+
+```{r, echo=F}
+for (mut in 1:length(mut.type))
+{
+#  mut=1
+pick.cova=cova[simons.control.para.est[[mut]]$pick.cova.index]
+cova.fea=matrix(nrow=1, ncol=length(pick.cova))
+
+
+simons.control.conf.inter=matrix(nrow=length(pick.cova), ncol=2)
+colnames(simons.control.conf.inter)=c("lower", "upper")
+rownames(simons.control.conf.inter)=pick.cova
+
+
+for (i in 1:length(pick.cova))
+{
+  
+  cova.fea[1,i]=simons.control.para.est[[mut]]$para.est[i+1]
+  simons.control.conf.inter[i,]=simons.control.para.est[[mut]]$para.conf[i+1,]
+  
+  
+}
+colnames(cova.fea)=pick.cova
+
+barcenters=barplot(cova.fea, beside=T,ylab=expression(paste(beta)),col=c("red"), legend=c("simons_contr_100bp"), ylim=c(min(simons.control.conf.inter), max(simons.control.conf.inter)),  main=mut.type[mut],  cex.names=0.65, args.legend = list(x ='topright', bty='n', inset=c(-0.005,0), cex=0.8), xpd = FALSE, las=2)
+
+
+segments(barcenters, simons.control.conf.inter[,1],  barcenters,simons.control.conf.inter[,2], lwd = 1.5)
+
+arrows(barcenters, simons.control.conf.inter[,1], barcenters,simons.control.conf.inter[,2], lwd = 1.5, angle = 90,code = 3, length = 0.05)
+} # end of mut
+```
+
+
+* compute the raio of confidence interval over absolute value of estimated coefficient, rank them, and  choose maximum of the top 25% quanitle  or 1. That is at least there are 25% covariate features with smallest ratios are selected as significant features.  
 
 
 

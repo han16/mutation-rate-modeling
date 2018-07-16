@@ -7,7 +7,7 @@ output: html_document
 
 <!-- The file analysis/chunks.R contains chunks that define default settings
 shared across the workflowr files. -->
-```{r read-chunk, include=FALSE, cache=FALSE}
+```{r read-chunk, include=FALSE}
 knitr::read_chunk("chunks.R")
 library(knitr)
 library(kableExtra)
@@ -53,6 +53,8 @@ index  | mutation type | # total windows |# window $p.val<0.05$ |  # window $p.v
 
 
 
+
+
 ### 10k windows 
 
 
@@ -72,7 +74,7 @@ plotQQ.unif <- function(p.obs) {
 
 #### Residual distribution and QQ plot of p values 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
@@ -107,7 +109,7 @@ grid()
 #### Windows with high expected mutation rate 
 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 cutoff=-5
 high.mut.region=c(NA)
 high.mut.type=c(NA)
@@ -142,6 +144,9 @@ kable(high.mut.region, caption = "windows with standardized residual less than -
 ```
 
 
+The reason for high expected mutation rate is that there are about 100 windows of 100 bp that have recombination rates as high as 108.  
+
+
 
 #### hotspot detection and neighborhood correlation 
 
@@ -149,7 +154,7 @@ kable(high.mut.region, caption = "windows with standardized residual less than -
 One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected 'hotspot' windows. 
 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 cutoff=c(2,3,4)
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
@@ -189,7 +194,7 @@ barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2
 ####  scatter plot 
 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 par(mfrow=c(3,3))
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 chr=paste("chr", seq(1,22), sep="")
@@ -236,7 +241,7 @@ add 100bp windows: Observed and estimated mutations for 100k windows are obtaine
 
 #### Residual distribution and QQ plot of p values 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
@@ -270,7 +275,7 @@ grid()
 #### Windows with high expected mutation rate 
 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 cutoff=-5
 high.mut.region=c(NA)
 high.mut.type=c(NA)
@@ -322,7 +327,7 @@ mtext("100 bp windows for chr8:139200000-139300000", outer = TRUE, cex = 1.5)
 One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected 'hotspot' windows. 
 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 cutoff=c(2,3,4)
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
@@ -361,7 +366,7 @@ barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2
 ####  scatter plot 
 
 
-```{r, echo=F, warning=F}
+```{r, echo=F, warning=F, cache=T}
 par(mfrow=c(3,3))
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 chr=paste("chr", seq(1,22), sep="")
