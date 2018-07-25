@@ -159,35 +159,117 @@ mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.
 cutoff=c(2,3,4)
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
+pvalue.mut.type=list()
+closest.neigh.mut.type=list()
 for (i in 1:length(mut.type))
 {
 #  i=2
 simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added.10k", sep=""), header=F)
-
 stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
 count=matrix(nrow=4, ncol=length(cutoff))
+random.count=matrix(nrow=4, ncol=length(cutoff))
+pvalue=matrix(nrow=4, ncol=length(cutoff))
+closest.neigh.dist=list()
 for (ii in 1:length(cutoff))
 {
 simons_control_hotspot=simons_control[which(stand.diff>cutoff[ii]),]
 wind.index=as.numeric(rownames(simons_control_hotspot))
+###############################
 wind.result=rle(diff(wind.index))
 wind.iso=sum(wind.result$values>1)+1
 wind.2neighbor=sum(wind.result$lengths==2 & wind.result$values==1)
 wind.3neighbor=sum(wind.result$lengths==3 & wind.result$values==1)
 wind.3moreneighbor=sum(wind.result$lengths>3 & wind.result$values==1)
 count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor))
-}
+################### use simulation of random samples to get expected rate of each case 
+  total.num=nrow(simons_control)
+  hotspot.num=nrow(simons_control[which(stand.diff>cutoff[ii]),])
+  ratio.dist=rep(0, 4)
+  num.rep=100
+  for (jj in 1:num.rep)
+  {
+  random.index=sort(sample(seq(1,total.num), hotspot.num))
+  random.result=rle(diff(random.index))
+  if (length(random.result$lengths)>1)
+   { 
+    random.iso=sum(random.result$values>1)
+    random.2neighbor=sum(random.result$lengths==2 & random.result$values==1)
+    random.3neighbor=sum(random.result$lengths==3 & random.result$values==1)
+    random.3moreneighbor=sum(random.result$lengths>3 & random.result$values==1)
+    ratio.dist=ratio.dist+c(random.iso, random.2neighbor, random.3neighbor, random.3moreneighbor)/(sum(c(random.iso, random.2neighbor, random.3neighbor, random.3moreneighbor))-1)
+  }
+  if (length(random.result$lengths)==1)
+   {
+    if (random.result$values>1)
+       ratio.dist=ratio.dist+c(1,0,0,0) # only isolated windows 
+    if (random.result$values==1 & random.result$lengths==1)
+       ratio.dist=ratio.dist+c(0,1,0,0) # only 2neighbor windows
+    if (random.result$values==1 & random.result$lengths==2)
+       ratio.dist=ratio.dist+c(0,0,1,0) # only 3neighbor windows
+    if (random.result$values==1 & random.result$lengths>2)
+       ratio.dist=ratio.dist+c(0,0,0,1) # only 3moreneighbor windows
+   }
+ } # end of jj
+  random.count[,ii]=ratio.dist/num.rep
+  for (jj in 1:nrow(count))
+    pvalue[jj,ii]=poisson.test(round(c(count[jj,ii], random.count[jj,ii])*total.num),r=1, alternative = "greater")$p.value
+ ############################## for each window, calculate the distance to the closest neighbor 
+  closest.dist=numeric()
+  for (jj in 1:length(wind.index))
+  {
+   if (jj==1) 
+    closest.dist[jj]=wind.index[jj+1]-wind.index[jj]
+   if (jj>1 & jj<length(wind.index))
+     closest.dist[jj]=min(wind.index[jj+1]-wind.index[jj], wind.index[jj]-wind.index[jj-1])
+   if (jj==length(wind.index))
+     closest.dist[jj]=wind.index[jj]-wind.index[jj-1]
+  }
+  closest.neigh.dist[[ii]]=closest.dist
+} # end of ii
+
+closest.neigh.mut.type[[i]]=closest.neigh.dist
+###############
+rownames(pvalue)=c(0,1,2, ">2")
+colnames(pvalue)=cutoff
+#kable(pvalue, caption=mut.type[i])
+pvalue.mut.type[[i]]=pvalue
 
 rownames(count)=c(0,1,2, ">2")
 colnames(count)=cutoff
-barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,2), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consective windows"))
-}
+log.pvalue=-log(pvalue)
+log.pvalue[log.pvalue>5]=5
+barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,6), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consecutive windows"))
+points(as.vector(barcenters), as.vector(log.pvalue), col=rep(c("red", "blue", "green", "yellow"), 4), pch=16)
+} # end of i
 ```
 
 
 
 * No.consecutive windows: 0 means 'isolated' windows , 1 means two-consecutive windows, and etc.  
 * with cutoff of 4, all "hotsopt" are isolated and consecutive hotspots are clearly observed until cutoff reduces to 2. 
+
+
+```{r, echo=F}
+for (j in 1:length(mut.type))
+{  
+
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+for (i in 1:3)
+{
+ave=mean(closest.neigh.mut.type[[j]][[i]])
+hist(closest.neigh.mut.type[[j]][[i]], freq=F, breaks=50, main=paste("cutoff of ", cutoff[i], "; mean of ", round(ave),  sep=""), xlab="")
+lines(density(closest.neigh.mut.type[[j]][[i]]), col="red")
+abline(v=1, col="blue")
+}
+  mtext(mut.type[j], outer = TRUE, cex = 1.5)
+}  
+```
+
+
+* for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density 
+* the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1. 
+
+
 
 
 
@@ -336,7 +418,7 @@ pvalue.mut.type=list()
 closest.neigh.mut.type=list()
 for (i in 1:length(mut.type))
 {
-#  i=2
+#  i=1
 simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
 
 stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
@@ -410,17 +492,33 @@ pvalue.mut.type[[i]]=pvalue
 
 rownames(count)=c(0,1,2, ">2")
 colnames(count)=cutoff
-barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,2), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consecutive windows"))
+log.pvalue=-log(pvalue)
+log.pvalue[log.pvalue>5]=5
+barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,6), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consecutive windows"))
+points(as.vector(barcenters), as.vector(log.pvalue), col=rep(c("red", "blue", "green", "yellow"), 4), pch=16)
 } # end of i
 ```
 
 
 * No.consecutive windows: 0 means 'isolated' windows , 1 means two-consecutive windows, and etc.  
 * with cutoff of 4, all "hotsopt" are isolated and consecutive hotspots are clearly observed until cutoff reduces to 2. 
+* points over the bars are -log(p values) of enrichment with background, -log(p values) are forced to be 5 when they are greater than 5. 
+
+
+```{r, echo=F, eval=F}
+library(depmixS4)
+total.state=rep(0,nrow(simons_control))
+total.state[wind.index]=1
+total.state=data.frame(total.state)
+colnames(total.state)=c("state")
+mod=depmix(list(state~1),data=total.state,nstates=2, family = list(multinomial("identity")))
+fm=fit(mod)
+
+```
 
 
 
-```{r, echo=F, results='asis'}
+```{r, echo=F, results='asis', warning=F}
   kable(pvalue.mut.type[[1]], caption=mut.type[1], "html")%>%
 kable_styling() %>%
 scroll_box(height = "200px")
@@ -451,7 +549,9 @@ scroll_box(height = "200px")
   
 ```
 
-* P values: In the whole genome, randomly pick the same amount of hotspot windows, do a enrichment test between hotspot windows and random windows under each scenario by one-side poisson test.    
+* In every table, each column is the residual cutoff and each row is the number of consecutive windows.  
+* Numbers in the table are p values: In the whole genome, randomly pick the same amount of random windows as hotspot windows, do a enrichment test between hotspot windows and random windows under each scenario by one-side poisson test. 
+  
 
 
 
