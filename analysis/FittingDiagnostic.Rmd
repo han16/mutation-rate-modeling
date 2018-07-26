@@ -161,6 +161,7 @@ path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_es
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 pvalue.mut.type=list()
 closest.neigh.mut.type=list()
+random.closest.neigh.mut.type=list()
 for (i in 1:length(mut.type))
 {
 #  i=2
@@ -170,6 +171,7 @@ count=matrix(nrow=4, ncol=length(cutoff))
 random.count=matrix(nrow=4, ncol=length(cutoff))
 pvalue=matrix(nrow=4, ncol=length(cutoff))
 closest.neigh.dist=list()
+random.win.closest.neigh.dist=list()
 for (ii in 1:length(cutoff))
 {
 simons_control_hotspot=simons_control[which(stand.diff>cutoff[ii]),]
@@ -213,6 +215,14 @@ count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c
   random.count[,ii]=ratio.dist/num.rep
   for (jj in 1:nrow(count))
     pvalue[jj,ii]=poisson.test(round(c(count[jj,ii], random.count[jj,ii])*total.num),r=1, alternative = "greater")$p.value
+ ###############################  get null distribution of distance of one hotpspot to its closeest neighbor 
+  total.num=nrow(simons_control)
+  hotspot.num=nrow(simons_control[which(stand.diff>cutoff[ii]),])
+  random.window.index=sort(sample(seq(1,total.num), hotspot.num))
+  closest.neigh.dist.indi=numeric()
+  for (jj in 1:(length(random.window.index)-1))
+      closest.neigh.dist.indi[jj]=random.window.index[jj+1]-random.window.index[jj]
+  random.win.closest.neigh.dist[[ii]]=closest.neigh.dist.indi  
  ############################## for each window, calculate the distance to the closest neighbor 
   closest.dist=numeric()
   for (jj in 1:length(wind.index))
@@ -226,8 +236,9 @@ count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c
   }
   closest.neigh.dist[[ii]]=closest.dist
 } # end of ii
-
+############
 closest.neigh.mut.type[[i]]=closest.neigh.dist
+random.closest.neigh.mut.type[[i]]=random.win.closest.neigh.dist
 ###############
 rownames(pvalue)=c(0,1,2, ">2")
 colnames(pvalue)=cutoff
@@ -238,7 +249,7 @@ rownames(count)=c(0,1,2, ">2")
 colnames(count)=cutoff
 log.pvalue=-log(pvalue)
 log.pvalue[log.pvalue>5]=5
-barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,6), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consecutive windows"))
+barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,6), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.conse win"))
 points(as.vector(barcenters), as.vector(log.pvalue), col=rep(c("red", "blue", "green", "yellow"), 4), pch=16)
 } # end of i
 ```
@@ -249,7 +260,7 @@ points(as.vector(barcenters), as.vector(log.pvalue), col=rep(c("red", "blue", "g
 * with cutoff of 4, all "hotsopt" are isolated and consecutive hotspots are clearly observed until cutoff reduces to 2. 
 
 
-```{r, echo=F}
+```{r, echo=F, warning=F}
 for (j in 1:length(mut.type))
 {  
 
@@ -257,9 +268,12 @@ par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
 for (i in 1:3)
 {
 ave=mean(closest.neigh.mut.type[[j]][[i]])
-hist(closest.neigh.mut.type[[j]][[i]], freq=F, breaks=50, main=paste("cutoff of ", cutoff[i], "; mean of ", round(ave),  sep=""), xlab="")
+p.value=ks.test(closest.neigh.mut.type[[j]][[i]], random.closest.neigh.mut.type[[j]][[i]])$p.value
+hist(closest.neigh.mut.type[[j]][[i]], freq=F, breaks=50, main=paste(" mean of ", round(ave), ";p.val=", round(p.value, digits=6),sep=""), xlab=cutoff[i])
 lines(density(closest.neigh.mut.type[[j]][[i]]), col="red")
+lines(density(random.closest.neigh.mut.type[[j]][[i]]), col="green")
 abline(v=1, col="blue")
+
 }
   mtext(mut.type[j], outer = TRUE, cex = 1.5)
 }  
@@ -268,6 +282,9 @@ abline(v=1, col="blue")
 
 * for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density 
 * the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1. 
+* red line are density of sample distribution and green line is pdf of null distribution of random windows 
+* p.val is calculated by ks.test for testing if two distributions are identical or not
+
 
 
 
@@ -416,6 +433,7 @@ path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_es
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 pvalue.mut.type=list()
 closest.neigh.mut.type=list()
+random.closest.neigh.mut.type=list()
 for (i in 1:length(mut.type))
 {
 #  i=1
@@ -426,6 +444,7 @@ count=matrix(nrow=4, ncol=length(cutoff))
 random.count=matrix(nrow=4, ncol=length(cutoff))
 pvalue=matrix(nrow=4, ncol=length(cutoff))
 closest.neigh.dist=list()
+random.win.closest.neigh.dist=list()
 for (ii in 1:length(cutoff))
 {
 simons_control_hotspot=simons_control[which(stand.diff>cutoff[ii]),]
@@ -469,6 +488,14 @@ count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c
   random.count[,ii]=ratio.dist/num.rep
   for (jj in 1:nrow(count))
     pvalue[jj,ii]=poisson.test(round(c(count[jj,ii], random.count[jj,ii])*total.num),r=1, alternative = "greater")$p.value
+ ###############################  get null distribution of distance of one hotpspot to its closeest neighbor 
+  total.num=nrow(simons_control)
+  hotspot.num=nrow(simons_control[which(stand.diff>cutoff[ii]),])
+  random.window.index=sort(sample(seq(1,total.num), hotspot.num))
+  closest.neigh.dist.indi=numeric()
+  for (jj in 1:(length(random.window.index)-1))
+      closest.neigh.dist.indi[jj]=random.window.index[jj+1]-random.window.index[jj]
+  random.win.closest.neigh.dist[[ii]]=closest.neigh.dist.indi  
  ############################## for each window, calculate the distance to the closest neighbor 
   closest.dist=numeric()
   for (jj in 1:length(wind.index))
@@ -482,8 +509,9 @@ count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c
   }
   closest.neigh.dist[[ii]]=closest.dist
 } # end of ii
-
+############
 closest.neigh.mut.type[[i]]=closest.neigh.dist
+random.closest.neigh.mut.type[[i]]=random.win.closest.neigh.dist
 ###############
 rownames(pvalue)=c(0,1,2, ">2")
 colnames(pvalue)=cutoff
@@ -494,9 +522,11 @@ rownames(count)=c(0,1,2, ">2")
 colnames(count)=cutoff
 log.pvalue=-log(pvalue)
 log.pvalue[log.pvalue>5]=5
-barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,6), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.consecutive windows"))
+barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, legend=c(0,1,2, ">2"), ylim=c(0,6), xlab="Standardized residual cutoff", ylab="Freq", main=mut.type[i],  args.legend=list(title="No.conse win"))
 points(as.vector(barcenters), as.vector(log.pvalue), col=rep(c("red", "blue", "green", "yellow"), 4), pch=16)
 } # end of i
+
+
 ```
 
 
@@ -518,7 +548,7 @@ fm=fit(mod)
 
 
 
-```{r, echo=F, results='asis', warning=F}
+```{r, echo=F, results='asis', warning=F, eval=F}
   kable(pvalue.mut.type[[1]], caption=mut.type[1], "html")%>%
 kable_styling() %>%
 scroll_box(height = "200px")
@@ -555,7 +585,7 @@ scroll_box(height = "200px")
 
 
 
-```{r, echo=F}
+```{r, echo=F, warning=F}
 for (j in 1:length(mut.type))
 {  
 
@@ -563,9 +593,12 @@ par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
 for (i in 1:3)
 {
 ave=mean(closest.neigh.mut.type[[j]][[i]])
-hist(closest.neigh.mut.type[[j]][[i]], freq=F, breaks=50, main=paste("cutoff of ", cutoff[i], "; mean of ", round(ave),  sep=""), xlab="")
+p.value=ks.test(closest.neigh.mut.type[[j]][[i]], random.closest.neigh.mut.type[[j]][[i]])$p.value
+hist(closest.neigh.mut.type[[j]][[i]], freq=F, breaks=50, main=paste(" mean of ", round(ave), ";p.val=", round(p.value, digits=6),sep=""), xlab=cutoff[i])
 lines(density(closest.neigh.mut.type[[j]][[i]]), col="red")
+lines(density(random.closest.neigh.mut.type[[j]][[i]]), col="green")
 abline(v=1, col="blue")
+
 }
   mtext(mut.type[j], outer = TRUE, cex = 1.5)
 }  
@@ -574,6 +607,8 @@ abline(v=1, col="blue")
 
 * for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density 
 * the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1. 
+* red line are density of sample distribution and green line is pdf of null distribution of random windows 
+* p.val is calculated by ks.test for testing if two distributions are identical or not
 
 
 ####  scatter plot 
@@ -647,9 +682,7 @@ par(op)
 }
 
 
-# A_to_C: 11.31% windows have $Z>4$
-# A_to_G: 2.65%
-# A_to_T: 10.89% 
+
 ```
 
 
@@ -660,7 +693,7 @@ par(op)
 
 
 ```{r, echo=F, warning=F, eval=F}
-# Moran's I 
+# Moran's I
 mut.type=c("A_to_C", "A_to_G", "A_to_T")
 path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
@@ -702,9 +735,7 @@ for (i in 2:length(mut.type))
 legend(1, 4, mut.type, col=seq(1, length(mut.type)), lty=rep(1, length(mut.type)), pch=seq(1, length(mut.type)), cex=0.8 )  
 grid()
 
-# on every chromsome, calculate residual auto-spatial correlation by Moran.I function
-# use incidence matrix-only neighbor windows has distance of 1, 0 otherwise.   
-# significant spatial correlations are observed on chromsome 3, 8, 14, and 20  
+
 
 ```
 
