@@ -26,7 +26,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -74,9 +75,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -95,8 +94,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -112,7 +117,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -132,6 +136,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -153,18 +194,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -242,8 +340,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -252,6 +348,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -310,20 +416,14 @@ div.section {
 
 
 <h1 class="title toc-ignore">Fitting Diagnostic</h1>
-<h4 class="author"><em>Shengtong Han</em></h4>
-<h4 class="date"><em>YYYY-MM-DD</em></h4>
+<h4 class="author">Shengtong Han</h4>
+<h4 class="date">YYYY-MM-DD</h4>
 
 </div>
 
 
 <!-- The file analysis/chunks.R contains chunks that define default settings
 shared across the workflowr files. -->
-<!-- Update knitr chunk options -->
-<!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-07-26</p>
-<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
- package git2r is installed -->
-<p><strong>Code version:</strong> edc1e0b</p>
 <div id="simons-control" class="section level2">
 <h2>Simons-control</h2>
 <div id="bp-windows" class="section level3">
@@ -368,62 +468,135 @@ shared across the workflowr files. -->
 <p>add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows.</p>
 <div id="residual-distribution-and-qq-plot-of-p-values" class="section level4">
 <h4>Residual distribution and QQ plot of p values</h4>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-3-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-3-9.png" width="672" /></p>
 </div>
 <div id="windows-with-high-expected-mutation-rate" class="section level4">
 <h4>Windows with high expected mutation rate</h4>
 <table>
-<caption>windows with standardized residual less than -5</caption>
+<caption>
+windows with standardized residual less than -5
+</caption>
 <thead>
-<tr class="header">
-<th></th>
-<th align="left">chr</th>
-<th align="right">start</th>
-<th align="right">end</th>
-<th align="left">observed</th>
-<th align="left">expected</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+chr
+</th>
+<th style="text-align:right;">
+start
+</th>
+<th style="text-align:right;">
+end
+</th>
+<th style="text-align:left;">
+observed
+</th>
+<th style="text-align:left;">
+expected
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td>A_to_C_1</td>
-<td align="left">chr8</td>
-<td align="right">139240000</td>
-<td align="right">139250000</td>
-<td align="left">0</td>
-<td align="left">189.8829699</td>
+<tr>
+<td style="text-align:left;">
+A_to_C_1
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139240000
+</td>
+<td style="text-align:right;">
+139250000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+189.8829699
+</td>
 </tr>
-<tr class="even">
-<td>A_to_C_2</td>
-<td align="left">chr8</td>
-<td align="right">139250000</td>
-<td align="right">139260000</td>
-<td align="left">0</td>
-<td align="left">650.7239649</td>
+<tr>
+<td style="text-align:left;">
+A_to_C_2
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139250000
+</td>
+<td style="text-align:right;">
+139260000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+650.7239649
+</td>
 </tr>
-<tr class="odd">
-<td>C_to_A.CpG_1</td>
-<td align="left">chr8</td>
-<td align="right">139240000</td>
-<td align="right">139250000</td>
-<td align="left">0</td>
-<td align="left">45.33371804</td>
+<tr>
+<td style="text-align:left;">
+C_to_A.CpG_1
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139240000
+</td>
+<td style="text-align:right;">
+139250000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+45.33371804
+</td>
 </tr>
-<tr class="even">
-<td>C_to_A.CpG_2</td>
-<td align="left">chr8</td>
-<td align="right">139250000</td>
-<td align="right">139260000</td>
-<td align="left">0</td>
-<td align="left">137.5672679</td>
+<tr>
+<td style="text-align:left;">
+C_to_A.CpG_2
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139250000
+</td>
+<td style="text-align:right;">
+139260000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+137.5672679
+</td>
 </tr>
-<tr class="odd">
-<td>C_to_T.CpG_1</td>
-<td align="left">chr8</td>
-<td align="right">139250000</td>
-<td align="right">139260000</td>
-<td align="left">0</td>
-<td align="left">42.86830912</td>
+<tr>
+<td style="text-align:left;">
+C_to_T.CpG_1
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139250000
+</td>
+<td style="text-align:right;">
+139260000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+42.86830912
+</td>
 </tr>
 </tbody>
 </table>
@@ -432,13 +605,13 @@ shared across the workflowr files. -->
 <div id="hotspot-detection-and-neighborhood-correlation" class="section level4">
 <h4>hotspot detection and neighborhood correlation</h4>
 <p>One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected ‘hotspot’ windows.</p>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-6-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-9.png" width="672" /></p>
 <ul>
 <li>No.consecutive windows: 0 means ‘isolated’ windows , 1 means two-consecutive windows, and etc.<br />
 </li>
 <li>with cutoff of 4, all “hotsopt” are isolated and consecutive hotspots are clearly observed until cutoff reduces to 2.</li>
 </ul>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-7-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-9.png" width="672" /></p>
 <ul>
 <li>for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density</li>
 <li>the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1.</li>
@@ -448,7 +621,7 @@ shared across the workflowr files. -->
 </div>
 <div id="scatter-plot" class="section level4">
 <h4>scatter plot</h4>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <ul>
 <li>Every point is one chromosome where expected mutation rate and observed mutation count in each 10k window are added up.</li>
 </ul>
@@ -459,55 +632,103 @@ shared across the workflowr files. -->
 <p>add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows.</p>
 <div id="residual-distribution-and-qq-plot-of-p-values-1" class="section level4">
 <h4>Residual distribution and QQ plot of p values</h4>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-9-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-9.png" width="672" /></p>
 </div>
 <div id="windows-with-high-expected-mutation-rate-1" class="section level4">
 <h4>Windows with high expected mutation rate</h4>
 <table>
-<caption>windows with standardized residual less than -5</caption>
+<caption>
+windows with standardized residual less than -5
+</caption>
 <thead>
-<tr class="header">
-<th></th>
-<th align="left">chr</th>
-<th align="right">start</th>
-<th align="right">end</th>
-<th align="left">observed</th>
-<th align="left">expected</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+chr
+</th>
+<th style="text-align:right;">
+start
+</th>
+<th style="text-align:right;">
+end
+</th>
+<th style="text-align:left;">
+observed
+</th>
+<th style="text-align:left;">
+expected
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td>A_to_C</td>
-<td align="left">chr8</td>
-<td align="right">139200000</td>
-<td align="right">139300000</td>
-<td align="left">0</td>
-<td align="left">840.7832083</td>
+<tr>
+<td style="text-align:left;">
+A_to_C
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139200000
+</td>
+<td style="text-align:right;">
+139300000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+840.7832083
+</td>
 </tr>
-<tr class="even">
-<td>C_to_A.CpG</td>
-<td align="left">chr8</td>
-<td align="right">139200000</td>
-<td align="right">139300000</td>
-<td align="left">0</td>
-<td align="left">182.9181968</td>
+<tr>
+<td style="text-align:left;">
+C_to_A.CpG
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139200000
+</td>
+<td style="text-align:right;">
+139300000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+182.9181968
+</td>
 </tr>
-<tr class="odd">
-<td>C_to_T.CpG</td>
-<td align="left">chr8</td>
-<td align="right">139200000</td>
-<td align="right">139300000</td>
-<td align="left">0</td>
-<td align="left">61.42456014</td>
+<tr>
+<td style="text-align:left;">
+C_to_T.CpG
+</td>
+<td style="text-align:left;">
+chr8
+</td>
+<td style="text-align:right;">
+139200000
+</td>
+<td style="text-align:right;">
+139300000
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+61.42456014
+</td>
 </tr>
 </tbody>
 </table>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="hotspot-detection-and-neighborhood-correlation-1" class="section level4">
 <h4>hotspot detection and neighborhood correlation</h4>
 <p>One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected ‘hotspot’ windows.</p>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-13-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-9.png" width="672" /></p>
 <ul>
 <li>No.consecutive windows: 0 means ‘isolated’ windows , 1 means two-consecutive windows, and etc.<br />
 </li>
@@ -517,7 +738,7 @@ shared across the workflowr files. -->
 </li>
 <li><p>Numbers in the table are p values: In the whole genome, randomly pick the same amount of random windows as hotspot windows, do a enrichment test between hotspot windows and random windows under each scenario by one-side poisson test.</p></li>
 </ul>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-16-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-9.png" width="672" /></p>
 <ul>
 <li>for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density</li>
 <li>the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1.</li>
@@ -527,7 +748,7 @@ shared across the workflowr files. -->
 </div>
 <div id="scatter-plot-1" class="section level4">
 <h4>scatter plot</h4>
-<p><img src="figure/FittingDiagnostic.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <ul>
 <li>Every point is one chromosome where expected mutation rate and observed mutation count in each 100k window are added up.</li>
 </ul>
@@ -537,44 +758,6 @@ shared across the workflowr files. -->
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <!-- Insert the session information into the document -->
-<pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.5.0 (2018-04-23)
-Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 7 x64 (build 7601) Service Pack 1
-
-Matrix products: default
-
-locale:
-[1] LC_COLLATE=English_United States.1252 
-[2] LC_CTYPE=English_United States.1252   
-[3] LC_MONETARY=English_United States.1252
-[4] LC_NUMERIC=C                          
-[5] LC_TIME=English_United States.1252    
-
-attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
-
-other attached packages:
-[1] depmixS4_1.3-3     Rsolnp_1.16        MASS_7.3-49       
-[4] nnet_7.3-12        ape_5.1            gplots_3.0.1      
-[7] RColorBrewer_1.1-2 kableExtra_0.8.0   knitr_1.20        
-
-loaded via a namespace (and not attached):
- [1] Rcpp_0.12.16       highr_0.6          git2r_0.21.0      
- [4] pillar_1.2.2       compiler_3.5.0     plyr_1.8.4        
- [7] bitops_1.0-6       tools_3.5.0        digest_0.6.15     
-[10] evaluate_0.10.1    tibble_1.4.2       nlme_3.1-137      
-[13] viridisLite_0.3.0  lattice_0.20-35    pkgconfig_2.0.1   
-[16] rlang_0.2.0        rstudioapi_0.7     parallel_3.5.0    
-[19] yaml_2.1.19        httr_1.3.1         stringr_1.3.0     
-[22] xml2_1.2.0         gtools_3.5.0       caTools_1.17.1    
-[25] hms_0.4.2          stats4_3.5.0       rprojroot_1.3-2   
-[28] grid_3.5.0         R6_2.2.2           rmarkdown_1.9     
-[31] gdata_2.18.0       readr_1.1.1        magrittr_1.5      
-[34] codetools_0.2-15   backports_1.1.2    scales_0.5.0      
-[37] htmltools_0.3.6    rvest_0.3.2        colorspace_1.3-2  
-[40] KernSmooth_2.23-15 stringi_1.1.7      munsell_0.4.3     
-[43] truncnorm_1.0-8   </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

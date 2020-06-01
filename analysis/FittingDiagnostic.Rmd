@@ -8,7 +8,6 @@ output: html_document
 <!-- The file analysis/chunks.R contains chunks that define default settings
 shared across the workflowr files. -->
 ```{r read-chunk, include=FALSE}
-knitr::read_chunk("chunks.R")
 library(knitr)
 library(kableExtra)
 library(RColorBrewer)
@@ -17,18 +16,6 @@ library(ape)
 set.seed(123)
 ```
 
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
-
-<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
- package git2r is installed -->
-```{r code-version, echo=FALSE, results='asis'}
-```
 
 ```{r, echo=F}
 loadRData <- function(fileName){
@@ -76,7 +63,7 @@ plotQQ.unif <- function(p.obs) {
 
 ```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\10kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 for (i in 1:length(mut.type))
 {
@@ -114,7 +101,7 @@ cutoff=-5
 high.mut.region=c(NA)
 high.mut.type=c(NA)
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 for (i in 1:length(mut.type))
 {
@@ -157,7 +144,7 @@ One way to define hotsopt is look at standardized residuals that are greater tha
 ```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 cutoff=c(2,3,4)
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 pvalue.mut.type=list()
 closest.neigh.mut.type=list()
@@ -175,6 +162,10 @@ random.win.closest.neigh.dist=list()
 for (ii in 1:length(cutoff))
 {
 simons_control_hotspot=simons_control[which(stand.diff>cutoff[ii]),]
+############## hotspot for Xin's grant 
+if (ii==3)
+write.csv(simons_control_hotspot, file=paste("C:\\Shengtong\\Research\\mutation-rate\\ForXinGrant\\", "10k.window", "stand.diff.cutoff",cutoff[ii], mut.type[i],"CSV", sep="."))  
+##############
 wind.index=as.numeric(rownames(simons_control_hotspot))
 ###############################
 wind.result=rle(diff(wind.index))
@@ -297,7 +288,7 @@ abline(v=1, col="blue")
 par(mfrow=c(3,3))
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 chr=paste("chr", seq(1,22), sep="")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 
 
@@ -342,7 +333,7 @@ add 100bp windows: Observed and estimated mutations for 100k windows are obtaine
 
 ```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 for (i in 1:length(mut.type))
 {
@@ -379,7 +370,7 @@ cutoff=-5
 high.mut.region=c(NA)
 high.mut.type=c(NA)
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 for (i in 1:length(mut.type))
 {
@@ -402,7 +393,7 @@ kable(high.mut.region, caption = "windows with standardized residual less than -
 ```
 
 
-```{r, echo=F}
+```{r, echo=F, eval=F}
 high.mut.chr8=read.table("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.ExpObsVar.bed.139200000-139300000")
 par(mfrow=c(1,2),oma = c(0, 0, 2, 0))
 
@@ -429,15 +420,18 @@ One way to define hotsopt is look at standardized residuals that are greater tha
 ```{r, echo=F, warning=F, cache=F}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 cutoff=c(2,3,4)
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 pvalue.mut.type=list()
 closest.neigh.mut.type=list()
 random.closest.neigh.mut.type=list()
+ExpObsVar.sum=matrix(0, nrow=31063, ncol=2)
 for (i in 1:length(mut.type))
 {
 #  i=1
 simons_control=read.table(paste(path, prefix, mut.type[i], ".ExpObsVar.bed.bed.added", sep=""), header=F)
+ExpObsVar.sum[,1]=ExpObsVar.sum[,1]+as.numeric(as.character(simons_control[,4])) # sum up observed and expected mutation counts across mutation types 
+ExpObsVar.sum[,2]=ExpObsVar.sum[,2]+as.numeric(as.character(simons_control[,5])) # sum up observed and expected mutation counts across mutation types
 
 stand.diff=(as.numeric(as.character(simons_control[,4]))-as.numeric(as.character(simons_control[,5])))/sqrt(as.numeric(as.character(simons_control[,5])))
 count=matrix(nrow=4, ncol=length(cutoff))
@@ -448,6 +442,17 @@ random.win.closest.neigh.dist=list()
 for (ii in 1:length(cutoff))
 {
 simons_control_hotspot=simons_control[which(stand.diff>cutoff[ii]),]
+############hotspot for Xin's grant 
+#if (ii==3)
+{  
+# save the full list  
+#write.csv(simons_control_hotspot, file=paste("C:\\Shengtong\\Research\\mutation-rate\\ForXinGrant\\", "100k.window", "stand.diff.cutoff",cutoff[ii], mut.type[i],"CSV", sep="."))  
+  
+#simons_control_hotspot[,6]=(as.numeric(as.character(simons_control_hotspot[,4]))-as.numeric(as.character(simons_control_hotspot[,5])))/sqrt(as.numeric(as.character(simons_control_hotspot[,5])))
+#simons_control_hotspot_sort=simons_control_hotspot[order(simons_control_hotspot$V6, decreasing=T),]
+#write.csv(simons_control_hotspot_sort[1:5,], file=paste("C:\\Shengtong\\Research\\mutation-rate\\ForXinGrant\\", "100k.window", "stand.diff.cutoff",cutoff[ii], "top5window", mut.type[i],"CSV", sep=".")) 
+}  
+############
 wind.index=as.numeric(rownames(simons_control_hotspot))
 ###############################
 wind.result=rle(diff(wind.index))
@@ -509,6 +514,8 @@ count[,ii]=c(wind.iso, wind.2neighbor, wind.3neighbor, wind.3moreneighbor)/sum(c
   }
   closest.neigh.dist[[ii]]=closest.dist
 } # end of ii
+##############
+
 ############
 closest.neigh.mut.type[[i]]=closest.neigh.dist
 random.closest.neigh.mut.type[[i]]=random.win.closest.neigh.dist
@@ -526,6 +533,15 @@ barcenters=barplot(count, col=c("red", "blue", "green", "yellow"), beside=T, leg
 points(as.vector(barcenters), as.vector(log.pvalue), col=rep(c("red", "blue", "green", "yellow"), 4), pch=16)
 } # end of i
 
+################### consider total mutation count acoss all mutation types 
+stand.diff=(ExpObsVar.sum[,1]-ExpObsVar.sum[,2])/sqrt(ExpObsVar.sum[,2])
+simons_control_hotspot=simons_control[which(stand.diff>4),]
+simons_control_hotspot[,6]=stand.diff[which(stand.diff>4)]
+simons_control_hotspot[,4]=ExpObsVar.sum[which(stand.diff>4),1]
+simons_control_hotspot[,5]=ExpObsVar.sum[which(stand.diff>4),2]
+simons_control_hotspot_sort=simons_control_hotspot[order(simons_control_hotspot$V6, decreasing=T),]
+write.csv(simons_control_hotspot_sort, file=paste("C:\\Shengtong\\Research\\mutation-rate\\ForXinGrant\\", "100k.window", "stand.diff.cutoff.4", "topwindow","across.all.mutation.type","CSV", sep=".")) 
+##################
 
 ```
 
@@ -618,7 +634,7 @@ abline(v=1, col="blue")
 par(mfrow=c(3,3))
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 chr=paste("chr", seq(1,22), sep="")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 
 
@@ -655,7 +671,7 @@ grid()
 ```{r, echo=F, warning=F, eval=F}
 #### Relative risk of each window
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 
 
@@ -695,7 +711,7 @@ par(op)
 ```{r, echo=F, warning=F, eval=F}
 # Moran's I
 mut.type=c("A_to_C", "A_to_G", "A_to_T")
-path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
+#path="D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\"
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation."
 chrom=paste("chr", seq(1,22), sep="")
 all.pval=matrix(nrow=length(mut.type), ncol=length(chrom))
