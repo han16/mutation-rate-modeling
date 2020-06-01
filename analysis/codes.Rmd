@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## obtain baseline mutation rate 
 
-Below is the core code used to calculate baseline mutation rate for 7-mer ERV. It is built upon a couple of other codes somewhere else.  
+Below is the core code `get.baseline.mutation.rate.7mer.sh` used to calculate baseline mutation rate for 7-mer ERV. It is built upon a couple of other codes somewhere else.  
 
 ```{r, echo=T, eval=F}
 # This script is used to generate allele-specific base level mutation rate based on the 7-mer model based on extremely rare variants.
