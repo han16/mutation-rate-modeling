@@ -1,0 +1,77 @@
+---
+title: "codes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## obtain baseline mutation rate 
+
+Below is the core code used to calculate baseline mutation rate for 7-mer ERV. It is built upon a couple of other codes somewhere else.  
+
+```{r, echo=T, eval=F}
+# This script is used to generate allele-specific base level mutation rate based on the 7-mer model based on extremely rare variants.
+# The window file used would include coding, UTRs, 10kb within TSSs and promoters
+path1=/project2/xinhe/Shengtong/Shengtong_JumpSeq/mutation.rate/baseline.mutation/baseline.7mer
+path2=/project2/xinhe/TADA-A
+path3=/project2/xinhe/Shengtong/Shengtong_JumpSeq/mutation.rate/codes/sbatch
+prefix=chr1.hg19.genome
+chr=chr1
+module load bedtools
+
+cd $path1/
+# Step 1: prepare extended genomic windows file
+#sed '1d' ../data/Example.bed | awk {'print $1"\t"$2"\t"$3+1"\t"$4'} > Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed
+# awk {'print $1"\t"$2"\t"$3+1"\t"$4'}  Example.bed > Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed
+
+# Step 2: Get the nucleotide sequence of each interval, in tab format
+bedtools getfasta -fi $path2/other_annotations/genome_build/hg19.fasta -bed $prefix.bed  -fo $prefix.bed.fasta -tab
+
+# Step 3: Use the output file to extract ref/alt of each base and one column of the 1-based position within the window intervals.
+python $path2/external_tools/ref_alt_extract_for_ERV_mutrate_generation.py $prefix.bed.fasta  > $prefix.bed.fasta.tri
+rm $prefix.bed.fasta
+#Also remove entries that have alt the same as ref
+awk '$3 != $4' $prefix.bed.fasta.tri > $prefix.bed.fasta.tri2
+rm $prefix.bed.fasta.tri
+#rm ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta
+#rm ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri
+
+#sort -k1,1 -k2,2n Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.sorted
+
+# split based on chromosomes
+#awk '$1 == 1' $prefix.bed.fasta.tri2 > $prefix.bed.fasta.tri2.$chr
+awk '$1 == 1' $prefix.bed.fasta.tri2 > $prefix.bed.fasta.tri2.$chr
+#awk '$1 == 2' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr2
+#awk '$1 == 3' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr3
+#awk '$1 == 4' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr4
+#awk '$1 == 5' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr5
+#awk '$1 == 6' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr6
+#awk '$1 == 7' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr7
+#awk '$1 == 8' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr8
+#awk '$1 == 9' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr9
+#awk '$1 == 10' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr10
+#awk '$1 == 11' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr11
+#awk '$1 == 12' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr12
+#awk '$1 == 13' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr13
+#awk '$1 == 14' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr14
+#awk '$1 == 15' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr15
+#awk '$1 == 16' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr16
+#awk '$1 == 17' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr17
+#awk '$1 == 18' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr18
+#awk '$1 == 19' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr19
+#awk '$1 == 20' Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr20
+#awk '$1 == 21' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr21
+#awk '$1 == 22' ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2 > ../data/Example_windows_extended_1bp_for_getting_base_level_mutrate_coding_noncoding_UTRs.bed.fasta.tri2.chr22
+
+
+
+# Step 4: Use .tri2 file as an input file to get the allele-specific mutation rate.
+
+#for i in {1..22}
+#do sbatch $path3/$prefix.bed.fasta.tri2.chr$i.sbatch
+#done
+
+sbatch $path3/$prefix.bed.fasta.tri2.$chr.sbatch
+```
