@@ -11,7 +11,7 @@
 
 
 
-<title>codes</title>
+<title>code</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -414,11 +414,45 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">codes</h1>
+<h1 class="title toc-ignore">code</h1>
 
 </div>
 
 
+<div id="coding-workflow" class="section level2">
+<h2>Coding Workflow</h2>
+<p>I split the codes into a sequence of small steps, each accompolishes a small task.</p>
+<pre class="r"><code># all relevant codes are located at
+/project2/xinhe/Shengtong/mutation_rate/mutation.rate/codes</code></pre>
+<p>Note: (1) I have renamed Shengtong_JumpSeq to mutation_rate. so wherever Shengtong_JumpSeq appears in a path, replace it with mutation_rate to make the code executable (2) all 14 features are stored at /project2/xinhe/Shengtong/mutation_rate/mutation.rate/refdir. Some features are discrete and others are continuous.</p>
+<div id="step-1-extract-covariate-features" class="section level3">
+<h3>Step 1: extract covariate features</h3>
+<p>This step get 14 covariate features given a genome window.</p>
+<pre class="r"><code>Code: step1_extract.cova.feature.sh</code></pre>
+</div>
+<div id="step-2-split-into-cpg-and-non-cpg" class="section level3">
+<h3>step 2: Split into CpG and non CpG</h3>
+<pre class="r"><code>Code: step2_split.base.C.into.CpG.nonCpG.sh </code></pre>
+</div>
+<div id="step-3-get-mutation-data-of-every-chromosome-by-mutation-type" class="section level3">
+<h3>step 3: get mutation data of every chromosome by mutation type</h3>
+<p>because of memory issue, need to run the analysis on one single chromosome at a time</p>
+<pre class="r"><code>code: step3_get.mutation.data.on.every.chromsome.every.mutation.type.sh</code></pre>
+</div>
+<div id="step-4-combine-baseline-mutation-rate-and-covariate-features" class="section level3">
+<h3>step 4: combine baseline mutation rate and covariate features</h3>
+<pre class="r"><code>Code: step4_combine.cova.feature.mutation.and.baseline.rate.sh</code></pre>
+</div>
+<div id="step-5-run-glm-to-do-model-fitting" class="section level3">
+<h3>step 5: run GLM to do model fitting</h3>
+<p>At this point, we have mutation count, covariate features and baseline mutation rate ready, so run GLM to fit the model.</p>
+<pre class="r"><code>Code: step5_poiss.reg.by.cate.R</code></pre>
+</div>
+<div id="step-6-model-fitting-diagnostic" class="section level3">
+<h3>step 6: model fitting diagnostic</h3>
+<pre class="r"><code>Code: step6_ResidualVisual.R</code></pre>
+</div>
+</div>
 <div id="obtain-baseline-mutation-rate" class="section level2">
 <h2>obtain baseline mutation rate</h2>
 <p>Below is the core code <code>get.baseline.mutation.rate.7mer.sh</code> used to calculate baseline mutation rate for 7-mer ERV. It is built upon a couple of other codes somewhere else.</p>

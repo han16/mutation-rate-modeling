@@ -47,6 +47,8 @@ Table: Five WGS  DNM case sample information
 
 
 
+
+
 ### Wong_NC_2016_693_control_SNV- Control sample 
 
 index    | Samples | \# mutations| \# subjects
@@ -155,6 +157,13 @@ index    | mutation type |  Wong-control| Jonsson | simons-control| Yuen
 5 | C->T | 5,314 (19.61%) | 21,220 | 23,977 | 24,418
 6 | C->A | 1,298 (4.79%) | 3,862 | 5,404 | 5,942
 
+```{r, echo=T, eval=F}
+Wong data: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Wong_NC_2016_693_control_SNV_with_allele_info.txt
+Jonson: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Jonsson_Yuen2017/comb_SNPs_Jonsson
+Yuen:  /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Jonsson_Yuen2017/comb_SNPs_Yuen
+Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS
+```
+
 
 ## Data processing and model fitting 
 
@@ -210,10 +219,10 @@ wong.control.para.est=list(); simons.control.para.est=list(); jonsson.para.est=l
 yuen.para.est=list()
 for (i in 1:length(mut.type))
 {
-  wong.control.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Wong_NC_2016_693_control_SNV_100bp.window_mutation", mut.type[i], "RData", sep="."))
-  simons.control.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
-  jonsson.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\comb_SNPs_Jonsson.mutation", mut.type[i], "RData", sep="."))
-  yuen.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Jonsson_Yuen\\comb_SNPs_Yuen.mutation", mut.type[i], "RData", sep="."))
+  wong.control.para.est[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Wong_NC_2016_693_control_SNV_100bp.window_mutation", mut.type[i], "RData", sep="."))
+  simons.control.para.est[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Simons\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
+  jonsson.para.est[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Jonsson_Yuen\\comb_SNPs_Jonsson.mutation", mut.type[i], "RData", sep="."))
+  yuen.para.est[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Jonsson_Yuen\\comb_SNPs_Yuen.mutation", mut.type[i], "RData", sep="."))
 }
 names(wong.control.para.est)=mut.type
 names(simons.control.para.est)=mut.type
@@ -291,9 +300,9 @@ simons.control.para.est.100bp=list(); simons.control.para.est.100k=list()
 simons.control.para.est.10k=list()
 for (i in 1:length(mut.type))
 {
-  simons.control.para.est.100bp[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
- simons.control.para.est.100k[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
- simons.control.para.est.10k[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\10kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
+  simons.control.para.est.100bp[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Simons\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
+ simons.control.para.est.100k[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Simons\\100kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
+ simons.control.para.est.10k[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Simons\\10kwindow\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "RData", sep="."))
  
 }
 names(simons.control.para.est.100bp)=mut.type
@@ -360,7 +369,7 @@ cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27m
 simons.control.para.est=list()
 for (i in 1:length(mut.type))
 {
-  simons.control.para.est[[i]]=loadRData(paste("D:\\ResearchWork\\StatisticalGenetics\\Mutation-Rate-project\\parameter_estimate\\Simons\\100bpwindow_varselection\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "var.selection.RData", sep="."))
+  simons.control.para.est[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Simons\\100bpwindow_varselection\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "var.selection.RData", sep="."))
 }
 ```
 

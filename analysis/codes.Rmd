@@ -1,11 +1,75 @@
 ---
-title: "codes"
+title: "code"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Coding Workflow 
+
+I split the codes into a sequence of small steps, each accompolishes a small task. 
+```{r, echo=T, eval=F}
+# all relevant codes are located at
+/project2/xinhe/Shengtong/mutation_rate/mutation.rate/codes
+```
+
+Note: (1) I have renamed Shengtong_JumpSeq to mutation_rate. so wherever Shengtong_JumpSeq appears in a path, replace it with mutation_rate to make the code executable (2) all 14 features are stored at /project2/xinhe/Shengtong/mutation_rate/mutation.rate/refdir. Some features are discrete and others are continuous. 
+
+
+
+
+
+###  Step 1: extract covariate features
+
+This step get 14 covariate features given a genome window.  
+
+```{r, echo=T, eval=F}
+Code: step1_extract.cova.feature.sh
+```
+
+
+### step 2: Split into CpG and non CpG 
+
+```{r, echo=T, eval=F}
+Code: step2_split.base.C.into.CpG.nonCpG.sh 
+```
+
+
+
+###  step 3: get mutation data of every chromosome by mutation type  
+
+because of memory issue, need to run the analysis on one single chromosome at a time
+
+```{r, echo=T, eval=F}
+code: step3_get.mutation.data.on.every.chromsome.every.mutation.type.sh
+```
+
+
+###  step 4: combine baseline mutation rate and covariate features 
+
+```{r, echo=T, eval=F}
+Code: step4_combine.cova.feature.mutation.and.baseline.rate.sh
+```
+
+
+###  step 5: run GLM to do model fitting 
+
+At this point, we have mutation count, covariate features and baseline mutation rate ready, so run GLM to fit the model. 
+
+```{r, echo=T, eval=F}
+Code: step5_poiss.reg.by.cate.R
+```
+
+###  step 6: model fitting diagnostic 
+
+```{r,echo=T, eval=F}
+Code: step6_ResidualVisual.R
+```
+
+
+
 
 ## obtain baseline mutation rate 
 
