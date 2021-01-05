@@ -125,7 +125,7 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 ### Yuen data 
 
-WGS Simons control data
+Yuen data 
 
 index    | mutation type | \# mutations
 ----|-------|-------|---
