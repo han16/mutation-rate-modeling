@@ -45,7 +45,15 @@ index    | Samples | \# mutations| \# subjects
 
 Table: Five WGS  DNM case sample information
 
+* Jiang_cases_DNM.bed [Detection of clinically relevant genetic variants in autism spectrum disorder by whole-genome sequencing](https://pubmed.ncbi.nlm.nih.gov/23849776/), AJHG 2013. 
 
+* Michaelson_cases_DNM.bed [Whole-genome sequencing in autism identifies hot spots for de novo germline mutation](https://pubmed.ncbi.nlm.nih.gov/23260136/), cell, 2012
+
+* Yuen_NM2015_cases_DNM.bed [Whole-genome sequencing of quartet families with autism spectrum disorder](https://pubmed.ncbi.nlm.nih.gov/25621899/), nature medicine, 2015
+
+* Wu_cases_DNM.bed [unpublished]
+
+* Kong_cases_DNM.bed [Rate of de novo mutations and the importance of father's age to disease risk](https://www.nature.com/articles/nature11396), nature, 2012
 
 
 
@@ -163,6 +171,13 @@ Jonson: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Jonsson_Yuen2017/c
 Yuen:  /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Jonsson_Yuen2017/comb_SNPs_Yuen
 Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS
 ```
+
+
+* Wong data: [New observations on maternal age effect on germline de novo mutation](https://www.nature.com/articles/ncomms10486), nature communications, 2016
+
+* Jonson, not clear 
+
+* Simons: not clear 
 
 
 ## Data processing and model fitting 
