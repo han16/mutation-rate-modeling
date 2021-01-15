@@ -38,7 +38,10 @@ index  | mutation type | # total windows |# window $p.val<0.05$ |  # window $p.v
 2 | A->G | 15,067 | 15,067 | 10,806
 3 | A->T | 26,839,598 | 3,656 | 3,649
 
-
+```{r, echo=T, eval=F}
+Data: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS/controls/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.bed.bed.add.100bp
+Columns: chr, start, end, observed rate, fitted rate.
+```
 
 
 
