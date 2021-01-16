@@ -175,9 +175,9 @@ Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS
 
 * Wong data: [New observations on maternal age effect on germline de novo mutation](https://www.nature.com/articles/ncomms10486), nature communications, 2016
 
-* Jonson, not clear 
+* Jonson, [Whole genome characterization of sequence diversity of 15,220 Icelanders](https://www.nature.com/articles/sdata2017115), Scientific Data, 2017
 
-* Simons: not clear 
+* Simons: [Genomic Patterns of De Novo Mutation in Simplex Autism](https://pubmed.ncbi.nlm.nih.gov/28965761/), cell, 2017
 
 
 ## Data processing and model fitting 
