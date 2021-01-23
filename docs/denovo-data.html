@@ -750,6 +750,20 @@ Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS</code><
 <li><p>Jonson, <a href="https://www.nature.com/articles/sdata2017115">Whole genome characterization of sequence diversity of 15,220 Icelanders</a>, Scientific Data, 2017</p></li>
 <li><p>Simons: <a href="https://pubmed.ncbi.nlm.nih.gov/28965761/">Genomic Patterns of De Novo Mutation in Simplex Autism</a>, cell, 2017</p></li>
 </ul>
+<pre class="r"><code>Folder: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS/controls
+Data for 100bp window: table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.bed.bed.add.100bp
+Each row shows data of one 100bp window. Each column: chromosome, start, end, observed DNM count in the window, and fitted mutation rate in the window. 
+
+chr1     0   100 0   0
+chr1     100     200 0   0
+chr1     200     300 0   0
+chr1     300     400 0   0
+chr1     400     500 0   0
+chr1     500     600 0   0
+chr1     600     700 0   0
+chr1     700     800 0   0
+chr1     800     900 0   0
+chr1     900     1000 0      0</code></pre>
 </div>
 </div>
 <div id="data-processing-and-model-fitting" class="section level2">
@@ -825,19 +839,19 @@ Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS</code><
 <div id="whole-genome-fit-14-features-simultaneously" class="section level2">
 <h2>Whole genome-fit 14 features simultaneously</h2>
 <p>The window length is set 100 bp. Use GLM to fit the model, and stated otherwise.</p>
-<p><img src="denovo-data_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-2.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-3.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-4.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-5.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-6.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-7.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-8.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-9.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-10.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-11.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-12.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-13.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-9-14.png" width="672" /></p>
+<p><img src="denovo-data_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-4.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-5.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-6.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-7.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-8.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-9.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-10.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-11.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-12.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-13.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-10-14.png" width="672" /></p>
 <ul>
 <li><p>Fit 14 covariate features simultaneously.</p></li>
 <li><p>95% confidence interval by GLM is often big.</p></li>
 </ul>
 <div id="parameter-estimate-comparison" class="section level4">
 <h4>Parameter estimate comparison</h4>
-<p><img src="denovo-data_files/figure-html/unnamed-chunk-12-1.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-2.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-3.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-4.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-5.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-6.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-7.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-8.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-9.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-10.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-11.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-12.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-13.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-12-14.png" width="672" /></p>
+<p><img src="denovo-data_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-2.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-3.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-4.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-5.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-6.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-7.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-8.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-9.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-10.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-11.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-12.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-13.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-13-14.png" width="672" /></p>
 </div>
 </div>
 <div id="parameter-estimate-with-variable-selection" class="section level2">
 <h2>Parameter estimate with variable selection</h2>
-<p><img src="denovo-data_files/figure-html/unnamed-chunk-15-1.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-2.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-3.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-4.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-5.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-6.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-7.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-8.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-15-9.png" width="672" /></p>
+<p><img src="denovo-data_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-4.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-5.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-6.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-7.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-8.png" width="672" /><img src="denovo-data_files/figure-html/unnamed-chunk-16-9.png" width="672" /></p>
 <ul>
 <li>compute the raio of confidence interval over absolute value of estimated coefficient, rank them, and choose maximum of the top 25% quanitle or 1. That is at least there are 25% covariate features with smallest ratios are selected as significant features.</li>
 </ul>

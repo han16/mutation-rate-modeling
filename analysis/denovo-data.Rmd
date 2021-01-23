@@ -179,6 +179,24 @@ Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS
 
 * Simons: [Genomic Patterns of De Novo Mutation in Simplex Autism](https://pubmed.ncbi.nlm.nih.gov/28965761/), cell, 2017
 
+```{r, echo=T, eval=F}
+Folder: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS/controls
+Data for 100bp window: table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.bed.bed.add.100bp
+Each row shows data of one 100bp window. Each column: chromosome, start, end, observed DNM count in the window, and fitted mutation rate in the window. 
+
+chr1 	 0 	 100 0 	 0
+chr1 	 100 	 200 0 	 0
+chr1 	 200 	 300 0 	 0
+chr1 	 300 	 400 0 	 0
+chr1 	 400 	 500 0 	 0
+chr1 	 500 	 600 0 	 0
+chr1 	 600 	 700 0 	 0
+chr1 	 700 	 800 0 	 0
+chr1 	 800 	 900 0 	 0
+chr1 	 900 	 1000 0 	 0
+
+```
+
 
 ## Data processing and model fitting 
 
