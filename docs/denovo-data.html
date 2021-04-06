@@ -548,6 +548,7 @@ shared across the workflowr files. -->
 <th>index</th>
 <th>mutation type</th>
 <th># mutations</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -555,31 +556,37 @@ shared across the workflowr files. -->
 <td>1</td>
 <td>A-&gt;C</td>
 <td>3,582</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>A-&gt;G</td>
 <td>13,477</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>A-&gt;T</td>
 <td>3,331</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>C-&gt;G</td>
 <td>4,822</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>C-&gt;T</td>
 <td>21,220</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td>C-&gt;A</td>
 <td>3,862</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -594,6 +601,7 @@ shared across the workflowr files. -->
 <th>index</th>
 <th>mutation type</th>
 <th># mutations</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -601,31 +609,37 @@ shared across the workflowr files. -->
 <td>1</td>
 <td>A-&gt;C</td>
 <td>3,899</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>A-&gt;G</td>
 <td>15,083</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>A-&gt;T</td>
 <td>3,664</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>C-&gt;G</td>
 <td>5,393</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>C-&gt;T</td>
 <td>23,977</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td>C-&gt;A</td>
 <td>5,404</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -640,6 +654,7 @@ shared across the workflowr files. -->
 <th>index</th>
 <th>mutation type</th>
 <th># mutations</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -647,31 +662,37 @@ shared across the workflowr files. -->
 <td>1</td>
 <td>A-&gt;C</td>
 <td>4,239</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>A-&gt;G</td>
 <td>15,893</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>A-&gt;T</td>
 <td>4,086</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>C-&gt;G</td>
 <td>5,433</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>C-&gt;T</td>
 <td>24,418</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td>C-&gt;A</td>
 <td>5,942</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -780,15 +801,15 @@ chr1     900     1000 0      0</code></pre>
 <h3>Model fitting for each mutation type separately</h3>
 <p>There are two ways to fit the model, GLM and optims. Both methods give the same esrimate either for whole genome or categorized windows as whown in simulations. Here only present the result by GLM with categorization,</p>
 <ul>
-<li>GLM (use R function GLM) with offset term</li>
-</ul>
+<li><p>GLM (use R function GLM) with offset term</p>
 <p><span class="math display">\[y\sim Pois( e^{\mu+X^T\beta})\]</span></p>
 <ol style="list-style-type: decimal">
-<li>With categorization, response <span class="math inline">\(y\)</span> is the ** number of mutations ** from all windows within a category and covariate feature</li>
-<li><p>offset term uses 7-mer ERV baseline mutation rate, which is sum of 7mer-mutation rate in a window for each mutation type, e.g. for A-&gt;C, sum over all 7-mer mutation rate with A-&gt;C in the center.</p></li>
-<li>intercept is included and the same across all categories</li>
+<li><p>With categorization, response <span class="math inline">\(y\)</span> is the <strong>total number of mutations</strong> from all windows within a category and covariate feature</p></li>
+<li><p>offset term uses 7-mer ERV baseline mutation rate, which is sum of 7-mer mutation rate in a window for each mutation type, e.g. for A-&gt;C, sum over all 7-mer mutation rate with A-&gt;C in the center.</p></li>
+<li><p>intercept is included and the same across all categories</p></li>
 <li><p>confidence interval could be obtained as well</p></li>
-</ol>
+</ol></li>
+</ul>
 </div>
 </div>
 <div id="erv-baseline-mutation-rate" class="section level2">
@@ -800,6 +821,7 @@ chr1     900     1000 0      0</code></pre>
 <th>index</th>
 <th>mutation type</th>
 <th>mutations rate</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -807,31 +829,37 @@ chr1     900     1000 0      0</code></pre>
 <td>1</td>
 <td>A-&gt;C</td>
 <td><span class="math inline">\(1.6627\times 10^{-9}\)</span></td>
+<td></td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>A-&gt;G</td>
 <td><span class="math inline">\(6.1805 \times 10^{-9}\)</span></td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>A-&gt;T</td>
 <td><span class="math inline">\(1.5633 \times 10^{-9}\)</span></td>
+<td></td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>C-&gt;G</td>
 <td><span class="math inline">\(2.8075 \times 10^{-9}\)</span></td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>C-&gt;T</td>
 <td><span class="math inline">\(1.2885 \times 10^{-8}\)</span></td>
+<td></td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td>C-&gt;A</td>
 <td><span class="math inline">\(3.3977 \times 10^{-9}\)</span></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -886,13 +914,13 @@ chr1     900     1000 0      0</code></pre>
 ##  [7] nlme_3.1-139       lattice_0.20-38    evaluate_0.13     
 ## [10] lifecycle_0.2.0    tibble_3.0.1       viridisLite_0.3.0 
 ## [13] pkgconfig_2.0.3    rlang_0.4.6        rstudioapi_0.10   
-## [16] parallel_3.6.0     yaml_2.2.0         xfun_0.7          
+## [16] parallel_3.6.0     yaml_2.2.0         xfun_0.20         
 ## [19] stringr_1.4.0      httr_1.4.1         xml2_1.3.2        
 ## [22] vctrs_0.3.0        gtools_3.8.1       caTools_1.17.1.2  
 ## [25] hms_0.5.3          grid_3.6.0         webshot_0.5.1     
 ## [28] glue_1.4.1         R6_2.4.1           rmarkdown_1.13    
 ## [31] gdata_2.18.0       readr_1.3.1        magrittr_1.5      
-## [34] scales_1.0.0       ellipsis_0.3.0     htmltools_0.3.6   
+## [34] scales_1.1.1       ellipsis_0.3.0     htmltools_0.3.6   
 ## [37] rvest_0.3.5        colorspace_1.4-1   KernSmooth_2.23-15
 ## [40] stringi_1.4.3      munsell_0.5.0      crayon_1.3.4</code></pre>
 </div>

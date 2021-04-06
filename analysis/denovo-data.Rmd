@@ -86,6 +86,7 @@ There are 585,017,944 C's  and 844,868,045 A's in hg19.
 
 
 ### Jonsson
+
 De novo WGS of Jonsson data has 1548 controls. 
 
 index    | mutation type | \# mutations
@@ -214,8 +215,8 @@ There are two ways to fit the model, GLM and optims. Both methods give the same 
   $$y\sim Pois( e^{\mu+X^T\beta})$$
 
   
-  (1) With categorization,  response   $y$ is the ** number of mutations ** from all windows  within a category and covariate feature
-  (2) offset term uses 7-mer ERV baseline mutation rate, which is sum of 7mer-mutation rate in a window for each mutation type, e.g. for A->C, sum over all 7-mer mutation rate with A->C in the center.     
+  (1) With categorization,  response   $y$ is the **total number of mutations** from all windows  within a category and covariate feature
+  (2) offset term uses 7-mer ERV baseline mutation rate, which is sum of 7-mer mutation rate in a window for each mutation type, e.g. for A->C, sum over all 7-mer mutation rate with A->C in the center.     
   
   (2) intercept is included and the same across all categories
   (3) confidence interval could be obtained as well
