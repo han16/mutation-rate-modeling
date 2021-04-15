@@ -1,5 +1,4 @@
-# mutation-rate-modeling
+# Mutation rate modeling in human genome 
 
-A [workflowr][] project.
 
-[workflowr]: https://github.com/jdblischak/workflowr
+
