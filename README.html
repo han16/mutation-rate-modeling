@@ -380,8 +380,19 @@ $(document).ready(function () {
 <div id="mutation-rate-modeling-in-human-genome" class="section level1">
 <h1>Mutation rate modeling in human genome</h1>
 <p>Poisson regression model will be used to learn how genomic features influence mutation rate, ideally at the single base level using de novo mutation data, with the aim of providing insight on mutagenic mechanism.</p>
+<p>The pipeline will proceed in the following.</p>
 <div id="step-1-prepare-baseline-mutation-rate" class="section level2">
 <h2>Step 1: Prepare baseline mutation rate</h2>
+<p>To improve the model fitting, we consider k-mer mutation rate as offset in the model, for example k=3, 7. (k=7 is recommended by <a href="https://www.nature.com/articles/s41467-018-05936-5">Jedidiah Carlson, et al 2018</a>)</p>
+</div>
+<div id="step-2-combine-mutation-count-and-all-features-in-a-matrix" class="section level2">
+<h2>Step 2: Combine mutation count and all features in a matrix</h2>
+</div>
+<div id="step-3-run-generalized-linear-model-glm" class="section level2">
+<h2>Step 3: Run Generalized Linear Model (GLM)</h2>
+</div>
+<div id="step-4-model-diagnostic" class="section level2">
+<h2>Step 4: Model diagnostic</h2>
 </div>
 </div>
 
