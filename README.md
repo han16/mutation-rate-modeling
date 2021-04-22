@@ -12,6 +12,14 @@ To improve the model fitting, we consider k-mer mutation rate as offset in the m
 
 ## Step 2: Combine mutation count and all features in a matrix 
 
+### Step 2.1 Get mutation count by mutation type 
+
+Get mutation subtype, such as `A->C`, `A->G`, and so on. In total there are 6 mutation subtypes as one strand and its complement strand are counted as one subtype, for instance, `A->C` includes both `A->C` and `T->G`. 
+
+```
+step1_get.mutation.data.of.mutation.type.sh
+```
+
 ## Step 3: Run Generalized Linear Model (GLM)
 
 ## Step 4: Model diagnostic 

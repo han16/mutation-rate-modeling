@@ -387,6 +387,11 @@ $(document).ready(function () {
 </div>
 <div id="step-2-combine-mutation-count-and-all-features-in-a-matrix" class="section level2">
 <h2>Step 2: Combine mutation count and all features in a matrix</h2>
+<div id="step-2.1-get-mutation-count-by-mutation-type" class="section level3">
+<h3>Step 2.1 Get mutation count by mutation type</h3>
+<p>Get mutation subtype, such as <code>A-&gt;C</code>, <code>A-&gt;G</code>, and so on. In total there are 6 mutation subtypes as one strand and its complement strand are counted as one subtype, for instance, <code>A-&gt;C</code> includes both <code>A-&gt;C</code> and <code>T-&gt;G</code>.</p>
+<pre><code>step1_get.mutation.data.of.mutation.type.sh</code></pre>
+</div>
 </div>
 <div id="step-3-run-generalized-linear-model-glm" class="section level2">
 <h2>Step 3: Run Generalized Linear Model (GLM)</h2>
