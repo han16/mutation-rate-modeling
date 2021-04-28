@@ -18,6 +18,15 @@ Get mutation subtype, such as `A->C`, `A->G`, and so on. In total there are 6 mu
 
 ```
 step1_get.mutation.data.of.mutation.type.sh
+
+```
+
+### Step 2.2 Split into CpG and non-CpG
+
+For cytosine, such as `C->A`, `C->G`, `C->T` split into CpG and non-CpG. Make sure the strand is plus or minus strand, which will lead to identifying CpG sites. If the current position at S is C, then it's CpG when the position at S+1 is G for plus strand. Given a G at current position S (when we look at subtype `G->T` corresponding to `C->A` in the complementary strand), it's a CpG when the position at S-1 is C for minus strand.    
+
+```
+step2_split.base.C.into.CpG.nonCpG.sh
 ```
 
 ## Step 3: Run Generalized Linear Model (GLM)

@@ -390,7 +390,13 @@ $(document).ready(function () {
 <div id="step-2.1-get-mutation-count-by-mutation-type" class="section level3">
 <h3>Step 2.1 Get mutation count by mutation type</h3>
 <p>Get mutation subtype, such as <code>A-&gt;C</code>, <code>A-&gt;G</code>, and so on. In total there are 6 mutation subtypes as one strand and its complement strand are counted as one subtype, for instance, <code>A-&gt;C</code> includes both <code>A-&gt;C</code> and <code>T-&gt;G</code>.</p>
-<pre><code>step1_get.mutation.data.of.mutation.type.sh</code></pre>
+<pre><code>step1_get.mutation.data.of.mutation.type.sh
+</code></pre>
+</div>
+<div id="step-2.2-split-into-cpg-and-non-cpg" class="section level3">
+<h3>Step 2.2 Split into CpG and non-CpG</h3>
+<p>For cytosine, such as <code>C-&gt;A</code>, <code>C-&gt;G</code>, <code>C-&gt;T</code> split into CpG and non-CpG. Make sure the strand is plus or minus strand, which will lead to identifying CpG sites. If the current position at S is C, then it’s CpG when the position at S+1 is G for plus strand. Given a G at current position S (when we look at subtype <code>G-&gt;T</code> corresponding to <code>C-&gt;A</code> in the complementary strand), it’s a CpG when the position at S-1 is C for minus strand.</p>
+<pre><code>step2_split.base.C.into.CpG.nonCpG.sh</code></pre>
 </div>
 </div>
 <div id="step-3-run-generalized-linear-model-glm" class="section level2">
