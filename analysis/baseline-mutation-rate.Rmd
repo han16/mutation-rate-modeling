@@ -1,0 +1,30 @@
+---
+title: "baseline-mutation-rate"
+output: html_document
+---
+
+```{r, echo=T, warning=F, message=F}
+library(tidyverse)
+library(ggplot2)
+```
+
+Depends on local nucleotide context, consider 3-mer and 7-mer mutation rate. 
+
+## 3-mer vs 7-mer 
+
+```{r, echo=F}
+mer3_vs_mer7=as_tibble(read.table("C:\\Shengtong\\Research\\mutation-rate\\mutation-rate-modeling\\data\\mutation.rate.3mer.vs.7mer.random.10000row", header=F))
+# originally from /project2/xinhe/Shengtong/mutation_rate/mutation.rate/baseline.mutation/b# aseline.comparison.between.3mer.and.7mer 
+
+ggplot(mer3_vs_mer7, aes(x = V1, y = V2)) +
+    geom_point()+
+  xlab("3-mer mutation rate")+
+  ylab("7-mer mutation rate")+
+  geom_abline(intercept = 0, slope=1, col="red")+
+  ggtitle("chr10 with alt_A")+
+  theme(plot.title = element_text(hjust = 0.5)) # center the title 
+```
+
+
+* randomly choose 10,000 positions on chr10 with alternative allele `A`, compare 3-mer mutation rate and 7-mer rate. They appear to be identical.   
+

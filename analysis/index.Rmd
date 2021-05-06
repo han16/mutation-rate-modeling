@@ -17,3 +17,6 @@ output:
 * [codes](codes.html)
 
 
+* [Simons control WGS analysis](simons-control-wgs.html)
+
+* [Baseline mutation rate](baseline-mutation-rate.html)

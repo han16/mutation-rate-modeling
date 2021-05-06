@@ -1,0 +1,32 @@
+---
+title: "Simons control WGS"
+output: html_document
+---
+
+
+## Partition by mutation types 
+
+WGS Simons control data
+
+index    | mutation type | \# mutations
+----|-------|-------|---
+1 | A->C (+ T->G) | 3,899+3,900=7,799
+2 | A->G (+ T->C) | 15,083+14,919=30,002  
+3 | A->T (+ T->A) | 3,664+3,743=7,407
+4 | C->G (+ G->C) | 5,393+5,308=10,701
+5 | C->T (+ G->A) | 23,977+23,907=47,884 
+6 | C->A (+ G->T)| 5,404+5,652=11,056
+
+```{r, echo=F}
+slices <- c(7799, 30002, 7404, 10701, 47884, 11056) 
+lbls <- c("A->C", "A->G", "A->T", "C->G", "C->T", "C->A")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) # add percents to labels 
+lbls <- paste(lbls,"%",sep="") # ad % to labels 
+pie(slices,labels = lbls, col=rainbow(length(lbls)),
+  	main="Percentage of mutation types in Simons control data ")
+```
+
+## Referecnce 
+
+[Genomic Patterns of De Novo Mutation in Simplex Autism](https://pubmed.ncbi.nlm.nih.gov/28965761/), cell, 2017

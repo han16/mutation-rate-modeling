@@ -27,7 +27,7 @@ These features are from the [reference data][data]
 
  11 binary features 
 
-*  EXON: (416,549)
+* EXON: (416,549)
 * H3K4me1
 * H3K4me3
 * H3K9ac
