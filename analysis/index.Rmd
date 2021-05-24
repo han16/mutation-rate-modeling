@@ -8,6 +8,8 @@ output:
 
 *  [statistical modeling](modeling.html)
 
+* [Simulation experiments](simulation.html)
+
 * [Parameter estimation](denovo-data.html)
 
 * [Fitting diagnostic](FittingDiagnostic.html) 

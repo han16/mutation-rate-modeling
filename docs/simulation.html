@@ -9,10 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Shengtong Han" />
 
 
-<title>Statistical Modeling</title>
+<title>simulation</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -415,85 +414,113 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Statistical Modeling</h1>
-<h4 class="author">Shengtong Han</h4>
+<h1 class="title toc-ignore">simulation</h1>
 
 </div>
 
 
-<div id="base-level" class="section level2">
-<h2>Base level</h2>
-<p>At every genomic locus, observed number of mutations, <span class="math inline">\(y_i\)</span> is modeled as Poisson distribution as</p>
-<p><span class="math inline">\(y_i \sim Pois(\mu_i)\)</span></p>
-<p>There are several covariates affecting the mutation rate, such as tri-nucleotide context, parents’ age, etc. To relate the mutation rate to covariates <span class="math inline">\(X_i\)</span>, Poisson regression could be one way to do that</p>
-<p><span class="math inline">\(log(E(y_i|X_i))=log(\mu_i)=X_i^T\beta\)</span></p>
-<p>Thus</p>
-<p><span class="math inline">\(\mu_i=e^{X_i^T\beta}\)</span>.</p>
-<p>The likelihood function is</p>
-<p><span class="math display">\[
-\begin{aligned} 
-L(\beta|Y)&amp;=\prod_i\frac{[e^{X_i^T\beta}]^{Y_i}e^{-e^{X_i^T\beta}}}{Y_i!}\\
-&amp;=e^{\sum_i[X_i^T\beta Y_i-e^{X_i^T\beta}]} \times constant
-\end{aligned}
-\]</span></p>
-<p>The log likelihood is</p>
-<p><span class="math display">\[
-\begin{aligned}
-l(\beta)&amp;=\sum_i[X_i^T\beta Y_i-e^{X_i^T\beta}]+constant\\
-&amp;=\sum_i(X_i^T\beta)Y_i-\sum_ie^{X_i^T\beta}+constant
-\end{aligned}
-\]</span></p>
-</div>
-<div id="region-level" class="section level2">
-<h2>Region level</h2>
-<p>It’s computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within a window, collapse all bases together, denote <span class="math inline">\(Y\)</span> by the total number of mutations, assume <span class="math inline">\(X_i\)</span> are the same across all bases. Within a window, assuming <span class="math inline">\(Y_i\sim Pois(\mu_i)\)</span> are indepedent poisson random variables, the sum <span class="math inline">\(Y=\sum_iY_i \sim Pois (\sum_i\mu_i)\)</span></p>
-<p>Considering baseline mutation rate <span class="math inline">\(\mu_{i0}\)</span> at every base <span class="math inline">\(i\)</span>, then <span class="math inline">\(Y \sim Pois(\sum_i \mu_{i0} \mu_i)\)</span>, where <span class="math inline">\(\sum_i \mu_{i0}\mu_i=\sum_i\mu_{i0}e^{X_i^T\beta}=e^{X^T\beta}\sum_i\mu_{i0}\)</span>, assuming <span class="math inline">\(x_i^T\beta\)</span> are the same across all bases in the window and <span class="math inline">\(\sum_i \mu_{i0}\)</span> is the total baseline mutation for the window. Then <span class="math inline">\(Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})\)</span></p>
-<p>The likelihood funciton is</p>
-<p><span class="math display">\[
-\begin{aligned} 
-L(\beta|Y)=\prod_j\frac{[\mu_{j0}e^{X_j^T\beta}]^{Y_j}e^{-\mu_{j0}e^{X_j^T\beta}}}{Y_j!}
-\end{aligned}
-\]</span></p>
-<p>and</p>
+<div id="simulations" class="section level2">
+<h2>Simulations</h2>
+<p>The model generating the data is</p>
+<p><span class="math inline">\(y \sim Pois(\mu_0e^{\beta_0+\beta_1X})\)</span></p>
+<div id="constant-baseline-mutation-rate-mu_0" class="section level3">
+<h3>Constant baseline mutation rate <span class="math inline">\(\mu_0\)</span></h3>
+<div id="use-true-baseline-mutation-rate-as-offset" class="section level4">
+<h4>Use true baseline mutation rate as offset</h4>
+<pre class="r"><code>#rm(list=ls())
+set.seed(1000)
+n &lt;- 10000
+baseline.rate=0.01
+#regression coefficients
+ beta0 &lt;- 0.1
+ beta1 &lt;- log(2)
+#generate covariate values
+ x &lt;- rbinom(n, 1, prob=0.5)
+#compute mu&#39;s
+mu &lt;- exp(beta0 + beta1 * x)*baseline.rate
+#generate Y-values
+ y &lt;- rpois(n=n, lambda=mu)
+   #data set
+ data &lt;- data.frame(y=y, x=x)
+ y0=sum(data$y[data$x==0]); y1=sum(data$y[data$x==1])
+ cate.data=data.frame(y=c(y0,y1), x=c(0,1))
+ fit=glm(data$y~data$x+offset(log(rep(baseline.rate, n))), family=poisson())
+ cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(baseline.rate*sum(x==cate.data$x[1]), baseline.rate*sum(x==cate.data$x[2])))), family=poisson())
+fit.conf=confint(fit)</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre class="r"><code>cate.fit.conf=confint(cate.fit)</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<p><img src="simulation_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <ul>
-<li><span class="math inline">\(Y_j\)</span>; total number of mutations in window <span class="math inline">\(j\)</span></li>
-<li><span class="math inline">\(X_j\)</span>: a vector of covariates for the window, assuming the same acorss all bases in the window</li>
+<li>sample size, i.e. number of windows <span class="math inline">\(N=10^4\)</span></li>
+<li>baseline rate is constant across all windows <span class="math inline">\(\mu_0=0.01\)</span>.</li>
+<li><span class="math inline">\(\beta_0=0.1, \beta_1=log(2)\)</span>.</li>
+<li>M11 and M12 are GLM without and with categorization; M21, M22 are optim without and with categorization. <span class="math inline">\(\widehat{\beta}_{11}=\widehat{\beta}_{12}\)</span> and <span class="math inline">\(\widehat{\beta}_{21}=\widehat{\beta}_{22}\)</span> and the difference between M11 and M21 are too minor to visualize</li>
 </ul>
-<p>And the log likelihood function is</p>
-<p><span class="math display">\[
-\begin{aligned}
-l(\beta)=\sum_j[Y_jlog(\underbrace{\mu_{j0}e^{X_j^T\beta}}_{\mu_j})]-\sum_j[\underbrace{\mu_{j0}e^{X_j^T\beta}}_{\mu_j}]+constant\\
-=\sum[Y_jlog(\mu_j)]-\sum_j[\mu_j]+constant
-\end{aligned}
-\]</span></p>
-</div>
-<div id="categorization" class="section level2">
-<h2>Categorization</h2>
-<p>Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have <span class="math inline">\(P\)</span> binary features (continuous features could be discretized into discrete values). Totally it is going to be <span class="math inline">\(2^P\)</span> feature categories. Usually <span class="math inline">\(2^P &lt;&lt; \frac{3B}{L}\)</span>, <span class="math inline">\(L\)</span> is window length.</p>
-<p>Let <span class="math inline">\(c\)</span> index category. <span class="math inline">\(Y_c\)</span> is the total number of mutations, <span class="math inline">\(\mu_{c0}\)</span> is the baseline mutation rate, <span class="math inline">\(X_c\)</span> is the feature covariates.</p>
-<p>The likelihood function is</p>
-<p><span class="math display">\[
-\begin{aligned}
- logP(Y|\beta) &amp; = \sum_j[Y_jlog(\mu_{j0}e^{X_j^T\beta})]-\sum_j[\mu_{j0}e^{X_j^T\beta}]+constant(following ~LH~of~region~level)\\
- &amp;=\sum_c\{Y_c(X_c^T\beta)-\mu_{c0}e^{X_c^T\beta} \}+constant
-\end{aligned}
-\]</span></p>
+<pre><code>## Waiting for profiling to be done...
+## Waiting for profiling to be done...</code></pre>
+<p><img src="simulation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <ul>
-<li><span class="math inline">\(\mu_{c0}=\sum_j\mu_{j0}\)</span> in category <span class="math inline">\(c\)</span>.</li>
-<li>The last equation is because for category <span class="math inline">\(c\)</span>, all <span class="math inline">\(X_j=X_c\)</span> are the same, so <span class="math inline">\(\sum_jY_j(X_j^T\beta)=X_c^T\beta \sum_jY_j=Y_c(X_c^T\beta)\)</span>.</li>
+<li>sample size, i.e. number of windows <span class="math inline">\(N=10^6\)</span></li>
+<li>baseline rate is constant across all windows <span class="math inline">\(\mu_0=0.01\)</span>.</li>
+<li><span class="math inline">\(\beta_0=0.1, \beta_1=log(2)\)</span>.</li>
 </ul>
-<p>Thus <span class="math inline">\(Y_c\sim Pois(\mu_{c0}e^{X_c^T\beta})\)</span>. Another way to understand it is that since <span class="math inline">\(Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})\)</span>, in category <span class="math inline">\(c\)</span>, the sum of <span class="math inline">\(\sum_j Y_j \sim Pois(\sum_j \mu_{j0}e^{X_j^T\beta})\)</span>, where <span class="math inline">\(\sum_j \mu_{j0}e^{X_j^T\beta}=e^{X_c\beta} \sum_j \mu_{j0}=\mu_{c0}e^{X_c\beta}\)</span>, assuming <span class="math inline">\(Y_j\)</span> are independent.</p>
-<div id="likelihood-and-derivative" class="section level3">
-<h3>Likelihood and derivative</h3>
-<p>Let <span class="math inline">\(f(\beta)=\sum_c\{Y_c(X_c^T\beta)-\mu_{c0}e^{X_c^T\beta} \}\)</span> be the objective function to be optimized over <span class="math inline">\(\beta\)</span>. <span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_i}=\sum_c (Y_c(X_{ic})-\mu_{c0}X_{ic}e^{X_c^T\beta})\)</span>, <span class="math inline">\(i=1, \cdots, P\)</span>, and</p>
-<p><span class="math inline">\(\frac{\partial f(\beta)}{\partial \beta_0}=\sum_c (Y_c-\mu_{c0}e^{X_c^T\beta})\)</span>.</p>
+<p>When there are 2 covariates</p>
+<pre><code>## Waiting for profiling to be done...
+## Waiting for profiling to be done...</code></pre>
+<p><img src="simulation_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<ul>
+<li>sample size, i.e. number of windows <span class="math inline">\(N=10^6\)</span></li>
+<li>baseline rate is constant across all windows <span class="math inline">\(\mu_0=0.01\)</span>.</li>
+<li><span class="math inline">\(\beta_0=0.1, \beta_1=log(2), \beta_2=log(5)\)</span>.</li>
+</ul>
+<div id="section" class="section level53">
+<p class="heading"></p>
+</div>
+<div id="section-1" class="section level53">
+<p class="heading"></p>
+<pre><code>## Waiting for profiling to be done...
+## Waiting for profiling to be done...
+## Waiting for profiling to be done...</code></pre>
+<p><img src="simulation_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<ul>
+<li>This figure shows that three different manipulations of the data give the same estimate by GLM: (1) No categorization (2) use categorization (3) first split the original data into two sub data sets, for each sub-data, do categorization, then combine them together to use GLM. The third way allows to do categorization on each single chromosome, then combine them to use GLM.</li>
+</ul>
 </div>
 </div>
-<div id="predictive-density" class="section level2">
-<h2>Predictive density</h2>
-<p>Let <span class="math inline">\(\tilde{y}\)</span> be a new value, <span class="math inline">\(Y\)</span> be the observed data, the posterior predictive distribution of <span class="math inline">\(\tilde{y}\)</span> is</p>
-<p><span class="math inline">\(p(\tilde{y})=\int p(\tilde{y}|\beta, Y)p(\theta|Y)d\beta\)</span>.</p>
-<p>For the Poission regression model where <span class="math inline">\(\beta\)</span> is fixed, the log predictive density is <span class="math inline">\(l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j\)</span>, where <span class="math inline">\(\mu_j\)</span> is the predicted mutation rate using the parameter estimated in the training set.</p>
+<div id="use-estimated-baseline-mutation-rate" class="section level4">
+<h4>Use estimated baseline mutation rate</h4>
+<p>In most cases, we never know the true baseline mutation rate, so we may have to use their estimates</p>
+<ul>
+<li>with estimated baseline mutation rate as offset, intercept esmtiate is not correct, but <span class="math inline">\(\widehat{\beta_1}\)</span> is good.</li>
+</ul>
+</div>
+</div>
+<div id="variable-baseline-mutatiom-rate-mu_i0" class="section level3">
+<h3>Variable baseline mutatiom rate <span class="math inline">\(\mu_{i0}\)</span></h3>
+<div id="use-true-baseline-mutation-rate" class="section level4">
+<h4>use true baseline mutation rate</h4>
+<pre><code>## Waiting for profiling to be done...
+## Waiting for profiling to be done...</code></pre>
+<p><img src="simulation_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<ul>
+<li><span class="math inline">\(\mu_{i0}\)</span> is generated by <span class="math inline">\(\mu_{i0} \sim rbeta(n, 1, 100)\)</span></li>
+</ul>
+<p><img src="simulation_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="use-randomly-generated-baseline-mutation-rate" class="section level4">
+<h4>use randomly generated baseline mutation rate</h4>
+<pre class="r"><code>#fit=glm(data$y~data$x+offset(log(rep(sum(data$y)/n, n))), family=poisson())
+fit=glm(data$y~data$x+offset(log(rbeta(n,1, 100))), family=poisson())
+#cate.fit=glm(cate.data$y~cate.data$x+offset(log(c(sum(cate.data$y)/n*sum(x==cate.data$x[1]), sum(cate.data$y)/n*sum(x==cate.data$x[2])))), family=poisson())
+cate.fit=glm(cate.data$y~cate.data$x+offset(log(rbeta(2,1,100 ))), family=poisson()) </code></pre>
+<p><img src="simulation_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<ul>
+<li>with estimated baseline mutation rate as offset, intercept esmtiate is not correct, but <span class="math inline">\(\widehat{\beta_1}\)</span> is good.</li>
+</ul>
+<!-- Insert the session information into the document -->
+</div>
+</div>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

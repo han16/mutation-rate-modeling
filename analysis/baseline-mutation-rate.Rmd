@@ -8,7 +8,26 @@ library(tidyverse)
 library(ggplot2)
 ```
 
- Consider 3-mer and 7-mer mutation rate, see how they differ from each other.  
+ Consider 3-mer and 7-mer mutation rate, see how they differ from each other. 
+ 
+ 
+## 3-mer base rate 
+
+
+
+```{r, echo=F}
+three_mer_rate=as_tibble(read.table("C:\\Shengtong\\Research\\mutation-rate\\3_mer_base_from_Exac\\forweb_cleaned_exac_r03_march16_z_data_pLI.txt", header=T))
+```
+
+```{r, echo=T}
+three_mer_rate
+colnames(three_mer_rate)
+```
+
+Data (shouldn't be 3-mer rate) is downloaded from [here](ftp://ftp.broadinstitute.org/pub/ExAC_release/release1/manuscript_data/forweb_cleaned_exac_r03_march16_z_data_pLI.txt.gz)
+
+
+
 
 ## 3-mer vs 7-mer 
 
