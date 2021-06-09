@@ -485,13 +485,19 @@ div.section {
 <li>Whole human genome (hg19) is evenly split into 100bp windows</li>
 <li>use even (odd) windows as training data to estimate parameters <span class="math inline">\(\beta\)</span></li>
 <li>use another half odd (even) windows as validation data to make prediction</li>
-<li>windows with predicited density as <code>NaN</code> due to <span class="math inline">\(\widehat{\mu}_j=0\)</span> are removed</li>
+<li>windows with predicted density as <code>NaN</code> due to <span class="math inline">\(\widehat{\mu}_j=0\)</span> are removed</li>
 </ul>
+<div id="m1-vs-m2-by-mutation-types" class="section level4">
+<h4>M1 vs M2 by mutation types</h4>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
-<pre class="r"><code>m1.post.pred%&gt;%select(post.pred)%&gt;%summarise(sum=sum(post.pred))%&gt;%pull()</code></pre>
-<pre><code>## [1] -513739.6</code></pre>
-<pre class="r"><code>m2.post.pred%&gt;%select(post.pred)%&gt;%summarise(sum=sum(post.pred))%&gt;%pull()  </code></pre>
-<pre><code>## [1] -900035.1</code></pre>
+</div>
+<div id="three-models-regardless-of-mutation-types" class="section level4">
+<h4>three models regardless of mutation types</h4>
+<ul>
+<li>M1, M2 sum over all predicted probabilities across 9 mutation types</li>
+</ul>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
 </div>
 </div>
 <div id="referecnce" class="section level2">
