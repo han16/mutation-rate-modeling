@@ -493,7 +493,7 @@ l(\beta)=\sum_j[Y_jlog(\underbrace{\mu_{j0}e^{X_j^T\beta}}_{\mu_j})]-\sum_j[\und
 <h2>Predictive density</h2>
 <p>Let <span class="math inline">\(\tilde{y}\)</span> be a new value, <span class="math inline">\(Y\)</span> be the observed data, the posterior predictive distribution of <span class="math inline">\(\tilde{y}\)</span> is</p>
 <p><span class="math inline">\(p(\tilde{y})=\int p(\tilde{y}|\beta, Y)p(\theta|Y)d\beta\)</span>.</p>
-<p>For the Poission regression model where <span class="math inline">\(\beta\)</span> is fixed, the log predictive density is <span class="math inline">\(l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j\)</span>, where <span class="math inline">\(\mu_j\)</span> is the predicted mutation rate using the parameter estimated in the training set.</p>
+<p>For the Poission regression model where <span class="math inline">\(\beta\)</span> is fixed, the log predictive density is <span class="math inline">\(l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j\)</span>, where <span class="math inline">\(\widehat{\mu}_j\)</span> is the predicted mutation rate using the parameter estimated in the training set. Note <span class="math inline">\(\widehat{\mu}_j=\mu_{j0}e^{X_j^T\widehat{\beta}}=0\)</span> when <span class="math inline">\(\mu_{j0}=0\)</span>, resulting in invalid predictive density for window <span class="math inline">\(j\)</span>.</p>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

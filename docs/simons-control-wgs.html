@@ -419,8 +419,9 @@ div.section {
 </div>
 
 
-<div id="partition-by-mutation-types" class="section level2">
-<h2>Partition by mutation types</h2>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<div id="mutation-count-partition-by-mutation-types" class="section level2">
+<h2>Mutation count partition by mutation types</h2>
 <p>WGS Simons control data</p>
 <table>
 <thead>
@@ -470,7 +471,29 @@ div.section {
 </tr>
 </tbody>
 </table>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="model-evalulation" class="section level2">
+<h2>Model evalulation</h2>
+<ul>
+<li><p>Model 1 (M1): 3-mer+features for 9 mutation types</p></li>
+<li><p>Model 2 (M2): 3-mer only for 9 mutation types</p></li>
+<li><p>Model 3 (M3): 3-mer+features for pooled 9 mutation types</p></li>
+</ul>
+<div id="predictive-density-measure" class="section level3">
+<h3>Predictive density measure</h3>
+<ul>
+<li>Whole human genome (hg19) is evenly split into 100bp windows</li>
+<li>use even (odd) windows as training data to estimate parameters <span class="math inline">\(\beta\)</span></li>
+<li>use another half odd (even) windows as validation data to make prediction</li>
+<li>windows with predicited density as <code>NaN</code> due to <span class="math inline">\(\widehat{\mu}_j=0\)</span> are removed</li>
+</ul>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<pre class="r"><code>m1.post.pred%&gt;%select(post.pred)%&gt;%summarise(sum=sum(post.pred))%&gt;%pull()</code></pre>
+<pre><code>## [1] -513739.6</code></pre>
+<pre class="r"><code>m2.post.pred%&gt;%select(post.pred)%&gt;%summarise(sum=sum(post.pred))%&gt;%pull()  </code></pre>
+<pre><code>## [1] -900035.1</code></pre>
+</div>
 </div>
 <div id="referecnce" class="section level2">
 <h2>Referecnce</h2>

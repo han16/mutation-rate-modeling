@@ -4,7 +4,11 @@ output: html_document
 ---
 
 
-## Partition by mutation types 
+```{r, echo=T, message=F, warning=F}
+library(tidyverse)
+```
+
+## Mutation count partition by mutation types 
 
 WGS Simons control data
 
@@ -26,6 +30,109 @@ lbls <- paste(lbls,"%",sep="") # ad % to labels
 pie(slices,labels = lbls, col=rainbow(length(lbls)),
   	main="Percentage of mutation types in Simons control data ")
 ```
+
+
+## Model evalulation 
+
+* Model 1 (M1): 3-mer+features for 9 mutation types
+
+* Model 2 (M2): 3-mer only  for 9 mutation types 
+
+* Model 3 (M3): 3-mer+features for pooled 9 mutation types 
+
+### Predictive density measure 
+
+* Whole human genome (hg19) is evenly split into 100bp windows 
+* use even (odd) windows as training data to estimate parameters $\beta$
+* use another half odd (even) windows as validation data to make prediction 
+* windows with predicited density as `NaN` due to $\widehat{\mu}_j=0$ are removed 
+
+```{r, echo=F}
+path="C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density"
+m1.post.pred=tibble()
+m2.post.pred=tibble()
+m1.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.txt", sep="/"), header=T))
+m2.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.with.zero.coefficient.and.intercept.txt", sep="/"), header=T))
+m1.m2.combine=bind_rows(m1.post.pred, m2.post.pred)%>%add_column(model=c(rep("M1", 18), rep("M2", 18)))
+################## plot them 
+
+ggplot(data=m1.m2.combine%>%filter(train.set=="odd"), aes(x=mutation.type, y=-post.pred, fill=model)) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+theme(text = element_text(size=10))+
+geom_bar(stat="identity", position=position_dodge())+
+   ylab("-log(pred.prob)")+
+   ggtitle("odd widow as train set and even as validation")+
+  theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+
+ggplot(data=m1.m2.combine%>%filter(train.set=="even"), aes(x=mutation.type, y=-post.pred, fill=model)) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+theme(text = element_text(size=10))+
+geom_bar(stat="identity", position=position_dodge())+
+    ylab("-log(pred.prob)")+
+   ggtitle("even widow as train set and odd as validation")+
+  theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+```
+
+
+```{r, echo=F, eval=F}
+# this one is out dated
+
+path="C:/Shengtong/Research/mutation-rate/mutation-rate-modeling"
+mutation.type=c("mutation.A_to_C.and.mutation.T_to_G", "mutation.A_to_G.and.mutation.T_to_C", "mutation.A_to_T.and.mutation.T_to_A", "mutation.C_to_A.CpG.and.mutation.G_to_T.CpG", "mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG", "mutation.C_to_G.CpG.and.mutation.G_to_C.CpG", "mutation.C_to_G.nonCpG.and.mutation.G_to_C.nonCpG", "mutation.C_to_T.CpG.and.mutation.G_to_A.CpG", "mutation.C_to_T.nonCpG.and.mutation.G_to_A.nonCpG")
+train.set=c("odd", "even")
+
+m1.post.pred=tibble()
+m2.post.pred=tibble()
+for (i in 1:length(train.set))
+ for (j in 1:length(mutation.type))
+ {
+#   i=1; j=1
+   # for model M1
+ m1.post.pred[(i-1)*length(mutation.type)+j,1]=mutation.type[j]
+ m1.post.pred[(i-1)*length(mutation.type)+j,2]=train.set[i]
+ m1.post.pred[(i-1)*length(mutation.type)+j,3]=read.table(paste(path, "/data/c/","table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[j], ".log.pre.density.", train.set[i], ".window.as.train.and.", train.set[-i], ".as.test.txt", sep=""))[1,1]
+# for model M2
+ m2.post.pred[(i-1)*length(mutation.type)+j,1]=mutation.type[j]
+ m2.post.pred[(i-1)*length(mutation.type)+j,2]=train.set[i]
+ #m2.post.pred[(i-1)*length(mutation.type)+j,3]=read.table(paste(path, "/data/post.predictive.density/","table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[j], ".log.pre.density.", train.set[i], ".window.as.train.and.", train.set[-i], ".as.test.set.zero.coefficient.txt", sep=""))[1,1]
+   
+   
+   #read.table(paste(path, "/data/post.predictive.density/","table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[j], ".log.pre.density.", train.set[i], ".window.as.train.and.", train.set[-i], ".as.test.set.zero.coefficient.txt", sep=""))[1,1]
+  
+ }
+### manually input these numbers because above "read.table" doesn't work
+m2.post.pred[10,3]=-19081.7805438345; m2.post.pred[1,3]=-19134.3924241926
+m2.post.pred[11,3]=-63788.2562686147; m2.post.pred[2,3]=-63725.9222857454
+m2.post.pred[12,3]=-18561.7729402479; m2.post.pred[3,3]=-17544.2271206252
+m2.post.pred[13,3]=-3010.29539580911; m2.post.pred[4,3]=-3002.46869536483
+m2.post.pred[14,3]=-23902.9968898446; m2.post.pred[5,3]=-22936.6898924069
+m2.post.pred[15,3]=-2608.4473826471; m2.post.pred[6,3]=-2582.35308057233
+m2.post.pred[16,3]=-23799.5413754154; m2.post.pred[7,3]=-23578.4960146752
+m2.post.pred[17,3]=-43028.2119650248; m2.post.pred[8,3]=-43524.6358008957
+m2.post.pred[18,3]=-59728.5031941892; m2.post.pred[9,3]=-59404.2036796568
+colnames(m1.post.pred)=c("mutation.type", "train.set", "post.pred")
+colnames(m2.post.pred)=c("mutation.type", "train.set", "post.pred")
+
+m1.m2.combine=bind_rows(m1.post.pred, m2.post.pred)%>%add_column(model=c(rep("M1", 18), rep("M2", 18)))
+#########
+
+ggplot(data=m1.m2.combine%>%filter(train.set=="odd"), aes(x=mutation.type, y=log(-post.pred, base=10), fill=model)) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+theme(text = element_text(size=10))+
+geom_bar(stat="identity", position=position_dodge())
+
+ggplot(data=m1.m2.combine%>%filter(train.set=="even"), aes(x=mutation.type, y=-post.pred, fill=model)) +
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+theme(text = element_text(size=10))+
+geom_bar(stat="identity", position=position_dodge())
+
+```
+
+```{r, echo=T}
+m1.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
+m2.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()  
+```
+
 
 ## Referecnce 
 

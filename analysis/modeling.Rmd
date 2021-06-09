@@ -119,4 +119,4 @@ Let $\tilde{y}$ be a new value, $Y$  be the observed data, the posterior predict
 
 $p(\tilde{y})=\int p(\tilde{y}|\beta, Y)p(\theta|Y)d\beta$. 
 
-For the Poission regression model where $\beta$ is fixed, the log predictive density is $l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j$, where $\mu_j$ is the predicted mutation rate using the parameter estimated in the training set. 
+For the Poission regression model where $\beta$ is fixed, the log predictive density is $l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j$, where $\widehat{\mu}_j$ is the predicted mutation rate using the parameter estimated in the training set. Note $\widehat{\mu}_j=\mu_{j0}e^{X_j^T\widehat{\beta}}=0$ when $\mu_{j0}=0$, resulting in invalid predictive density for window $j$.  
