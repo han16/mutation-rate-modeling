@@ -4,7 +4,7 @@ output: html_document
 ---
 
 
-```{r, echo=T, message=F, warning=F}
+```{r, echo=F, message=F, warning=F}
 library(tidyverse)
 ```
 
@@ -36,7 +36,7 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 * Model 1 (M1): 3-mer+features for 9 mutation types
 
-* Model 2 (M2): 3-mer only  for 9 mutation types 
+* Model 2 (M2): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
 
 * Model 3 (M3): 3-mer+features for pooled 9 mutation types 
 
@@ -72,6 +72,12 @@ geom_bar(stat="identity", position=position_dodge())+
    ggtitle("even widow as train set and odd as validation")+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 ```
+
+```{r, echo=T}
+m1.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
+m2.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()  
+```
+
 
 
 ```{r, echo=F, eval=F}
@@ -128,10 +134,6 @@ geom_bar(stat="identity", position=position_dodge())
 
 ```
 
-```{r, echo=T}
-m1.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
-m2.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()  
-```
 
 
 ## Referecnce 

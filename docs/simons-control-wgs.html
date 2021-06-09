@@ -419,7 +419,6 @@ div.section {
 </div>
 
 
-<pre class="r"><code>library(tidyverse)</code></pre>
 <div id="mutation-count-partition-by-mutation-types" class="section level2">
 <h2>Mutation count partition by mutation types</h2>
 <p>WGS Simons control data</p>
@@ -477,7 +476,7 @@ div.section {
 <h2>Model evalulation</h2>
 <ul>
 <li><p>Model 1 (M1): 3-mer+features for 9 mutation types</p></li>
-<li><p>Model 2 (M2): 3-mer only for 9 mutation types</p></li>
+<li><p>Model 2 (M2): 3-mer only for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.</p></li>
 <li><p>Model 3 (M3): 3-mer+features for pooled 9 mutation types</p></li>
 </ul>
 <div id="predictive-density-measure" class="section level3">
