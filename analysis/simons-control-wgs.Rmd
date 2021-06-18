@@ -5,7 +5,11 @@ output: html_document
 
 
 ```{r, echo=F, message=F, warning=F}
+rm(list=ls())
 library(tidyverse)
+library(gridExtra)
+library(ggpubr)
+set.seed(123)
 ```
 
 ## Mutation count partition by mutation types 
@@ -34,11 +38,13 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 ## Model evalulation 
 
-* Model 1 (M1): 3-mer+features for 9 mutation types
 
-* Model 2 (M2): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
 
-* Model 3 (M3): 3-mer+features for pooled 9 mutation types 
+* Model 0 (M0): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
+
+* Model  (M1): 3-mer+features for pooled 9 mutation types 
+
+* Model 2 (M2): 3-mer+features for 9 mutation types
 
 ### Predictive density measure 
 
@@ -47,18 +53,18 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 * use another half odd (even) windows as validation data to make prediction 
 * windows with predicted density as `NaN` due to $\widehat{\mu}_j=0$ are removed 
 
-#### M1 vs M2 by mutation types 
+#### M0 vs M2 by mutation types 
 
 ```{r, echo=F}
 path="C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density"
-m1.post.pred=tibble()
+m0.post.pred=tibble()
 m2.post.pred=tibble()
-m1.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.txt", sep="/"), header=T))
-m2.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.with.zero.coefficient.and.intercept.txt", sep="/"), header=T))
-m1.m2.combine=bind_rows(m1.post.pred, m2.post.pred)%>%add_column(model=c(rep("M1", 18), rep("M2", 18)))
+m2.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.txt", sep="/"), header=T))
+m0.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.with.zero.coefficient.and.intercept.txt", sep="/"), header=T))
+m0.m2.combine=bind_rows(m0.post.pred, m2.post.pred)%>%add_column(model=c(rep("M0", 18), rep("M2", 18)))
 ################## plot them 
 
-ggplot(data=m1.m2.combine%>%filter(train.set=="odd"), aes(x=mutation.type, y=-post.pred, fill=model)) +
+ggplot(data=m0.m2.combine%>%filter(train.set=="odd"), aes(x=mutation.type, y=-post.pred, fill=model)) +
    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
 theme(text = element_text(size=10))+
 geom_bar(stat="identity", position=position_dodge())+
@@ -66,7 +72,7 @@ geom_bar(stat="identity", position=position_dodge())+
    ggtitle("odd widow as train set and even as validation")+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 
-ggplot(data=m1.m2.combine%>%filter(train.set=="even"), aes(x=mutation.type, y=-post.pred, fill=model)) +
+ggplot(data=m0.m2.combine%>%filter(train.set=="even"), aes(x=mutation.type, y=-post.pred, fill=model)) +
    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
 theme(text = element_text(size=10))+
 geom_bar(stat="identity", position=position_dodge())+
@@ -77,16 +83,16 @@ geom_bar(stat="identity", position=position_dodge())+
 
 #### three models regardless of mutation types 
 
-* M1, M2 sum over all predicted probabilities across 9 mutation types  
+* M0, M2 sum over all predicted probabilities across 9 mutation types  
 
 
 
 ```{r, echo=F}
-m3.post.pred=as_tibble(read.table(paste(path, "pooled.mutation.type.log.predictive.density.txt", sep="/"), header=T))
-pp3=m3.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
+m1.post.pred=as_tibble(read.table(paste(path, "pooled.mutation.type.log.predictive.density.txt", sep="/"), header=T))
+pp0=m0.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp1=m1.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp2=m2.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()  
-total.post.pred=tibble(model=c("M1", "M2", "M3"), post.pred=c(pp1, pp2, pp3))
+total.post.pred=tibble(model=c("M0", "M1", "M2"), post.pred=c(pp0, pp1, pp2))
 
 ggplot(data=total.post.pred, aes(x=model, y=-post.pred)) +
    theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
@@ -97,6 +103,79 @@ geom_bar(stat="identity", fill="blue")+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 ```
 
+### Expected rate vs observed rate 
+
+
+#### M0 vs M2 by mutation types
+
+
+```{r, echo=F, message=F, warning=F, cache=T}
+path="C:/Shengtong/Research/mutation-rate/ObsvsExp.10k.window"
+mutation.type=unique(as.character(read.table("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density/post.pred.for.model.txt", header=T)$mutation.type)) # get mutation types 
+Train=c("odd", "even")
+figures=list(); fig=0
+for (mut in 1:length(mutation.type))
+   for (set in 1:length(Train))
+   {
+     # mut=1; set=1
+      m2.exp.obs=as_tibble(read.table(paste(path, "/", "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".ExpObsVar.", Train[set], ".window.as.train.bed.bed.added.10k", sep=""), header=F))
+      
+m0.exp.obs=as_tibble(read.table(paste(path, "/", "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".ExpObsVar.", Train[set], ".window.as.train.with.zero.coefficient.and.intercept.bed.bed.added.10k", sep=""), header=F))
+colnames(m2.exp.obs)=c("chr", "start", "end", "obs", "exp")
+colnames(m0.exp.obs)=c("chr", "start", "end", "obs", "exp")
+
+############### consider chromosome level analysis 
+chr=unique(m2.exp.obs$chr)
+m0.exp.obs.chr=tibble()
+m2.exp.obs.chr=tibble()
+for (cc in 1:22) #only look at chr1, chr2, ..., chr22
+{
+   
+   m0.exp.obs.chr[cc,1]=sum(as.numeric(as.character(m0.exp.obs[which(m0.exp.obs$chr==chr[cc]),]$obs)), na.rm=T)
+   m0.exp.obs.chr[cc,2]=sum(as.numeric(as.character(m0.exp.obs[which(m0.exp.obs$chr==chr[cc]),]$exp)), na.rm=T)
+   
+   m2.exp.obs.chr[cc,1]=sum(as.numeric(as.character(m2.exp.obs[which(m2.exp.obs$chr==chr[cc]),]$obs)), na.rm=T)
+   m2.exp.obs.chr[cc,2]=sum(as.numeric(as.character(m2.exp.obs[which(m2.exp.obs$chr==chr[cc]),]$exp)), na.rm=T)
+   
+} 
+colnames(m0.exp.obs.chr)=c("obs", "exp")
+colnames(m2.exp.obs.chr)=c("obs", "exp")
+
+m0.m2.exp.obs.chr=rbind(m0.exp.obs.chr, m2.exp.obs.chr) %>% add_column(model=c(rep("M0", nrow(m0.exp.obs.chr)), rep("M2", nrow(m2.exp.obs.chr))))  # combine two models together 
+
+x.limit=y.limit=max(m0.m2.exp.obs.chr[,1:2])
+fig=fig+1
+figures[[fig]]=ggplot(m0.m2.exp.obs.chr, aes(x=obs, y=exp, color=model)) +
+  geom_point()+
+   xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle(paste(mutation.type[mut]))+
+   theme(plot.title = element_text(hjust = 0.5, size=7)) # center the title
+}  # end of for (set in 1:length(Train))
+
+figure=ggarrange(figures[[1]],figures[[3]], figures[[5]], figures[[7]], figures[[9]], figures[11], figures[[13]], figures[[15]], figures[[17]],  common.legend = TRUE, legend="right") 
+#figure
+annotate_figure(figure,
+                top = text_grob("odd windows", color = "red", face = "bold", size = 14),
+#                bottom = text_grob("Data source: \n ToothGrowth data set", color = "blue",
+#                                   hjust = 1, x = 1, face = "italic", size = 10),
+#                left = text_grob("Tooth length", color = "green", rot = 90),
+#                right = "I'm done, thanks :-)!",
+#                fig.lab = "Figure 1", fig.lab.face = "bold"
+)
+
+
+figure=ggarrange(figures[[2]],figures[[4]], figures[[6]], figures[[8]], figures[[10]], figures[12], figures[[14]], figures[[16]], figures[[18]],  common.legend = TRUE, legend="right") 
+#figure
+annotate_figure(figure,
+                top = text_grob("even windows", color = "red", face = "bold", size = 14),
+#                bottom = text_grob("Data source: \n ToothGrowth data set", color = "blue",
+#                                   hjust = 1, x = 1, face = "italic", size = 10),
+#                left = text_grob("Tooth length", color = "green", rot = 90),
+#                right = "I'm done, thanks :-)!",
+#                fig.lab = "Figure 1", fig.lab.face = "bold"
+)
+```
 
 
 

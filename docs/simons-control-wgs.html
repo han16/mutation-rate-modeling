@@ -475,9 +475,9 @@ div.section {
 <div id="model-evalulation" class="section level2">
 <h2>Model evalulation</h2>
 <ul>
-<li><p>Model 1 (M1): 3-mer+features for 9 mutation types</p></li>
-<li><p>Model 2 (M2): 3-mer only for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.</p></li>
-<li><p>Model 3 (M3): 3-mer+features for pooled 9 mutation types</p></li>
+<li><p>Model 0 (M0): 3-mer only for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.</p></li>
+<li><p>Model (M1): 3-mer+features for pooled 9 mutation types</p></li>
+<li><p>Model 2 (M2): 3-mer+features for 9 mutation types</p></li>
 </ul>
 <div id="predictive-density-measure" class="section level3">
 <h3>Predictive density measure</h3>
@@ -487,16 +487,23 @@ div.section {
 <li>use another half odd (even) windows as validation data to make prediction</li>
 <li>windows with predicted density as <code>NaN</code> due to <span class="math inline">\(\widehat{\mu}_j=0\)</span> are removed</li>
 </ul>
-<div id="m1-vs-m2-by-mutation-types" class="section level4">
-<h4>M1 vs M2 by mutation types</h4>
+<div id="m0-vs-m2-by-mutation-types" class="section level4">
+<h4>M0 vs M2 by mutation types</h4>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
 </div>
 <div id="three-models-regardless-of-mutation-types" class="section level4">
 <h4>three models regardless of mutation types</h4>
 <ul>
-<li>M1, M2 sum over all predicted probabilities across 9 mutation types</li>
+<li>M0, M2 sum over all predicted probabilities across 9 mutation types</li>
 </ul>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+</div>
+<div id="expected-rate-vs-observed-rate" class="section level3">
+<h3>Expected rate vs observed rate</h3>
+<div id="m0-vs-m2-by-mutation-types-1" class="section level4">
+<h4>M0 vs M2 by mutation types</h4>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
 </div>
 </div>
 </div>
