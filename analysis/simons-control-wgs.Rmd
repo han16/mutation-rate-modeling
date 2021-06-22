@@ -248,6 +248,25 @@ ggplot(m0.m1.m2.exp.obs, aes(x=obs, y=exp, color=model)) +
    geom_abline(intercept = 0, slope = 1)+
    ggtitle("scatter plot of three models on every chromosome")+
    theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+
+################### calculate residuals 
+```
+
+* $MSE=\sum\frac{(obs-exp)^2}{22}$
+
+```{r, echo=F, warning=F, message=F}
+m0.m1.m2.exp.obs.mse=as_tibble(m0.m1.m2.exp.obs)%>%add_column(mse=(m0.m1.m2.exp.obs$obs-m0.m1.m2.exp.obs$exp)^2)
+m0.mse=sum(m0.m1.m2.exp.obs.mse%>%filter(model=="M0")%>%select(mse)%>%pull)/22
+m1.mse=sum(m0.m1.m2.exp.obs.mse%>%filter(model=="M1")%>%select(mse)%>%pull)/22
+m2.mse=sum(m0.m1.m2.exp.obs.mse%>%filter(model=="M2")%>%select(mse)%>%pull)/22
+m0.m1.m2.mse=tibble(mse=c(m0.mse, m1.mse, m2.mse), model=c("M0", "M1", "M2"))
+ggplot(data=m0.m1.m2.mse, aes(x=model, y=mse)) +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+geom_bar(stat="identity", fill="blue")+
+    ylab("MSE")+
+   ggtitle("Chromosome wise MSE")+
+  theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 ```
 
 
