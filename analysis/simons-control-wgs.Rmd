@@ -180,10 +180,10 @@ figures[[i]]=ggplot(m0.m2.exp.obs.chr.list[[i]], aes(x=obs, y=exp, color=model))
   geom_point()+
    xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
-   ggtitle(paste(mutation.type[ceiling(i)]))+
+   ggtitle(paste(mutation.type[ceiling(i/2)]))+
    theme(plot.title = element_text(hjust = 0.5, size=7)) # center the title
    
-}   
+}    
 figure=ggarrange(figures[[1]],figures[[3]], figures[[5]], figures[[7]], figures[[9]], figures[11], figures[[13]], figures[[15]], figures[[17]],  common.legend = TRUE, legend="right") 
 #figure
 annotate_figure(figure,
