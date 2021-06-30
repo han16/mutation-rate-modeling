@@ -14,7 +14,7 @@ set.seed(123)
 
 ## Mutation count partition by mutation types 
 
-WGS Simons control data
+WGS Simons control data: 516 idiopathic autism families (2,064 individuals)
 
 index    | mutation type | \# mutations
 ----|-------|-------|---
@@ -42,7 +42,7 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 * Model 0 (M0): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
 
-* Model  (M1): 3-mer+features for pooled 9 mutation types 
+* Model 1 (M1): 3-mer+features for pooled 9 mutation types 
 
 * Model 2 (M2): 3-mer+features for 9 mutation types
 
@@ -106,13 +106,147 @@ geom_bar(stat="identity", fill="blue")+
 ### Expected rate vs observed rate 
 
 
-#### M0 vs M2 by mutation types
+#### M0 vs M2 by pooling all mutation types 
+
+
+* each dot is one 100kb wndow 
+
+
+```{r, echo=F, message=F, warning=F, cache=T, eval=T}
+########### consider windows of 100k bps  
+path="C:/Shengtong/Research/mutation-rate/ObsvsExp.100k.window"
+mutation.type=unique(as.character(read.table("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density/post.pred.for.model.txt", header=T)$mutation.type)) # get mutation types 
+Train=c("odd", "even")
+m2.exp.obs.list=list()
+k=0
+m0.exp.obs.total=tibble(obs=rep(0, 31063), exp=rep(0,31063)) # store total count across all mutation types 
+m2.exp.obs.total=tibble(obs=rep(0, 31063), exp=rep(0, 31063))
+for (mut in 1:length(mutation.type))
+   for (set in 1:length(Train))
+   {
+#      mut=1; set=1
+      k=k+1
+#      cat(mutation.type[mut], "is running", "\n")
+      m2.exp.obs=as_tibble(read.table(paste(path, "/", "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".ExpObsVar.", Train[set], ".window.as.train.bed.bed.added.100k", sep=""), header=F))
+      m2.exp.obs.list[[k]]=m2.exp.obs
+      m2.exp.obs.vec1=as.numeric(as.character(m2.exp.obs$V4))
+      m2.exp.obs.vec1[is.na(m2.exp.obs.vec1)]=0  ## fill NA with zero 
+      m2.exp.obs.total$obs=m2.exp.obs.total$obs+m2.exp.obs.vec1
+      
+      m2.exp.obs.vec2=as.numeric(as.character(m2.exp.obs$V5))
+      m2.exp.obs.vec2[is.na(m2.exp.obs.vec2)]=0  ## fill NA with zero 
+      m2.exp.obs.total$exp=m2.exp.obs.total$exp+m2.exp.obs.vec2
+      
+      m0.exp.obs=as_tibble(read.table(paste(path, "/", "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".ExpObsVar.", Train[set], ".window.as.train.with.zero.coefficient.and.intercept.bed.bed.added.100k", sep=""), header=F))
+      m0.exp.obs.vec1=as.numeric(as.character(m0.exp.obs$V4))
+      m0.exp.obs.vec1[is.na(m0.exp.obs.vec1)]=0  ## fill NA with zero 
+      m0.exp.obs.total$obs=m0.exp.obs.total$obs+m0.exp.obs.vec1
+      
+      m0.exp.obs.vec2=as.numeric(as.character(m0.exp.obs$V5))
+      m0.exp.obs.vec2[is.na(m0.exp.obs.vec2)]=0  ## fill NA with zero 
+      m0.exp.obs.total$exp=m0.exp.obs.total$exp+m0.exp.obs.vec2
+      
+   } # end of for (mut in 1:length(mutation.type))
+
+
+
+#########################
+
+m0.m2.exp.obs.total=rbind(m0.exp.obs.total, m2.exp.obs.total) %>% add_column(model=c(rep("M0", nrow(m0.exp.obs.total)), rep("M2", nrow(m2.exp.obs.total))))  # combine two models together 
+
+y.limit=max(m0.m2.exp.obs.total[,1:2])
+x.limit=y.limit
+ggplot(m0.m2.exp.obs.total, aes(x=obs, y=exp, color=model)) +
+  geom_point()+
+  # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+  # ggtitle(paste(mutation.type[ceiling(i/2)]))+
+   theme(plot.title = element_text(hjust = 0.5, size=7)) # center the title
+
+######## save and output the results 
+#write.table(m0.exp.obs.total, file=paste(path, "/","m0.exp.obs.total.txt", sep=""))
+#write.table(m2.exp.obs.total, file=paste(path, "/","m2.exp.obs.total.txt", sep=""))
+#save(m0.m2.exp.obs.chr.list, file=paste(path, "/", "m0.m2.exp.obs.chr.list.RData", sep=""))
+```
+
+Note: In a few windows, the calculated expected rate could be unexpected high due to big recombination rate in several windows, such as 108.8. Below are such examples, the columns are chr, start, end, observed, ERVbaseline, DHS, CpGisland, lamin, gc, reptime, RecombRate, Exon, H3K27ac, H3K27me3, H3K36me3, H3K4me1, H3K4me3, H3K9ac, H3K9me3
+
+
+
+chr8     139256300       139256400       0       4.227595e-08    0       0       1       0.26    .       108.804        0       0       0       0       0       1       0       1
+
+chr8     139256400       139256500       0       7.081221e-08    0       0       1       0.39    .       108.804        0       0       0       0       0       1       0       1
+
+chr8     139256500       139256600       0       1.1543496e-07   0       0       1       0.49    .       108.804        0       0       0       0       0       1       0       1
+
+chr8     139256600       139256700       0       7.858366e-08    0       0       1       0.46    .       108.804        0       0       0       0       0       1       0       1
+
+chr8     139256700       139256800       0       9.983582e-08    0       0       1       0.55    .       108.804        0       0       0       0       0       1       0       1
+
+chr8     139256800       139256900       0       5.093645e-08    0       0       1       0.31    .       108.80
+
+
+
+```{r, echo=F, message=F, warning=F, cache=T, eval=F}
+path="C:/Shengtong/Research/mutation-rate/ObsvsExp.10m.window"
+mutation.type=unique(as.character(read.table("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density/post.pred.for.model.txt", header=T)$mutation.type)) # get mutation types 
+Train=c("odd", "even")
+figures=list(); fig=0
+m0.m2.exp.obs.list=list()
+m0.exp.obs.total=tibble(obs=rep(0, 22), exp=rep(0,22)) # store total count across all mutation types 
+m2.exp.obs.total=tibble(obs=rep(0, 22), exp=rep(0, 22))
+#for (mut in 1:length(mutation.type))
+#   for (set in 1:length(Train))
+   {
+      mut=1; set=1
+      cat(mutation.type[mut], "is running", "\n")
+      m2.exp.obs=as_tibble(read.table(paste(path, "/", "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".ExpObsVar.", Train[set], ".window.as.train.bed.bed.added.10m", sep=""), header=F))
+      
+m0.exp.obs=as_tibble(read.table(paste(path, "/", "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".ExpObsVar.", Train[set], ".window.as.train.with.zero.coefficient.and.intercept.bed.bed.added.10m", sep=""), header=F))
+colnames(m2.exp.obs)=c("chr", "start", "end", "obs", "exp")
+colnames(m0.exp.obs)=c("chr", "start", "end", "obs", "exp")
+
+
+#########################
+
+m0.m2.exp.obs=rbind(m0.exp.obs, m2.exp.obs) %>% add_column(model=c(rep("M0", nrow(m0.exp.obs)), rep("M2", nrow(m2.exp.obs))))  # combine two models together 
+
+m0.m2.exp.obs.tidy=tibble(obs=as.numeric(as.character(m0.m2.exp.obs$obs)), exp=as.numeric(as.character(m0.m2.exp.obs$exp)), model=m0.m2.exp.obs$model) %>%drop_na() # convert obs, exp as factor into numeric vectors to draw the plot
+
+fig=fig+1
+m0.m2.exp.obs.list[[fig]]=m0.m2.exp.obs
+i=fig
+#x.limit=y.limit=max(m0.m2.exp.obs.list[[i]][,4:5])
+figures[[fig]]=
+   
+   
+   ggplot(m0.m2.exp.obs.tidy, aes(x=obs, y=exp, color=model)) +
+  geom_point()+
+#   xlim(c(0, 10))+
+#+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle(paste(mutation.type[ceiling(i/2)]))+
+   theme(plot.title = element_text(hjust = 0.5, size=7)) # center the title
+
+}# end of for (set in 1:length(Train))
+
+colnames(m0.exp.obs.total)=c("obs", "exp")
+colnames(m2.exp.obs.total)=c("obs", "exp")
+######## save and output the results 
+#write.table(m0.exp.obs.total, file=paste(path, "/","m0.exp.obs.total.txt", sep=""))
+#write.table(m2.exp.obs.total, file=paste(path, "/","m2.exp.obs.total.txt", sep=""))
+#save(m0.m2.exp.obs.chr.list, file=paste(path, "/", "m0.m2.exp.obs.chr.list.RData", sep=""))
+```
+
+#### chromosome wide scatter plot 
+
 
 * each dot is one chromosome by summing up across 100bp windows 
 * observed rate on x axis and expected on y axis 
 
 
 ```{r, echo=F, message=F, warning=F, cache=T, eval=F}
+
 path="C:/Shengtong/Research/mutation-rate/ObsvsExp.10k.window"
 mutation.type=unique(as.character(read.table("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density/post.pred.for.model.txt", header=T)$mutation.type)) # get mutation types 
 Train=c("odd", "even")

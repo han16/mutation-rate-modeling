@@ -421,7 +421,7 @@ div.section {
 
 <div id="mutation-count-partition-by-mutation-types" class="section level2">
 <h2>Mutation count partition by mutation types</h2>
-<p>WGS Simons control data</p>
+<p>WGS Simons control data: 516 idiopathic autism families (2,064 individuals)</p>
 <table>
 <thead>
 <tr class="header">
@@ -476,7 +476,7 @@ div.section {
 <h2>Model evalulation</h2>
 <ul>
 <li><p>Model 0 (M0): 3-mer only for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.</p></li>
-<li><p>Model (M1): 3-mer+features for pooled 9 mutation types</p></li>
+<li><p>Model 1 (M1): 3-mer+features for pooled 9 mutation types</p></li>
 <li><p>Model 2 (M2): 3-mer+features for 9 mutation types</p></li>
 </ul>
 <div id="predictive-density-measure" class="section level3">
@@ -501,13 +501,27 @@ div.section {
 </div>
 <div id="expected-rate-vs-observed-rate" class="section level3">
 <h3>Expected rate vs observed rate</h3>
-<div id="m0-vs-m2-by-mutation-types-1" class="section level4">
-<h4>M0 vs M2 by mutation types</h4>
+<div id="m0-vs-m2-by-pooling-all-mutation-types" class="section level4">
+<h4>M0 vs M2 by pooling all mutation types</h4>
+<ul>
+<li>each dot is one 100kb wndow</li>
+</ul>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Note: In a few windows, the calculated expected rate could be unexpected high due to big recombination rate in several windows, such as 108.8. Below are such examples, the columns are chr, start, end, observed, ERVbaseline, DHS, CpGisland, lamin, gc, reptime, RecombRate, Exon, H3K27ac, H3K27me3, H3K36me3, H3K4me1, H3K4me3, H3K9ac, H3K9me3</p>
+<p>chr8 139256300 139256400 0 4.227595e-08 0 0 1 0.26 . 108.804 0 0 0 0 0 1 0 1</p>
+<p>chr8 139256400 139256500 0 7.081221e-08 0 0 1 0.39 . 108.804 0 0 0 0 0 1 0 1</p>
+<p>chr8 139256500 139256600 0 1.1543496e-07 0 0 1 0.49 . 108.804 0 0 0 0 0 1 0 1</p>
+<p>chr8 139256600 139256700 0 7.858366e-08 0 0 1 0.46 . 108.804 0 0 0 0 0 1 0 1</p>
+<p>chr8 139256700 139256800 0 9.983582e-08 0 0 1 0.55 . 108.804 0 0 0 0 0 1 0 1</p>
+<p>chr8 139256800 139256900 0 5.093645e-08 0 0 1 0.31 . 108.80</p>
+</div>
+<div id="chromosome-wide-scatter-plot" class="section level4">
+<h4>chromosome wide scatter plot</h4>
 <ul>
 <li>each dot is one chromosome by summing up across 100bp windows</li>
 <li>observed rate on x axis and expected on y axis</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
 </div>
 <div id="combined-all-mutation-types" class="section level4">
 <h4>Combined all mutation types</h4>
@@ -517,11 +531,11 @@ div.section {
 </li>
 <li>observed rate on x axis and expected on y axis</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <ul>
 <li><span class="math inline">\(MSE=\sum\frac{(obs-exp)^2}{22}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 </div>
 </div>
