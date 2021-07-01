@@ -156,7 +156,7 @@ m0.m2.exp.obs.total=rbind(m0.exp.obs.total, m2.exp.obs.total) %>% add_column(mod
 
 y.limit=max(m0.m2.exp.obs.total[,1:2])
 x.limit=y.limit
-ggplot(m0.m2.exp.obs.total, aes(x=obs, y=exp, color=model)) +
+ggplot(m0.m2.exp.obs.total, aes(x=exp, y=obs, color=model)) +
   geom_point()+
   # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
@@ -167,7 +167,7 @@ ggplot(m0.m2.exp.obs.total, aes(x=obs, y=exp, color=model)) +
 m0.m2.exp.obs.total.nooutlier=m0.m2.exp.obs.total%>%filter(exp<1000)
 y.limit=max(m0.m2.exp.obs.total.nooutlier[,1:2])
 x.limit=y.limit
-ggplot(m0.m2.exp.obs.total.nooutlier, aes(x=obs, y=exp, color=model)) +
+ggplot(m0.m2.exp.obs.total.nooutlier, aes(x=exp, y=obs, color=model)) +
   geom_point()+
   # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
@@ -231,7 +231,7 @@ i=fig
 figures[[fig]]=
    
    
-   ggplot(m0.m2.exp.obs.tidy, aes(x=obs, y=exp, color=model)) +
+   ggplot(m0.m2.exp.obs.tidy, aes(x=exp, y=obs, color=model)) +
   geom_point()+
 #   xlim(c(0, 10))+
 #+ylim(c(0, y.limit))+
@@ -321,7 +321,7 @@ figures=list()
 for (i in 1:length(m0.m2.exp.obs.chr.list))
 {
    x.limit=y.limit=max(m0.m2.exp.obs.chr.list[[i]][,1:2])
-figures[[i]]=ggplot(m0.m2.exp.obs.chr.list[[i]], aes(x=obs, y=exp, color=model)) +
+figures[[i]]=ggplot(m0.m2.exp.obs.chr.list[[i]], aes(x=exp, y=obs, color=model)) +
   geom_point()+
    xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
@@ -387,7 +387,7 @@ m2.exp.obs.total=read.table(paste(path, "/","m2.exp.obs.total.txt", sep=""), hea
 m0.m1.m2.exp.obs=rbind(m0.exp.obs.total, m1.exp.obs.chr, m2.exp.obs.total) %>%add_column(model=c(rep("M0", 22), rep("M1", 22), rep("M2", 22)))
 
 x.limit=y.limit=max(m0.m1.m2.exp.obs[,1:2])
-ggplot(m0.m1.m2.exp.obs, aes(x=obs, y=exp, color=model)) +
+ggplot(m0.m1.m2.exp.obs, aes(x=exp, y=obs, color=model)) +
   geom_point()+
    xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
