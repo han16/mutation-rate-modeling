@@ -109,7 +109,7 @@ geom_bar(stat="identity", fill="blue")+
 #### M0 vs M2 by pooling all mutation types 
 
 
-* each dot is one 100kb wndow 
+* each dot is one 100kb window 
 
 
 ```{r, echo=F, message=F, warning=F, cache=T, eval=T}
@@ -162,6 +162,17 @@ ggplot(m0.m2.exp.obs.total, aes(x=obs, y=exp, color=model)) +
    geom_abline(intercept = 0, slope = 1)+
   # ggtitle(paste(mutation.type[ceiling(i/2)]))+
    theme(plot.title = element_text(hjust = 0.5, size=7)) # center the title
+
+
+m0.m2.exp.obs.total.nooutlier=m0.m2.exp.obs.total%>%filter(exp<1000)
+y.limit=max(m0.m2.exp.obs.total.nooutlier[,1:2])
+x.limit=y.limit
+ggplot(m0.m2.exp.obs.total.nooutlier, aes(x=obs, y=exp, color=model)) +
+  geom_point()+
+  # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle("Removing the outlier driven by high recombination rate")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 
 ######## save and output the results 
 #write.table(m0.exp.obs.total, file=paste(path, "/","m0.exp.obs.total.txt", sep=""))
