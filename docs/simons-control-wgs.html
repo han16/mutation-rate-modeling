@@ -486,6 +486,8 @@ div.section {
 <li>use even (odd) windows as training data to estimate parameters <span class="math inline">\(\beta\)</span></li>
 <li>use another half odd (even) windows as validation data to make prediction</li>
 <li>windows with predicted density as <code>NaN</code> due to <span class="math inline">\(\widehat{\mu}_j=0\)</span> are removed</li>
+<li>M0 uses scale parameters to calculate predicted rate</li>
+<li>Overall these two models are comparable to each other, none of which outperforms another across all mutation types. For some mutation types, M0 works better and for others, M2 is better.</li>
 </ul>
 <div id="m0-vs-m2-by-mutation-types" class="section level4">
 <h4>M0 vs M2 by mutation types</h4>
@@ -495,6 +497,7 @@ div.section {
 <h4>three models regardless of mutation types</h4>
 <ul>
 <li>M0, M2 sum over all predicted probabilities across 9 mutation types</li>
+<li>M1&gt;M0&gt;M2</li>
 </ul>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
@@ -505,37 +508,142 @@ div.section {
 <h4>M0 vs M2 by pooling all mutation types</h4>
 <ul>
 <li>each dot is one 100kb window</li>
+<li>exp in M0 is expected rate adjusted by scaling parameter <span class="math inline">\(L=\frac{\sum y_i}{\sum \mu_i}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
-<p>Note: In a few windows, the calculated expected rate could be unexpected high due to big recombination rate in several windows, such as 108.8. Below are such examples, the columns are chr, start, end, observed, ERVbaseline, DHS, CpGisland, lamin, gc, reptime, RecombRate, Exon, H3K27ac, H3K27me3, H3K36me3, H3K4me1, H3K4me3, H3K9ac, H3K9me3</p>
-<p>chr8 139256300 139256400 0 4.227595e-08 0 0 1 0.26 . 108.804 0 0 0 0 0 1 0 1</p>
-<p>chr8 139256400 139256500 0 7.081221e-08 0 0 1 0.39 . 108.804 0 0 0 0 0 1 0 1</p>
-<p>chr8 139256500 139256600 0 1.1543496e-07 0 0 1 0.49 . 108.804 0 0 0 0 0 1 0 1</p>
-<p>chr8 139256600 139256700 0 7.858366e-08 0 0 1 0.46 . 108.804 0 0 0 0 0 1 0 1</p>
-<p>chr8 139256700 139256800 0 9.983582e-08 0 0 1 0.55 . 108.804 0 0 0 0 0 1 0 1</p>
-<p>chr8 139256800 139256900 0 5.093645e-08 0 0 1 0.31 . 108.80</p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-5.png" width="672" /></p>
 </div>
-<div id="chromosome-wide-scatter-plot" class="section level4">
-<h4>chromosome wide scatter plot</h4>
+<div id="outlier-diagnostic" class="section level4">
+<h4>Outlier diagnostic</h4>
+<p>Note: In a few windows, the calculated expected rate could be unexpected high due to big recombination rate in several windows, such as 108.8.</p>
+<p>Look at mutation type <code>mutation.A_to_C</code> at chromosome 8 as an example.</p>
 <ul>
-<li>each dot is one chromosome by summing up across 100bp windows</li>
-<li>observed rate on x axis and expected on y axis</li>
+<li>recombination rate in those windows and across all windows</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<pre><code> awk &#39;$11&gt;100&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+chr8     139247700       139247800       0       5.8508268e-08   0       0       1       0.41    .       108.804         0 0       1       0       0       0       0       1
+chr8     139247900       139248000       0       3.7592286e-08   0       0       1       0.59    .       108.804         0 0       1       0       0       0       0       1
+chr8     139248100       139248200       0       4.8498557e-08   0       0       1       0.44    .       108.804         0 0       1       0       0       0       0       1
+</code></pre>
+<p>there are 50 such windows in total and 50 in complementary strand <code>mutation.T_to_G</code>.</p>
+<p>Those 50 windows have recombination rate (RR) of <code>108.804</code>, more than 100 times high than average RR across all windows of 0.84.</p>
+<pre><code>awk &#39;{sum+=$11} END {print sum}&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+615910
+
+wc -l  table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+731820 table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+
+&gt; 615910/731820
+[1] 0.8416141
+</code></pre>
+<ul>
+<li>predicted rate in those windows and across all windows</li>
+</ul>
+<p>all those 50 windows have predicted rate more than 0.5</p>
+<pre><code>awk &#39;$5&gt;0.5&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.bed
+chr8 139247700 139247800 0 0.885879142920415 0.000179683336383749 3927.62074039213 -0.941211529317621 0.826701765213676
+chr8 139247900 139248000 0 0.514188561224198 0.000103058730615795 2306.96721407905 -0.717069425665464 0.763334370034514
+chr8 139248100 139248200 0 0.814619465876907 0.000164902137512123 3618.84938902892 -0.902562721298031 0.816620990462835
+chr8 139248300 139248400 0 0.845005809651171 0.000171279641853248 3748.88094484896 -0.919241975570726 0.821015489926893
+chr8 139248500 139248600 0 0.851571372578056 0.000173296884058543 3763.06476062817 -0.922806248666564 0.821945908060196
+
+
+awk &#39;$5&gt;0.5&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.bed | wc -l
+50</code></pre>
+<p>however M0 gives predicted rate</p>
+<pre><code>grep &#39;chr8&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed | awk &#39;$2&gt;=139247700 &amp;&amp;  $2&lt;=139257500&#39;
+chr8 139247700 139247800 0 1.00172949e-07 0.000179683336383749 3927.62074039213 -0.000316501104263476 0.500126265670176
+chr8 139247900 139248000 0 5.868529e-08 0.000103058730615795 2306.96721407905 -0.000242250469555788 0.500096643953808
+chr8 139248100 139248200 0 9.225769e-08 0.000164902137512123 3618.84938902892 -0.000303739510106934 0.500121174530947
+chr8 139248300 139248400 0 9.5600379e-08 0.000171279641853248 3748.88094484896 -0.000309193109560999 0.500123350202247
+chr8 139248500 139248600 0 9.6045573e-08 0.000173296884058543 3763.06476062817 -0.000309912202083106 0.500123637078644
+
+grep &#39;chr8&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed | awk &#39;$2&gt;=139247700 &amp;&amp;  $2&lt;=139257500&#39; | wc -l
+50
+</code></pre>
+<p>and adjusted rate is <code>3106*10^{-7}=10^{-4}</code>. Those 50 windows are 1000 times higher than that in M0 for predicted rate.</p>
+<pre><code>awk &#39;{sum+=$4} END {print sum}&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed
+3922
+
+awk &#39;{sum+=$5} END {print sum}&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed
+1.2627
+
+&gt; 3922/1.2627
+[1] 3106.043
+</code></pre>
+<ul>
+<li>verify calculation of predicted rate</li>
+</ul>
+<pre><code>&gt; load(&quot;table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.100bpwindow.ev&gt; .line.train.model.RData&quot;)
+&gt;
+&gt; ls()
+[1] &quot;result&quot;
+&gt; result
+$para.est
+                                          (Intercept)
+                                          7.946130900
+      second.cate.matrix[, 3:(2 + feature_number)]DHS
+                                          0.111412210
+second.cate.matrix[, 3:(2 + feature_number)]CpGisland
+                                         -0.061066892
+    second.cate.matrix[, 3:(2 + feature_number)]Lamin
+                                          0.049454107
+       second.cate.matrix[, 3:(2 + feature_number)]GC
+                                         -0.051563344
+       second.cate.matrix[, 3:(2 + feature_number)]RT
+                                          0.099047740
+       second.cate.matrix[, 3:(2 + feature_number)]RR
+                                          0.072775740
+     second.cate.matrix[, 3:(2 + feature_number)]Exon
+                                          0.033057750
+  second.cate.matrix[, 3:(2 + feature_number)]H3K27ac
+                                         -0.006163996
+ second.cate.matrix[, 3:(2 + feature_number)]H3K27me3
+                                          0.005764340
+ second.cate.matrix[, 3:(2 + feature_number)]H3K36me3
+                                          0.044806480
+  second.cate.matrix[, 3:(2 + feature_number)]H3K4me1
+                                          0.041314267
+  second.cate.matrix[, 3:(2 + feature_number)]H3K4me3
+                                          0.094146882
+   second.cate.matrix[, 3:(2 + feature_number)]H3K9ac
+                                          0.006397160
+  second.cate.matrix[, 3:(2 + feature_number)]H3K9me3
+                                          0.096692925
+</code></pre>
+<pre class="r"><code>coff.est=c(7.946130900, 0.111412210, -0.061066892,  0.049454107, -0.051563344, 0.099047740, 0.072775740, 0.033057750, -0.006163996, 0.005764340,0.044806480, 0.041314267, 0.094146882, 0.006397160, 0.096692925)
+cova.fea.a2c=c(0,5.8508268e-08,0,0,1,0.41,0,108.804,0,0,1,0,0,0,0,1) # covariate feature for window chr8     139247700       139247800 for mutation A-&gt;C
+cova.fea.t2g=c(0,4.1664681e-08,0,0,1,0.41,0,108.804,0,0,1,0,0,0,0,1)
+#covariate feature for window chr8     139247700       139247800 for mutation T-&gt;G
+feature_number=14
+exp.rate=exp(cova.fea.a2c[3:(3+feature_number-1)]%*%coff.est[2:15]+coff.est[1])*(cova.fea.a2c[2]+cova.fea.t2g[2]) # this is expected rate
+# covariate features are identical in both strands, but baseline rate should be added up in cauculating prediction rate  
+
+cat(&quot;expected rate is&quot;, exp.rate, &quot;\n&quot;) # which is exactly the one in file </code></pre>
+<pre><code>## expected rate is 0.8858791</code></pre>
+<pre class="r"><code># awk &#39;$5&gt;0.5&#39; table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.bed
+#chr8 139247700 139247800 0 0.885879142920415 0.000179683336383749 3927.62074039213 -0.941211529317621 0.826701765213676
+
+# what happens if replace 108.8 with average rate of 0.8 
+
+cova.fea.a2c=c(0,5.8508268e-08,0,0,1,0.41,0,0.8,0,0,1,0,0,0,0,1) 
+cova.fea.t2g=c(0,4.1664681e-08,0,0,1,0.41,0,0.8,0,0,1,0,0,0,0,1)
+exp.rate=exp(cova.fea.a2c[3:(3+feature_number-1)]%*%coff.est[2:15]+coff.est[1])*(cova.fea.a2c[2]+cova.fea.t2g[2]) # this is expected rate
+cat(&quot;after replace 108 with 0.8, expected rate is&quot;, exp.rate, &quot;\n&quot;)</code></pre>
+<pre><code>## after replace 108 with 0.8, expected rate is 0.0003418133</code></pre>
 </div>
-<div id="combined-all-mutation-types" class="section level4">
-<h4>Combined all mutation types</h4>
+<div id="chromosome-wide-scatter-plot-by-combining-all-mutation-types-in-m0-m2" class="section level4">
+<h4>Chromosome wide scatter plot by combining all mutation types in M0, M2</h4>
 <ul>
 <li>each dot is one chromosome by summing up across 100bp windows</li>
 <li>M0, M2 sum over all mutation types, M1 runs directly on mutation type combined sample<br />
 </li>
-<li>observed rate on x axis and expected on y axis</li>
+<li>observed rate on y axis and expected on x axis</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <ul>
 <li><span class="math inline">\(MSE=\sum\frac{(obs-exp)^2}{22}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 </div>
 </div>

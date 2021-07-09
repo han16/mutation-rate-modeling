@@ -52,6 +52,8 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 * use even (odd) windows as training data to estimate parameters $\beta$
 * use another half odd (even) windows as validation data to make prediction 
 * windows with predicted density as `NaN` due to $\widehat{\mu}_j=0$ are removed 
+* M0 uses scale parameters to calculate predicted rate 
+* Overall these two models are comparable to each other, none of which outperforms another across all mutation types. For some mutation types, M0 works better and for others, M2 is better.  
 
 #### M0 vs M2 by mutation types 
 
@@ -83,7 +85,8 @@ geom_bar(stat="identity", position=position_dodge())+
 
 #### three models regardless of mutation types 
 
-* M0, M2 sum over all predicted probabilities across 9 mutation types  
+* M0, M2 sum over all predicted probabilities across 9 mutation types 
+* M1>M0>M2
 
 
 
@@ -110,6 +113,7 @@ geom_bar(stat="identity", fill="blue")+
 
 
 * each dot is one 100kb window 
+* exp in M0 is expected rate adjusted by scaling parameter $L=\frac{\sum y_i}{\sum \mu_i}$
 
 
 ```{r, echo=F, message=F, warning=F, cache=T, eval=T}
@@ -148,9 +152,38 @@ for (mut in 1:length(mutation.type))
       
    } # end of for (mut in 1:length(mutation.type))
 
+scale.para=sum(m0.exp.obs.total$obs)/sum(m0.exp.obs.total$exp)
+m0.exp.obs.total=m0.exp.obs.total%>%add_column(scaled.exp=scale.para*m0.exp.obs.total$exp)
+m0.exp.obs.total=m0.exp.obs.total[,-2]
+m0.exp.obs.total=m0.exp.obs.total%>%rename(exp=scaled.exp) # rename col names 
+######################### plot M0: use scale parameter to adjust expected rate  
+ggplot(m0.exp.obs.total, aes(x=exp, y=obs)) +
+  geom_point()+
+   xlim(c(0, max(m0.exp.obs.total)))+ylim(c(0, max(m0.exp.obs.total)))+
+   geom_abline(intercept = 0, slope = 1)+
+   xlab("expected rate")+ylab("observed rate")+
+   ggtitle("M0")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+######################### plot M2  
+ggplot(m2.exp.obs.total, aes(x=exp, y=obs)) +
+  geom_point()+
+   xlim(c(0,max(m2.exp.obs.total[,1:2]) ))+
+ylim(c(0, max(m2.exp.obs.total[,1:2])))+
+   geom_abline(intercept = 0, slope = 1)+
+   xlab("expected rate")+ylab("observed rate")+
+   ggtitle("M2")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 
+m2.exp.obs.total.nooutlier=m2.exp.obs.total%>%filter(exp<1000)
+ggplot(m2.exp.obs.total.nooutlier, aes(x=exp, y=obs)) +
+  geom_point()+
+   xlim(c(0, max(m2.exp.obs.total.nooutlier)))+ylim(c(0,max(m2.exp.obs.total.nooutlier)))+
+   geom_abline(intercept = 0, slope = 1)+
+   xlab("expected rate")+ylab("observed rate")+
+   ggtitle("M2 without outlier")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+############################
 
-#########################
 
 m0.m2.exp.obs.total=rbind(m0.exp.obs.total, m2.exp.obs.total) %>% add_column(model=c(rep("M0", nrow(m0.exp.obs.total)), rep("M2", nrow(m2.exp.obs.total))))  # combine two models together 
 
@@ -180,22 +213,86 @@ ggplot(m0.m2.exp.obs.total.nooutlier, aes(x=exp, y=obs, color=model)) +
 #save(m0.m2.exp.obs.chr.list, file=paste(path, "/", "m0.m2.exp.obs.chr.list.RData", sep=""))
 ```
 
-Note: In a few windows, the calculated expected rate could be unexpected high due to big recombination rate in several windows, such as 108.8. Below are such examples, the columns are chr, start, end, observed, ERVbaseline, DHS, CpGisland, lamin, gc, reptime, RecombRate, Exon, H3K27ac, H3K27me3, H3K36me3, H3K4me1, H3K4me3, H3K9ac, H3K9me3
+
+#### Outlier diagnostic 
 
 
 
-chr8     139256300       139256400       0       4.227595e-08    0       0       1       0.26    .       108.804        0       0       0       0       0       1       0       1
+Note: In a few windows, the calculated expected rate could be unexpected high due to big recombination rate in several windows, such as 108.8. 
 
-chr8     139256400       139256500       0       7.081221e-08    0       0       1       0.39    .       108.804        0       0       0       0       0       1       0       1
+Look at mutation type `mutation.A_to_C` at chromosome 8 as an example.  
 
-chr8     139256500       139256600       0       1.1543496e-07   0       0       1       0.49    .       108.804        0       0       0       0       0       1       0       1
+* recombination rate in those windows and across all windows 
 
-chr8     139256600       139256700       0       7.858366e-08    0       0       1       0.46    .       108.804        0       0       0       0       0       1       0       1
+```
+ awk '$11>100' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+chr8     139247700       139247800       0       5.8508268e-08   0       0       1       0.41    .       108.804         0 0       1       0       0       0       0       1
+chr8     139247900       139248000       0       3.7592286e-08   0       0       1       0.59    .       108.804         0 0       1       0       0       0       0       1
+chr8     139248100       139248200       0       4.8498557e-08   0       0       1       0.44    .       108.804         0 0       1       0       0       0       0       1
 
-chr8     139256700       139256800       0       9.983582e-08    0       0       1       0.55    .       108.804        0       0       0       0       0       1       0       1
+```
+there are 50 such windows in total and 50 in complementary strand `mutation.T_to_G`. 
 
-chr8     139256800       139256900       0       5.093645e-08    0       0       1       0.31    .       108.80
+Those 50 windows have recombination rate (RR) of `108.804`, more than 100 times high than average RR across all windows of 0.84. 
 
+```
+awk '{sum+=$11} END {print sum}' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+615910
+
+wc -l  table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+731820 table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.chr8.ERVbaseline.1DHS.2CpGisland.3lamin.4gc.5reptime.6RecombRate.7Exon.8H3K27ac.9H3K27me3.10H3K36me3.11H3K4me1.12H3K4me3.13H3K9ac.14H3K9me3.even.line
+
+> 615910/731820
+[1] 0.8416141
+
+```
+
+* predicted rate in those windows and across all windows 
+
+all those 50 windows have predicted rate more than 0.5 
+
+```
+awk '$5>0.5' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.bed
+chr8 139247700 139247800 0 0.885879142920415 0.000179683336383749 3927.62074039213 -0.941211529317621 0.826701765213676
+chr8 139247900 139248000 0 0.514188561224198 0.000103058730615795 2306.96721407905 -0.717069425665464 0.763334370034514
+chr8 139248100 139248200 0 0.814619465876907 0.000164902137512123 3618.84938902892 -0.902562721298031 0.816620990462835
+chr8 139248300 139248400 0 0.845005809651171 0.000171279641853248 3748.88094484896 -0.919241975570726 0.821015489926893
+chr8 139248500 139248600 0 0.851571372578056 0.000173296884058543 3763.06476062817 -0.922806248666564 0.821945908060196
+
+
+awk '$5>0.5' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.bed | wc -l
+50
+```
+
+
+however M0 gives predicted rate  
+
+```
+grep 'chr8' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed | awk '$2>=139247700 &&  $2<=139257500'
+chr8 139247700 139247800 0 1.00172949e-07 0.000179683336383749 3927.62074039213 -0.000316501104263476 0.500126265670176
+chr8 139247900 139248000 0 5.868529e-08 0.000103058730615795 2306.96721407905 -0.000242250469555788 0.500096643953808
+chr8 139248100 139248200 0 9.225769e-08 0.000164902137512123 3618.84938902892 -0.000303739510106934 0.500121174530947
+chr8 139248300 139248400 0 9.5600379e-08 0.000171279641853248 3748.88094484896 -0.000309193109560999 0.500123350202247
+chr8 139248500 139248600 0 9.6045573e-08 0.000173296884058543 3763.06476062817 -0.000309912202083106 0.500123637078644
+
+grep 'chr8' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed | awk '$2>=139247700 &&  $2<=139257500' | wc -l
+50
+
+```
+
+and adjusted rate is `3106*10^{-7}=10^{-4}`. Those 50 windows are 1000 times higher than that in M0 for predicted rate. 
+
+```
+awk '{sum+=$4} END {print sum}' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed
+3922
+
+awk '{sum+=$5} END {print sum}' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.with.zero.coefficient.and.intercept.bed
+1.2627
+
+> 3922/1.2627
+[1] 3106.043
+
+```
 
 
 ```{r, echo=F, message=F, warning=F, cache=T, eval=F}
@@ -249,14 +346,81 @@ colnames(m2.exp.obs.total)=c("obs", "exp")
 #save(m0.m2.exp.obs.chr.list, file=paste(path, "/", "m0.m2.exp.obs.chr.list.RData", sep=""))
 ```
 
-#### chromosome wide scatter plot 
 
+* verify calculation of  predicted rate 
 
-* each dot is one chromosome by summing up across 100bp windows 
-* observed rate on x axis and expected on y axis 
+```
+> load("table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.100bpwindow.ev> .line.train.model.RData")
+>
+> ls()
+[1] "result"
+> result
+$para.est
+                                          (Intercept)
+                                          7.946130900
+      second.cate.matrix[, 3:(2 + feature_number)]DHS
+                                          0.111412210
+second.cate.matrix[, 3:(2 + feature_number)]CpGisland
+                                         -0.061066892
+    second.cate.matrix[, 3:(2 + feature_number)]Lamin
+                                          0.049454107
+       second.cate.matrix[, 3:(2 + feature_number)]GC
+                                         -0.051563344
+       second.cate.matrix[, 3:(2 + feature_number)]RT
+                                          0.099047740
+       second.cate.matrix[, 3:(2 + feature_number)]RR
+                                          0.072775740
+     second.cate.matrix[, 3:(2 + feature_number)]Exon
+                                          0.033057750
+  second.cate.matrix[, 3:(2 + feature_number)]H3K27ac
+                                         -0.006163996
+ second.cate.matrix[, 3:(2 + feature_number)]H3K27me3
+                                          0.005764340
+ second.cate.matrix[, 3:(2 + feature_number)]H3K36me3
+                                          0.044806480
+  second.cate.matrix[, 3:(2 + feature_number)]H3K4me1
+                                          0.041314267
+  second.cate.matrix[, 3:(2 + feature_number)]H3K4me3
+                                          0.094146882
+   second.cate.matrix[, 3:(2 + feature_number)]H3K9ac
+                                          0.006397160
+  second.cate.matrix[, 3:(2 + feature_number)]H3K9me3
+                                          0.096692925
+
+```
+
+```{r, echo=T}
+coff.est=c(7.946130900, 0.111412210, -0.061066892,  0.049454107, -0.051563344, 0.099047740, 0.072775740, 0.033057750, -0.006163996, 0.005764340,0.044806480, 0.041314267, 0.094146882, 0.006397160, 0.096692925)
+cova.fea.a2c=c(0,5.8508268e-08,0,0,1,0.41,0,108.804,0,0,1,0,0,0,0,1) # covariate feature for window chr8     139247700       139247800 for mutation A->C
+cova.fea.t2g=c(0,4.1664681e-08,0,0,1,0.41,0,108.804,0,0,1,0,0,0,0,1)
+#covariate feature for window chr8     139247700       139247800 for mutation T->G
+feature_number=14
+exp.rate=exp(cova.fea.a2c[3:(3+feature_number-1)]%*%coff.est[2:15]+coff.est[1])*(cova.fea.a2c[2]+cova.fea.t2g[2]) # this is expected rate
+# covariate features are identical in both strands, but baseline rate should be added up in cauculating prediction rate  
+
+cat("expected rate is", exp.rate, "\n") # which is exactly the one in file 
+# awk '$5>0.5' table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.even.window.as.train.bed
+#chr8 139247700 139247800 0 0.885879142920415 0.000179683336383749 3927.62074039213 -0.941211529317621 0.826701765213676
+
+# what happens if replace 108.8 with average rate of 0.8 
+
+cova.fea.a2c=c(0,5.8508268e-08,0,0,1,0.41,0,0.8,0,0,1,0,0,0,0,1) 
+cova.fea.t2g=c(0,4.1664681e-08,0,0,1,0.41,0,0.8,0,0,1,0,0,0,0,1)
+exp.rate=exp(cova.fea.a2c[3:(3+feature_number-1)]%*%coff.est[2:15]+coff.est[1])*(cova.fea.a2c[2]+cova.fea.t2g[2]) # this is expected rate
+cat("after replace 108 with 0.8, expected rate is", exp.rate, "\n")
+```
+
+#### Chromosome wide scatter plot by combining all mutation types in M0, M2
+
 
 
 ```{r, echo=F, message=F, warning=F, cache=T, eval=F}
+
+#* each dot is one chromosome by summing up across 100bp windows 
+#* observed rate on y axis and expected on x axis 
+#* expected rate in M0 is adjusted by scaling parameter L 
+
+
 
 path="C:/Shengtong/Research/mutation-rate/ObsvsExp.10k.window"
 mutation.type=unique(as.character(read.table("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density/post.pred.for.model.txt", header=T)$mutation.type)) # get mutation types 
@@ -321,45 +485,77 @@ figures=list()
 for (i in 1:length(m0.m2.exp.obs.chr.list))
 {
    x.limit=y.limit=max(m0.m2.exp.obs.chr.list[[i]][,1:2])
+   scale.para=sum(m0.m2.exp.obs.chr.list[[i]]$obs[1:22])/sum(m0.m2.exp.obs.chr.list[[i]]$exp[1:22]) # in M0, use scale parameter to adjust the expected rate 
+   m0.m2.exp.obs.chr.list[[i]]$exp[1:22]=m0.m2.exp.obs.chr.list[[i]]$exp[1:22]*scale.para
+   
+   
 figures[[i]]=ggplot(m0.m2.exp.obs.chr.list[[i]], aes(x=exp, y=obs, color=model)) +
   geom_point()+
    xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
    ggtitle(paste(mutation.type[ceiling(i/2)]))+
-   theme(plot.title = element_text(hjust = 0.5, size=7)) # center the title
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
    
 }    
-figure=ggarrange(figures[[1]],figures[[3]], figures[[5]], figures[[7]], figures[[9]], figures[11], figures[[13]], figures[[15]], figures[[17]],  common.legend = TRUE, legend="right") 
-#figure
-annotate_figure(figure,
-                top = text_grob("odd windows", color = "red", face = "bold", size = 14),
-#                bottom = text_grob("Data source: \n ToothGrowth data set", color = "blue",
-#                                   hjust = 1, x = 1, face = "italic", size = 10),
-#                left = text_grob("Tooth length", color = "green", rot = 90),
-#                right = "I'm done, thanks :-)!",
-#                fig.lab = "Figure 1", fig.lab.face = "bold"
-)
-
-
-figure=ggarrange(figures[[2]],figures[[4]], figures[[6]], figures[[8]], figures[[10]], figures[12], figures[[14]], figures[[16]], figures[[18]],  common.legend = TRUE, legend="right") 
-#figure
-annotate_figure(figure,
-                top = text_grob("even windows", color = "red", face = "bold", size = 14),
-#                bottom = text_grob("Data source: \n ToothGrowth data set", color = "blue",
-#                                   hjust = 1, x = 1, face = "italic", size = 10),
-#                left = text_grob("Tooth length", color = "green", rot = 90),
-#                right = "I'm done, thanks :-)!",
-#                fig.lab = "Figure 1", fig.lab.face = "bold"
-)
 ```
 
-#### Combined all mutation types 
+
+
+```{r, echo=F, warning=F, message=F, eval=F}
+#* scatter plot for odd windows 
+figures[[1]]
+figures[[3]]
+figures[[5]]
+figures[[7]]
+figures[[9]]
+figures[[11]]
+figures[[13]]
+figures[[15]]
+figures[[17]]
+```
+
+
+
+```{r, echo=F, warning=F, message=F, eval=F}
+#* scatter plot for even  windows
+figures[[2]]
+figures[[4]]
+figures[[6]]
+figures[[8]]
+figures[[10]]
+figures[[12]]
+figures[[14]]
+figures[[16]]
+figures[[18]]
+#figure=ggarrange(figures[[1]],figures[[3]], figures[[5]], figures[[7]], figures[[9]], figures[11], figures[[13]], figures[[15]], figures[[17]],  common.legend = TRUE, legend="right") 
+#figure
+#annotate_figure(figure,
+#                top = text_grob("odd windows", color = "red", face = "bold", size = 14),
+#                bottom = text_grob("Data source: \n ToothGrowth data set", color = "blue",
+#                                   hjust = 1, x = 1, face = "italic", size = 10),
+#                left = text_grob("Tooth length", color = "green", rot = 90),
+#                right = "I'm done, thanks :-)!",
+#                fig.lab = "Figure 1", fig.lab.face = "bold"
+#)
+
+
+#figure=ggarrange(figures[[2]],figures[[4]], figures[[6]], figures[[8]], figures[[10]], figures[12], figures[[14]], figures[[16]], figures[[18]],  common.legend = TRUE, legend="right") 
+#figure
+#annotate_figure(figure,
+#                top = text_grob("even windows", color = "red", face = "bold", size = 14),
+#                bottom = text_grob("Data source: \n ToothGrowth data set", color = "blue",
+#                                   hjust = 1, x = 1, face = "italic", size = 10),
+#                left = text_grob("Tooth length", color = "green", rot = 90),
+#                right = "I'm done, thanks :-)!",
+#                fig.lab = "Figure 1", fig.lab.face = "bold"
+#)
+```
 
 
 
 * each dot is one chromosome by summing up across 100bp windows 
 * M0, M2 sum over all mutation types, M1 runs directly on mutation type combined sample    
-* observed rate on x axis and expected on y axis 
+* observed rate on y axis and expected on x axis 
 
 
 
@@ -383,6 +579,7 @@ colnames(m1.exp.obs.chr)=c("obs", "exp")
 
 ####### read into previously save data 
 m0.exp.obs.total=read.table(paste(path, "/","m0.exp.obs.total.txt", sep=""), header=T)
+m0.exp.obs.total$exp=m0.exp.obs.total$exp*sum(m0.exp.obs.total$obs)/sum(m0.exp.obs.total$exp) # in M0, use scaled expected rate 
 m2.exp.obs.total=read.table(paste(path, "/","m2.exp.obs.total.txt", sep=""), header=T)
 m0.m1.m2.exp.obs=rbind(m0.exp.obs.total, m1.exp.obs.chr, m2.exp.obs.total) %>%add_column(model=c(rep("M0", 22), rep("M1", 22), rep("M2", 22)))
 
