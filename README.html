@@ -413,7 +413,7 @@ $(document).ready(function () {
 </div>
 <div id="step-3-run-generalized-linear-model-glm" class="section level2">
 <h2>Step 3: Run Generalized Linear Model (GLM)</h2>
-<p>It’s computational intractable to run Poisson regression via GLM on ~3B/100bp windows directly. Observing the mutation counts and some covariate features are sparse, thus many windows share similar features. <code>Split</code> which divides into Groups and Reassembles is employed multiple times to perform the analysis.</p>
+<p>It’s computational intractable to run Poisson regression via GLM on ~3B/100bp windows directly. Observing the mutation counts and some covariate features are sparse, thus many windows share similar features. <code>Split</code> which divides into Groups and Reassembles is employed multiple times in estimating parameters.</p>
 <pre><code>step5_poiss.reg.by.cate.R</code></pre>
 </div>
 <div id="step-4-model-diagnostic" class="section level2">

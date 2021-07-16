@@ -55,11 +55,12 @@ step4_combine.cova.feature.mutation.and.baseline.rate.sh
 
 ## Step 3: Run Generalized Linear Model (GLM)
 
-It's computational intractable to run Poisson regression via GLM on ~3B/100bp windows directly. Observing the mutation counts  and some covariate features are sparse, thus many windows share similar features. `Split` which divides into Groups and Reassembles is employed multiple times to perform the analysis.  
+It's computational intractable to run Poisson regression via GLM on ~3B/100bp windows directly. Observing the mutation counts  and some covariate features are sparse, thus many windows share similar features. `Split` which divides into Groups and Reassembles is employed multiple times in estimating parameters.  
 
 ```
 step5_poiss.reg.by.cate.R
 ```
+
 
 
 ## Step 4: Model diagnostic 

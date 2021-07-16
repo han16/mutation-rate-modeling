@@ -470,7 +470,7 @@ div.section {
 </tr>
 </tbody>
 </table>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="model-evalulation" class="section level2">
 <h2>Model evalulation</h2>
@@ -491,7 +491,7 @@ div.section {
 </ul>
 <div id="m0-vs-m2-by-mutation-types" class="section level4">
 <h4>M0 vs M2 by mutation types</h4>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-4-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
 </div>
 <div id="predicted-probability-of-three-models" class="section level4">
 <h4>predicted probability of three models</h4>
@@ -499,7 +499,7 @@ div.section {
 <li><p>In M0, M2 for each one of 9 mutation types, use even(odd) window as train set to estimate parameters, and use remaining odd(even) window to calculate predicted probability, and sum up across all mutation types. In M1, use odd(even) window as train set, and remaining even(odd) window to calculate predicted probability and add them up.</p></li>
 <li><p>the higher predicted probability, the better, M1&gt;M0&gt;M2</p></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 </div>
 <div id="expected-rate-vs-observed-rate" class="section level3">
@@ -511,7 +511,7 @@ div.section {
 <li>For each one of 9 mutation types, use odd(even) windows to estimate parameters, calculate expected rate in the same odd (even) window and sum up over all mutation types.</li>
 <li>exp in M0 is expected rate adjusted by scaling parameter <span class="math inline">\(L=\frac{\sum y_i}{\sum \mu_i}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-5.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-5.png" width="672" /></p>
 </div>
 <div id="outlier-diagnostic" class="section level4">
 <h4>Outlier diagnostic</h4>
@@ -641,12 +641,32 @@ cat(&quot;after replace 108 with 0.8, expected rate is&quot;, exp.rate, &quot;\n
 </li>
 <li>observed rate on y axis and expected on x axis</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <ul>
 <li><span class="math inline">\(MSE=\sum\frac{(obs-exp)^2}{22}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
+</div>
+</div>
+<div id="parameter-estimate-in-m1-m2" class="section level2">
+<h2>Parameter estimate in M1 &amp; M2</h2>
+<div id="m1-vs-m2" class="section level3">
+<h3>M1 vs M2</h3>
+<ul>
+<li><p>three continuous variables are firstly standardized, then converted into binary variable before collapsing in both M1 and M2 model</p></li>
+<li><p>estimate in M1 is more robust than M2 in the sense that both odd and even windows produce similar estimates, but they could vary a lot across specific mutation types in M2</p></li>
+<li><p><code>combine</code> denotes M1 model for pooled mutation types vs other 9 mutation types in M2 model on x axis</p></li>
+</ul>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-5.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-6.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-7.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-8.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-9.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-10.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-11.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-12.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-13.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-14.png" width="672" /></p>
+</div>
+<div id="parameter-estimated-in-m1" class="section level3">
+<h3>Parameter estimated in M1</h3>
+<ul>
+<li>three continuous variables are firstly standardized, then converted into binary variable before collapsing</li>
+<li>vertical lines are 95% confidence interval</li>
+</ul>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
 </div>
 <div id="referecnce" class="section level2">

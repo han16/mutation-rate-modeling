@@ -12,6 +12,15 @@ library(ggpubr)
 set.seed(123)
 ```
 
+
+```{r, echo=F}
+loadRData <- function(fileName){
+#loads an RData file, and returns it
+    load(fileName)
+    get(ls()[ls() != "fileName"])
+}
+```
+
 ## Mutation count partition by mutation types 
 
 WGS Simons control data: 516 idiopathic autism families (2,064 individuals)
@@ -64,10 +73,12 @@ m2.post.pred=tibble()
 m2.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.txt", sep="/"), header=T))
 m0.post.pred=as_tibble(read.table(paste(path, "post.pred.for.model.with.zero.coefficient.and.intercept.txt", sep="/"), header=T))
 m0.m2.combine=bind_rows(m0.post.pred, m2.post.pred)%>%add_column(model=c(rep("M0", 18), rep("M2", 18)))
+m0.m2.combine$mutation.type=m0.m2.combine$mutation.type %>% recode( mutation.C_to_A.CpG.and.mutation.G_to_T.CpG="C_to_A.CpG", mutation.C_to_G.CpG.and.mutation.G_to_C.CpG="C_to_G.CpG", mutation.C_to_T.CpG.and.mutation.G_to_A.CpG="C_to_T.CpG", mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG="C_to_A.nonCpG",        mutation.C_to_G.nonCpG.and.mutation.G_to_C.nonCpG="C_to_G.noncpG,", mutation.C_to_T.nonCpG.and.mutation.G_to_A.nonCpG="C_to_T.nonCpG",                       mutation.A_to_C.and.mutation.T_to_G="A_to_C",  mutation.A_to_G.and.mutation.T_to_C="A_to_G", mutation.A_to_T.and.mutation.T_to_A="A_to_T") # rename mutation type to make them shorter
+
 ################## plot them 
 
 ggplot(data=m0.m2.combine%>%filter(train.set=="odd"), aes(x=mutation.type, y=-post.pred, fill=model)) +
-   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
 theme(text = element_text(size=10))+
 geom_bar(stat="identity", position=position_dodge())+
    ylab("-log(pred.prob)")+
@@ -75,7 +86,7 @@ geom_bar(stat="identity", position=position_dodge())+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 
 ggplot(data=m0.m2.combine%>%filter(train.set=="even"), aes(x=mutation.type, y=-post.pred, fill=model)) +
-   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
 theme(text = element_text(size=10))+
 geom_bar(stat="identity", position=position_dodge())+
     ylab("-log(pred.prob)")+
@@ -614,6 +625,114 @@ geom_bar(stat="identity", fill="blue")+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 ```
 
+
+## Parameter estimate in M1 & M2
+
+### M1 vs M2
+
+* three continuous variables are firstly standardized, then converted into binary variable before collapsing in both M1 and M2 model
+
+* estimate in M1 is more robust than M2 in the sense that both odd and even windows produce similar estimates, but they could vary a lot across specific mutation types in M2 
+* `combine` denotes M1 model for pooled mutation types vs other 9 mutation types in M2 model on x axis 
+
+```{r, echo=F, warning=F, message=F}
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
+parameter.estimate.odd.window=list(); parameter.estimate.even.window=list()
+for (mut in 1:length(mutation.type))
+{
+#   mut=1
+   parameter.estimate.odd.window[[mut]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".100bpwindow.odd.line.train.model.with.standardize.covariate.RData", sep=""))
+   parameter.estimate.even.window[[mut]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", mutation.type[mut], ".100bpwindow.even.line.train.model.with.standardize.covariate.RData", sep=""))
+} # end of for (mut in 1:length(mutation.type))
+
+### this is parameter estimate in M1 
+parameter.estimate.odd.window[[mut+1]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation", ".100bpwindow.odd.line.train.model.with.standardize.covariate.RData", sep=""))
+parameter.estimate.even.window[[mut+1]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation", ".100bpwindow.even.line.train.model.with.standardize.covariate.RData", sep=""))
+
+figures=list(); parameter.estimate.cova.all=tibble()
+for (i in 1:length(cova))
+{
+   #i=1 for each covariate feature, compare parameter estimate across various mutation types 
+   parameter.estimate.cova.odd=numeric();parameter.estimate.cova.even=numeric() 
+   for (j in 1:(length(mutation.type)+1))
+      {
+       parameter.estimate.cova.odd[j]=parameter.estimate.odd.window[[j]]$para.est[i+1]
+       parameter.estimate.cova.even[j]=parameter.estimate.even.window[[j]]$para.est[i+1]
+   }
+   parameter.estimate.cova=tibble(estimate=c(parameter.estimate.cova.odd, parameter.estimate.cova.even), window=c(rep("odd", length(parameter.estimate.cova.odd)), rep("even", length(parameter.estimate.cova.even))), subtype=rep(c(mutation.type, "combine"),2)) # combine even and odd windows 
+   parameter.estimate.cova$subtype=parameter.estimate.cova$subtype %>% recode( mutation.C_to_A.CpG.and.mutation.G_to_T.CpG="C_to_A.CpG", mutation.C_to_G.CpG.and.mutation.G_to_C.CpG="C_to_G.CpG", mutation.C_to_T.CpG.and.mutation.G_to_A.CpG="C_to_T.CpG", mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG="C_to_A.nonCpG",        mutation.C_to_G.nonCpG.and.mutation.G_to_C.nonCpG="C_to_G.noncpG,", mutation.C_to_T.nonCpG.and.mutation.G_to_A.nonCpG="C_to_T.nonCpG",                       mutation.A_to_C.and.mutation.T_to_G="A_to_C",  mutation.A_to_G.and.mutation.T_to_C="A_to_G", mutation.A_to_T.and.mutation.T_to_A="A_to_T") # rename mutation type to make them shorter 
+   
+parameter.estimate.cova.all=rbind(parameter.estimate.cova.all, parameter.estimate.cova)
+   
+############  plot parameter estimate for each individual covariate feature 
+figures[[i]]=ggplot(data=parameter.estimate.cova, aes(x=subtype, y=estimate, fill=window)) +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+geom_bar(stat="identity", position=position_dodge())+
+    ylab(expression(paste(hat(beta))))+xlab("")+
+   geom_hline(yintercept=parameter.estimate.cova%>%filter(subtype=="combine"& window=="odd")%>%select(estimate)%>%pull, linetype="dashed", 
+                color = "lightskyblue", size=1)+
+   geom_hline(yintercept=parameter.estimate.cova%>%filter(subtype=="combine"& window=="even")%>%select(estimate)%>%pull, linetype="dashed", 
+                color = "red", size=1)+  # use horizental line to highlight 
+   ggtitle(paste(cova[i]))+
+  theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+
+} # end of for (i in 1:length(cova))
+parameter.estimate.cova.all=parameter.estimate.cova.all%>%add_column(cova=rep(cova, each=20))
+############# use facet to plot all covariates in one panel 
+#ggplot(data=parameter.estimate.cova.all, aes(x=subtype, y=estimate, fill=window)) +
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size=5))+
+#   facet_grid(rows = vars(cova))+
+#theme(text = element_text(size=10))+
+#geom_bar(stat="identity", position=position_dodge())+
+#    ylab("parameter estimate")+
+#   geom_hline(yintercept=parameter.estimate.cova%>%filter(subtype=="combine"& window=="odd")%>%select(estimate)%>%pull, linetype="dashed", 
+#                color = "lightskyblue")+
+#   geom_hline(yintercept=parameter.estimate.cova%>%filter(subtype=="combine"& window=="even")%>%select(estimate)%>%pull, linetype="dashed", 
+#                color = "red")#+  # use horizental line to highlight 
+############# plot individual feature 
+figures[[1]]
+figures[[2]]
+figures[[3]]
+figures[[4]]
+figures[[5]]
+figures[[6]]
+figures[[7]]
+figures[[8]]
+figures[[9]]
+figures[[10]]
+figures[[11]]
+figures[[12]]
+figures[[13]]
+figures[[14]]
+```
+
+### Parameter estimated in M1 
+
+* three continuous variables are firstly standardized, then converted into binary variable before collapsing 
+* vertical lines are 95% confidence interval 
+
+```{r, echo=F, message=F, warning=F}
+parameter.estimate.even.window.model1=tibble(estimate=parameter.estimate.even.window[[mut+1]]$para.est, lower=parameter.estimate.even.window[[mut+1]]$para.conf[,1], upper=parameter.estimate.even.window[[mut+1]]$para.conf[,2])
+
+parameter.estimate.odd.window.model1=tibble(estimate=parameter.estimate.odd.window[[mut+1]]$para.est, lower=parameter.estimate.odd.window[[mut+1]]$para.conf[,1], upper=parameter.estimate.odd.window[[mut+1]]$para.conf[,2])
+
+parameter.estimate.model1=rbind(parameter.estimate.even.window.model1[2:15,], parameter.estimate.odd.window.model1[2:15,]) %>% add_column(window=c(rep("even",14), rep("odd", 14)), cova=rep(cova,2))
+
+
+# Use 95% confidence intervals 
+ggplot(parameter.estimate.model1, aes(x=cova, y=estimate, fill=window)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+   ylab(expression(paste(hat(beta))))+xlab("covariate features")+
+    geom_errorbar(aes(ymin=lower, ymax=upper),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle("Parameter estimate in M1")+
+   theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
+```
 
 ## Referecnce 
 
