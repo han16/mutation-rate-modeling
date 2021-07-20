@@ -633,7 +633,7 @@ geom_bar(stat="identity", fill="blue")+
 * three continuous variables are firstly standardized, then converted into binary variable before collapsing in both M1 and M2 model
 
 * estimate in M1 is more robust than M2 in the sense that both odd and even windows produce similar estimates, but they could vary a lot across specific mutation types in M2 
-* `combine` denotes M1 model for pooled mutation types vs other 9 mutation types in M2 model on x axis 
+* `combine` highlighted by dashed horizontal lines denotes M1 model for pooled mutation types vs other 9 mutation types in M2 model on x axis 
 
 ```{r, echo=F, warning=F, message=F}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
