@@ -635,6 +635,8 @@ geom_bar(stat="identity", fill="blue")+
 * estimate in M1 is more robust than M2 in the sense that both odd and even windows produce similar estimates, but they could vary a lot across specific mutation types in M2 
 * `combine` highlighted by dashed horizontal lines denotes M1 model for pooled mutation types vs other 9 mutation types in M2 model on x axis 
 
+* vertical lines are 95% confidence interval. Clearly and as ecpected, CI in specific mutation types are much wider than that in `combine` sample. 
+
 ```{r, echo=F, warning=F, message=F}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
 cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
@@ -651,16 +653,23 @@ parameter.estimate.odd.window[[mut+1]]=loadRData(paste(path, "table.ASCWGS_20180
 parameter.estimate.even.window[[mut+1]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation", ".100bpwindow.even.line.train.model.with.standardize.covariate.RData", sep=""))
 
 figures=list(); parameter.estimate.cova.all=tibble()
-for (i in 1:length(cova))
+for (i in 1:length(cova))  # for covariate feature i
 {
    #i=1 for each covariate feature, compare parameter estimate across various mutation types 
-   parameter.estimate.cova.odd=numeric();parameter.estimate.cova.even=numeric() 
-   for (j in 1:(length(mutation.type)+1))
+   parameter.estimate.cova.odd=numeric();parameter.estimate.cova.odd.lower.bound=numeric(); parameter.estimate.cova.odd.upper.bound=numeric()
+   parameter.estimate.cova.even=numeric();  parameter.estimate.cova.even.lower.bound=numeric(); parameter.estimate.cova.even.upper.bound=numeric()
+   
+   for (j in 1:(length(mutation.type)+1)) # for mutation type j 
       {
        parameter.estimate.cova.odd[j]=parameter.estimate.odd.window[[j]]$para.est[i+1]
+       parameter.estimate.cova.odd.lower.bound[j]=parameter.estimate.odd.window[[j]]$para.conf[(i+1),1] # lower bound 
+       parameter.estimate.cova.odd.upper.bound[j]=parameter.estimate.odd.window[[j]]$para.conf[(i+1),2] # upper bound 
+       
        parameter.estimate.cova.even[j]=parameter.estimate.even.window[[j]]$para.est[i+1]
+       parameter.estimate.cova.even.lower.bound[j]=parameter.estimate.even.window[[j]]$para.conf[(i+1),1] # lower bound 
+       parameter.estimate.cova.even.upper.bound[j]=parameter.estimate.even.window[[j]]$para.conf[(i+1),2] # upper bound 
    }
-   parameter.estimate.cova=tibble(estimate=c(parameter.estimate.cova.odd, parameter.estimate.cova.even), window=c(rep("odd", length(parameter.estimate.cova.odd)), rep("even", length(parameter.estimate.cova.even))), subtype=rep(c(mutation.type, "combine"),2)) # combine even and odd windows 
+   parameter.estimate.cova=tibble(estimate=c(parameter.estimate.cova.odd, parameter.estimate.cova.even), lower=c(parameter.estimate.cova.odd.lower.bound, parameter.estimate.cova.even.lower.bound), upper=c(parameter.estimate.cova.odd.upper.bound, parameter.estimate.cova.even.upper.bound),window=c(rep("odd", length(parameter.estimate.cova.odd)), rep("even", length(parameter.estimate.cova.even))), subtype=rep(c(mutation.type, "combine"),2)) # combine even and odd windows 
    parameter.estimate.cova$subtype=parameter.estimate.cova$subtype %>% recode( mutation.C_to_A.CpG.and.mutation.G_to_T.CpG="C_to_A.CpG", mutation.C_to_G.CpG.and.mutation.G_to_C.CpG="C_to_G.CpG", mutation.C_to_T.CpG.and.mutation.G_to_A.CpG="C_to_T.CpG", mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG="C_to_A.nonCpG",        mutation.C_to_G.nonCpG.and.mutation.G_to_C.nonCpG="C_to_G.noncpG,", mutation.C_to_T.nonCpG.and.mutation.G_to_A.nonCpG="C_to_T.nonCpG",                       mutation.A_to_C.and.mutation.T_to_G="A_to_C",  mutation.A_to_G.and.mutation.T_to_C="A_to_G", mutation.A_to_T.and.mutation.T_to_A="A_to_T") # rename mutation type to make them shorter 
    
 parameter.estimate.cova.all=rbind(parameter.estimate.cova.all, parameter.estimate.cova)
@@ -674,7 +683,10 @@ geom_bar(stat="identity", position=position_dodge())+
    geom_hline(yintercept=parameter.estimate.cova%>%filter(subtype=="combine"& window=="odd")%>%select(estimate)%>%pull, linetype="dashed", 
                 color = "lightskyblue", size=1)+
    geom_hline(yintercept=parameter.estimate.cova%>%filter(subtype=="combine"& window=="even")%>%select(estimate)%>%pull, linetype="dashed", 
-                color = "red", size=1)+  # use horizental line to highlight 
+                color = "red", size=1)+  # use horizontal line to highlight
+    geom_errorbar(aes(ymin=lower, ymax=upper),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
    ggtitle(paste(cova[i]))+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 
@@ -708,7 +720,7 @@ figures[[13]]
 figures[[14]]
 ```
 
-### Parameter estimated in M1 
+### Parameter estimate in M1 
 
 * three continuous variables are firstly standardized, then converted into binary variable before collapsing 
 * vertical lines are 95% confidence interval 
