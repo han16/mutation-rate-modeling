@@ -124,7 +124,7 @@ geom_bar(stat="identity", fill="blue")+
 
 
 * this analysis is for combined sample, regardless of mutation types 
-* 100kb and 1Mb windows are considered
+* 100kb and 1Mb windows are considered by summing over the results from 100 bp windows 
 * exp in M0 is expected rate adjusted by scaling parameter $L=\frac{\sum y_i}{\sum \mu_i}$
 * MSE are calculated as $\sum(obs-exp)^2/No.windows$
 * no points seem obvious to be outlier
