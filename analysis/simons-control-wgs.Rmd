@@ -45,9 +45,9 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 ```
 
 
-## Model evalulation 
+## Model evaluation
 
-
+We consider the following 3 models, 
 
 * Model 0 (M0): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
 
@@ -94,7 +94,7 @@ geom_bar(stat="identity", position=position_dodge())+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 ```
 
-#### predicted probability of three models 
+#### Predicted probability of three models 
 
 * In M0, M2 for each one of  9 mutation types, use even(odd) window as train set to estimate parameters, and use remaining odd(even) window to calculate predicted probability, and sum up across all mutation types. In M1, use odd(even) window as train set, and remaining even(odd) window to calculate predicted probability and add them up. 
 
@@ -120,8 +120,53 @@ geom_bar(stat="identity", fill="blue")+
 
 ### Expected rate vs observed rate 
 
+#### Mutation type combined sample 
 
-#### M0 vs M2 by pooling all mutation types 
+
+* this analysis is for combined sample, regardless of mutation types 
+* 100kb and 1Mb windows are considered
+* exp in M0 is expected rate adjusted by scaling parameter $L=\frac{\sum y_i}{\sum \mu_i}$
+* MSE are calculated as $\sum(obs-exp)^2/No.windows$
+* no points seem obvious to be outlier
+
+```{r, echo=F, message=F, warning=F}
+path="C:/Shengtong/Research/mutation-rate/ObsvsExp.1m.window/"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar"
+suffix0="window.as.train.with.zero.coefficient.and.intercept.bed.bed.added.1m"
+m0.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix0, sep="")) # this is for mo 
+m0.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix0, sep=""))
+m0.exp.obs.even.obs=as.numeric(as.character(m0.exp.obs.even$V4)); m0.exp.obs.even.obs[is.na(m0.exp.obs.even.obs)]=0
+m0.exp.obs.even.exp=as.numeric(as.character(m0.exp.obs.even$V5)); m0.exp.obs.even.exp[is.na(m0.exp.obs.even.exp)]=0
+m0.exp.obs.odd.obs=as.numeric(as.character(m0.exp.obs.odd$V4)); m0.exp.obs.odd.obs[is.na(m0.exp.obs.odd.obs)]=0
+m0.exp.obs.odd.exp=as.numeric(as.character(m0.exp.obs.odd$V5)); m0.exp.obs.odd.exp[is.na(m0.exp.obs.odd.exp)]=0
+m0.exp.obs.adj=sum(m0.exp.obs.even.obs+m0.exp.obs.odd.obs)/sum(m0.exp.obs.even.exp+m0.exp.obs.odd.exp)*(m0.exp.obs.even.exp+m0.exp.obs.odd.exp)  # use scaled rate 
+m0.exp.obs=cbind((m0.exp.obs.even.obs+m0.exp.obs.odd.obs), m0.exp.obs.adj)
+colnames(m0.exp.obs)=c("obs", "exp")
+
+suffix1="window.as.train.bed.bed.added.1m"
+m1.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix1, sep="")) # this is for m1
+m1.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix1, sep=""))
+m1.exp.obs.even.obs=as.numeric(as.character(m1.exp.obs.even$V4)); m1.exp.obs.even.obs[is.na(m1.exp.obs.even.obs)]=0
+m1.exp.obs.even.exp=as.numeric(as.character(m1.exp.obs.even$V5)); m1.exp.obs.even.exp[is.na(m1.exp.obs.even.exp)]=0
+m1.exp.obs.odd.obs=as.numeric(as.character(m1.exp.obs.odd$V4)); m1.exp.obs.odd.obs[is.na(m1.exp.obs.odd.obs)]=0
+m1.exp.obs.odd.exp=as.numeric(as.character(m1.exp.obs.odd$V5)); m1.exp.obs.odd.exp[is.na(m1.exp.obs.odd.exp)]=0
+m1.exp.obs=cbind((m1.exp.obs.even.obs+m1.exp.obs.odd.obs), (m1.exp.obs.even.exp+m1.exp.obs.odd.exp))
+colnames(m1.exp.obs)=c("obs", "exp")
+m0.m1.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1]), exp=c(m0.exp.obs[,2], m1.exp.obs[,2]), model=c(rep("m0", nrow(m0.exp.obs)), rep("m1", nrow(m1.exp.obs))))
+
+y.limit=max(m0.m1.exp.obs[,1:2])
+x.limit=y.limit
+ggplot(m0.m1.exp.obs, aes(x=exp, y=obs, color=model)) +
+  geom_point()+
+  # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle("scatter plot of 1Mb windows; MSE: m0>m1")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+
+
+```
+
+#### M0 vs M2 by adding up all mutation types 
 
 
 * each dot is one 100kb window by summing up 100bp windows 
