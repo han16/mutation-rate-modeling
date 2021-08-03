@@ -512,9 +512,14 @@ div.section {
 <li>100kb and 1Mb windows are considered by summing over the results from 100 bp windows</li>
 <li>exp in M0 is expected rate adjusted by scaling parameter <span class="math inline">\(L=\frac{\sum y_i}{\sum \mu_i}\)</span></li>
 <li>MSE are calculated as <span class="math inline">\(\sum(obs-exp)^2/No.windows\)</span></li>
-<li>no points seem obvious to be outlier</li>
+<li>no points seem obvious to be outlier in the plot of 1Mb windows</li>
 </ul>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<ul>
+<li>there is one outlier in the plot of M1</li>
+</ul>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 <div id="m0-vs-m2-by-adding-up-all-mutation-types" class="section level4">
 <h4>M0 vs M2 by adding up all mutation types</h4>
@@ -523,7 +528,7 @@ div.section {
 <li>For each one of 9 mutation types, use odd(even) windows to estimate parameters, calculate expected rate in the same odd (even) window and sum up over all mutation types.</li>
 <li>exp in M0 is expected rate adjusted by scaling parameter <span class="math inline">\(L=\frac{\sum y_i}{\sum \mu_i}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-5.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-9-5.png" width="672" /></p>
 </div>
 <div id="outlier-diagnostic" class="section level4">
 <h4>Outlier diagnostic</h4>
@@ -653,11 +658,11 @@ cat(&quot;after replace 108 with 0.8, expected rate is&quot;, exp.rate, &quot;\n
 </li>
 <li>observed rate on y axis and expected on x axis</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <ul>
 <li><span class="math inline">\(MSE=\sum\frac{(obs-exp)^2}{22}\)</span></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 </div>
 </div>
@@ -671,7 +676,7 @@ cat(&quot;after replace 108 with 0.8, expected rate is&quot;, exp.rate, &quot;\n
 <li><p><code>combine</code> highlighted by dashed horizontal lines denotes M1 model for pooled mutation types vs other 9 mutation types in M2 model on x axis</p></li>
 <li><p>vertical lines are 95% confidence interval. Clearly and as ecpected, CI in specific mutation types are much wider than that in <code>combine</code> sample.</p></li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-5.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-6.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-7.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-8.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-9.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-10.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-11.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-12.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-13.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-16-14.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-2.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-3.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-4.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-5.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-6.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-7.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-8.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-9.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-10.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-11.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-12.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-13.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-18-14.png" width="672" /></p>
 </div>
 <div id="parameter-estimate-in-m1" class="section level3">
 <h3>Parameter estimate in M1</h3>
@@ -679,7 +684,7 @@ cat(&quot;after replace 108 with 0.8, expected rate is&quot;, exp.rate, &quot;\n
 <li>three continuous variables are firstly standardized, then converted into binary variable before collapsing</li>
 <li>vertical lines are 95% confidence interval</li>
 </ul>
-<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 </div>
 <div id="referecnce" class="section level2">

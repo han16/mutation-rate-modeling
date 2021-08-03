@@ -127,7 +127,7 @@ geom_bar(stat="identity", fill="blue")+
 * 100kb and 1Mb windows are considered by summing over the results from 100 bp windows 
 * exp in M0 is expected rate adjusted by scaling parameter $L=\frac{\sum y_i}{\sum \mu_i}$
 * MSE are calculated as $\sum(obs-exp)^2/No.windows$
-* no points seem obvious to be outlier
+* no points seem obvious to be outlier in the plot of 1Mb windows 
 
 ```{r, echo=F, message=F, warning=F}
 path="C:/Shengtong/Research/mutation-rate/ObsvsExp.1m.window/"
@@ -152,7 +152,7 @@ m1.exp.obs.odd.obs=as.numeric(as.character(m1.exp.obs.odd$V4)); m1.exp.obs.odd.o
 m1.exp.obs.odd.exp=as.numeric(as.character(m1.exp.obs.odd$V5)); m1.exp.obs.odd.exp[is.na(m1.exp.obs.odd.exp)]=0
 m1.exp.obs=cbind((m1.exp.obs.even.obs+m1.exp.obs.odd.obs), (m1.exp.obs.even.exp+m1.exp.obs.odd.exp))
 colnames(m1.exp.obs)=c("obs", "exp")
-m0.m1.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1]), exp=c(m0.exp.obs[,2], m1.exp.obs[,2]), model=c(rep("m0", nrow(m0.exp.obs)), rep("m1", nrow(m1.exp.obs))))
+m0.m1.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1]), exp=c(m0.exp.obs[,2], m1.exp.obs[,2]), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs))))
 
 y.limit=max(m0.m1.exp.obs[,1:2])
 x.limit=y.limit
@@ -160,10 +160,69 @@ ggplot(m0.m1.exp.obs, aes(x=exp, y=obs, color=model)) +
   geom_point()+
   # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
-   ggtitle("scatter plot of 1Mb windows; MSE: m0>m1")+
+   ggtitle("scatter plot of 1Mb windows; MSE: M0>M1")+
    theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 
 
+```
+
+
+```{r, echo=F, message=F, warning=F}
+path="C:/Shengtong/Research/mutation-rate/ObsvsExp.100k.window/"
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar"
+suffix0="window.as.train.with.zero.coefficient.and.intercept.bed.bed.added.100k"
+m0.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix0, sep="")) # this is for mo 
+m0.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix0, sep=""))
+m0.exp.obs.even.obs=as.numeric(as.character(m0.exp.obs.even$V4)); m0.exp.obs.even.obs[is.na(m0.exp.obs.even.obs)]=0
+m0.exp.obs.even.exp=as.numeric(as.character(m0.exp.obs.even$V5)); m0.exp.obs.even.exp[is.na(m0.exp.obs.even.exp)]=0
+m0.exp.obs.odd.obs=as.numeric(as.character(m0.exp.obs.odd$V4)); m0.exp.obs.odd.obs[is.na(m0.exp.obs.odd.obs)]=0
+m0.exp.obs.odd.exp=as.numeric(as.character(m0.exp.obs.odd$V5)); m0.exp.obs.odd.exp[is.na(m0.exp.obs.odd.exp)]=0
+m0.exp.obs.adj=sum(m0.exp.obs.even.obs+m0.exp.obs.odd.obs)/sum(m0.exp.obs.even.exp+m0.exp.obs.odd.exp)*(m0.exp.obs.even.exp+m0.exp.obs.odd.exp)  # use scaled rate 
+m0.exp.obs=cbind((m0.exp.obs.even.obs+m0.exp.obs.odd.obs), m0.exp.obs.adj)
+colnames(m0.exp.obs)=c("obs", "exp")
+
+suffix1="window.as.train.bed.bed.added.100k"
+m1.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix1, sep="")) # this is for m1
+m1.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix1, sep=""))
+m1.exp.obs.even.obs=as.numeric(as.character(m1.exp.obs.even$V4)); m1.exp.obs.even.obs[is.na(m1.exp.obs.even.obs)]=0
+m1.exp.obs.even.exp=as.numeric(as.character(m1.exp.obs.even$V5)); m1.exp.obs.even.exp[is.na(m1.exp.obs.even.exp)]=0
+m1.exp.obs.odd.obs=as.numeric(as.character(m1.exp.obs.odd$V4)); m1.exp.obs.odd.obs[is.na(m1.exp.obs.odd.obs)]=0
+m1.exp.obs.odd.exp=as.numeric(as.character(m1.exp.obs.odd$V5)); m1.exp.obs.odd.exp[is.na(m1.exp.obs.odd.exp)]=0
+m1.exp.obs=cbind((m1.exp.obs.even.obs+m1.exp.obs.odd.obs), (m1.exp.obs.even.exp+m1.exp.obs.odd.exp))
+colnames(m1.exp.obs)=c("obs", "exp")
+m0.m1.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1]), exp=c(m0.exp.obs[,2], m1.exp.obs[,2]), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs))))
+
+y.limit=max(m0.m1.exp.obs[,1:2])
+x.limit=y.limit
+ggplot(m0.m1.exp.obs, aes(x=exp, y=obs, color=model)) +
+  geom_point()+
+  # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle("scatter plot of 100kb windows; MSE: MSE.M0=4.69<M1=4.75")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+MSE.m0=sum((m0.exp.obs[,1]-m0.exp.obs[,2])^2)/nrow(m0.exp.obs)
+MSE.m1=sum((m1.exp.obs[,1]-m1.exp.obs[,2])^2)/nrow(m1.exp.obs)
+
+```
+
+* there is one outlier in the plot of M1 
+
+
+
+
+```{r, echo=F, message=F, warning=F}
+outlier.index=which.max(m1.exp.obs[,2])
+m0.m1.exp.obs=m0.m1.exp.obs[-c(outlier.index, nrow(m0.exp.obs)+outlier.index),]  # remove the outliers 
+y.limit=max(m0.m1.exp.obs[,1:2])
+x.limit=y.limit
+ggplot(m0.m1.exp.obs, aes(x=exp, y=obs, color=model)) +
+  geom_point()+
+  # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle("scatter plot of 100kb windows; MSE: MSE.M0=4.699>M1=4.696")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+MSE.m0=sum((m0.exp.obs[-outlier.index,1]-m0.exp.obs[-outlier.index,2])^2)/(nrow(m0.exp.obs)-1)
+MSE.m1=sum((m1.exp.obs[-outlier.index,1]-m1.exp.obs[-outlier.index,2])^2)/(nrow(m1.exp.obs)-1)
 ```
 
 #### M0 vs M2 by adding up all mutation types 
