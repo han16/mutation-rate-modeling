@@ -52,6 +52,7 @@ We consider the following 3 models,
 * Model 0 (M0): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
 
 * Model 1 (M1): 3-mer+features for pooled 9 mutation types 
+* split Model 1 (M1) into two submodels, M1(CpG):3-mer+features for pooled 3 CpG mutation types and M1(nonCpG): 3-mer+features for pooled 6 nonCpG mutation types  
 
 * Model 2 (M2): 3-mer+features for 9 mutation types
 
@@ -96,18 +97,26 @@ geom_bar(stat="identity", position=position_dodge())+
 
 #### Predicted probability of three models 
 
-* In M0, M2 for each one of  9 mutation types, use even(odd) window as train set to estimate parameters, and use remaining odd(even) window to calculate predicted probability, and sum up across all mutation types. In M1, use odd(even) window as train set, and remaining even(odd) window to calculate predicted probability and add them up. 
+* In M0, M2 for each one of  9 mutation types, use even(odd) window as train set to estimate parameters, and use remaining odd(even) window to calculate predicted probability, and sum up across all mutation types. 
 
-* the higher predicted probability, the better, M1>M0>M2
+* In M1, use odd(even) window as train set, and remaining even(odd) window to calculate predicted probability and add them up. 
+
+* Split 9 mutation types into 3 CpG combined sample, M1(CpG) and 6 nonCpG combined sample, M1(nonCpG)  
+
+* the higher predicted probability, the better, M1>M1(CpG)+M1(nonCpG)>M0>M2
 
 
 
 ```{r, echo=F}
 m1.post.pred=as_tibble(read.table(paste(path, "pooled.mutation.type.log.predictive.density.txt", sep="/"), header=T))
+m1.CpG.post.pred=as_tibble(read.table(paste(path, "pooled.CpG.mutation.type.data.log.predictive.density.txt", sep="/"), header=T))
+m1.nonCpG.post.pred=as_tibble(read.table(paste(path, "pooled.nonCpG.mutation.type.data.log.predictive.density.txt", sep="/"), header=T))
 pp0=m0.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp1=m1.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
+pp1.CpG=m1.CpG.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
+pp1.nonCpG=m1.nonCpG.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp2=m2.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()  
-total.post.pred=tibble(model=c("M0", "M1", "M2"), post.pred=c(pp0, pp1, pp2))
+total.post.pred=tibble(model=c("M0", "M1", "M1(CpG+nonCpG)", "M2"), post.pred=c(pp0, pp1, (pp1.CpG+pp1.nonCpG), pp2))
 
 ggplot(data=total.post.pred, aes(x=model, y=-post.pred)) +
    theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
@@ -131,6 +140,7 @@ geom_bar(stat="identity", fill="blue")+
 
 ```{r, echo=F, message=F, warning=F}
 path="C:/Shengtong/Research/mutation-rate/ObsvsExp.1m.window/"
+#######################################################
 prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar"
 suffix0="window.as.train.with.zero.coefficient.and.intercept.bed.bed.added.1m"
 m0.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix0, sep="")) # this is for mo 
@@ -143,6 +153,7 @@ m0.exp.obs.adj=sum(m0.exp.obs.even.obs+m0.exp.obs.odd.obs)/sum(m0.exp.obs.even.e
 m0.exp.obs=cbind((m0.exp.obs.even.obs+m0.exp.obs.odd.obs), m0.exp.obs.adj)
 colnames(m0.exp.obs)=c("obs", "exp")
 
+#####################################################
 suffix1="window.as.train.bed.bed.added.1m"
 m1.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix1, sep="")) # this is for m1
 m1.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix1, sep=""))
@@ -152,6 +163,57 @@ m1.exp.obs.odd.obs=as.numeric(as.character(m1.exp.obs.odd$V4)); m1.exp.obs.odd.o
 m1.exp.obs.odd.exp=as.numeric(as.character(m1.exp.obs.odd$V5)); m1.exp.obs.odd.exp[is.na(m1.exp.obs.odd.exp)]=0
 m1.exp.obs=cbind((m1.exp.obs.even.obs+m1.exp.obs.odd.obs), (m1.exp.obs.even.exp+m1.exp.obs.odd.exp))
 colnames(m1.exp.obs)=c("obs", "exp")
+
+############################################
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.3CpG.combined.ExpObsVar"
+suffix1="window.as.train.bed.bed.added.1m"
+m1.CpG.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix1, sep="")) # this is for m1 for combined CpG
+m1.CpG.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix1, sep=""))
+m1.CpG.exp.obs.even.obs=as.numeric(as.character(m1.CpG.exp.obs.even$V4)); m1.CpG.exp.obs.even.obs[is.na(m1.CpG.exp.obs.even.obs)]=0
+m1.CpG.exp.obs.even.exp=as.numeric(as.character(m1.CpG.exp.obs.even$V5)); m1.CpG.exp.obs.even.exp[is.na(m1.CpG.exp.obs.even.exp)]=0
+m1.CpG.exp.obs.odd.obs=as.numeric(as.character(m1.CpG.exp.obs.odd$V4)); m1.CpG.exp.obs.odd.obs[is.na(m1.CpG.exp.obs.odd.obs)]=0
+m1.CpG.exp.obs.odd.exp=as.numeric(as.character(m1.CpG.exp.obs.odd$V5)); m1.CpG.exp.obs.odd.exp[is.na(m1.CpG.exp.obs.odd.exp)]=0
+m1.CpG.exp.obs=cbind((m1.CpG.exp.obs.even.obs+m1.CpG.exp.obs.odd.obs), (m1.CpG.exp.obs.even.exp+m1.CpG.exp.obs.odd.exp))
+colnames(m1.CpG.exp.obs)=c("obs", "exp")
+
+
+############################################
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.6nonCpG.combined.ExpObsVar"
+suffix1="window.as.train.bed.bed.added.1m"
+m1.nonCpG.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix1, sep="")) # this is for m1 for combined nonCpG
+m1.nonCpG.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix1, sep=""))
+m1.nonCpG.exp.obs.even.obs=as.numeric(as.character(m1.nonCpG.exp.obs.even$V4)); m1.nonCpG.exp.obs.even.obs[is.na(m1.nonCpG.exp.obs.even.obs)]=0
+m1.nonCpG.exp.obs.even.exp=as.numeric(as.character(m1.nonCpG.exp.obs.even$V5)); m1.nonCpG.exp.obs.even.exp[is.na(m1.nonCpG.exp.obs.even.exp)]=0
+m1.nonCpG.exp.obs.odd.obs=as.numeric(as.character(m1.nonCpG.exp.obs.odd$V4)); m1.nonCpG.exp.obs.odd.obs[is.na(m1.nonCpG.exp.obs.odd.obs)]=0
+m1.nonCpG.exp.obs.odd.exp=as.numeric(as.character(m1.nonCpG.exp.obs.odd$V5)); m1.nonCpG.exp.obs.odd.exp[is.na(m1.nonCpG.exp.obs.odd.exp)]=0
+m1.nonCpG.exp.obs=cbind((m1.nonCpG.exp.obs.even.obs+m1.nonCpG.exp.obs.odd.obs), (m1.nonCpG.exp.obs.even.exp+m1.nonCpG.exp.obs.odd.exp))
+colnames(m1.nonCpG.exp.obs)=c("obs", "exp")
+
+#######################################################
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.3CpG.combined.ExpObsVar"
+m0.CpG.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix0, sep="")) # this is for mo for CpG combined 
+m0.CpG.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix0, sep=""))
+m0.CpG.exp.obs.even.obs=as.numeric(as.character(m0.CpG.exp.obs.even$V4)); m0.CpG.exp.obs.even.obs[is.na(m0.CpG.exp.obs.even.obs)]=0
+m0.CpG.exp.obs.even.exp=as.numeric(as.character(m0.CpG.exp.obs.even$V5)); m0.CpG.exp.obs.even.exp[is.na(m0.CpG.exp.obs.even.exp)]=0
+m0.CpG.exp.obs.odd.obs=as.numeric(as.character(m0.CpG.exp.obs.odd$V4)); m0.CpG.exp.obs.odd.obs[is.na(m0.CpG.exp.obs.odd.obs)]=0
+m0.CpG.exp.obs.odd.exp=as.numeric(as.character(m0.CpG.exp.obs.odd$V5)); m0.CpG.exp.obs.odd.exp[is.na(m0.CpG.exp.obs.odd.exp)]=0
+m0.CpG.exp.obs.adj=sum(m0.CpG.exp.obs.even.obs+m0.CpG.exp.obs.odd.obs)/sum(m0.CpG.exp.obs.even.exp+m0.CpG.exp.obs.odd.exp)*(m0.CpG.exp.obs.even.exp+m0.CpG.exp.obs.odd.exp)  # use scaled rate 
+m0.CpG.exp.obs=cbind((m0.CpG.exp.obs.even.obs+m0.CpG.exp.obs.odd.obs), m0.CpG.exp.obs.adj)
+colnames(m0.CpG.exp.obs)=c("obs", "exp")
+
+#######################################################
+prefix="table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.6nonCpG.combined.ExpObsVar"
+m0.nonCpG.exp.obs.even=read.table(paste(path, prefix, ".even.", suffix0, sep="")) # this is for mo for CpG combined 
+m0.nonCpG.exp.obs.odd=read.table(paste(path, prefix, ".odd.", suffix0, sep=""))
+m0.nonCpG.exp.obs.even.obs=as.numeric(as.character(m0.nonCpG.exp.obs.even$V4)); m0.nonCpG.exp.obs.even.obs[is.na(m0.nonCpG.exp.obs.even.obs)]=0
+m0.nonCpG.exp.obs.even.exp=as.numeric(as.character(m0.nonCpG.exp.obs.even$V5)); m0.nonCpG.exp.obs.even.exp[is.na(m0.nonCpG.exp.obs.even.exp)]=0
+m0.nonCpG.exp.obs.odd.obs=as.numeric(as.character(m0.nonCpG.exp.obs.odd$V4)); m0.nonCpG.exp.obs.odd.obs[is.na(m0.nonCpG.exp.obs.odd.obs)]=0
+m0.nonCpG.exp.obs.odd.exp=as.numeric(as.character(m0.nonCpG.exp.obs.odd$V5)); m0.nonCpG.exp.obs.odd.exp[is.na(m0.nonCpG.exp.obs.odd.exp)]=0
+m0.nonCpG.exp.obs.adj=sum(m0.nonCpG.exp.obs.even.obs+m0.nonCpG.exp.obs.odd.obs)/sum(m0.nonCpG.exp.obs.even.exp+m0.nonCpG.exp.obs.odd.exp)*(m0.nonCpG.exp.obs.even.exp+m0.nonCpG.exp.obs.odd.exp)  # use scaled rate 
+m0.nonCpG.exp.obs=cbind((m0.nonCpG.exp.obs.even.obs+m0.nonCpG.exp.obs.odd.obs), m0.nonCpG.exp.obs.adj)
+colnames(m0.nonCpG.exp.obs)=c("obs", "exp")
+
+##########################
 m0.m1.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1]), exp=c(m0.exp.obs[,2], m1.exp.obs[,2]), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs))))
 
 y.limit=max(m0.m1.exp.obs[,1:2])
@@ -162,8 +224,45 @@ ggplot(m0.m1.exp.obs, aes(x=exp, y=obs, color=model)) +
    geom_abline(intercept = 0, slope = 1)+
    ggtitle("scatter plot of 1Mb windows; MSE: M0>M1")+
    theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+#######
+#MSE:Mo: 
+obs.exp=m0.m1.exp.obs%>%filter(model=="M0")
+cat("M0 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+
+obs.exp=m0.m1.exp.obs%>%filter(model=="M1")
+cat("M1 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+```
 
 
+* M1(CpG+nonCpG) has one outlier, which is removed in scatter plot 
+
+```{r, echo=F, message=F, warning=F}
+###########################################
+m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1], (m0.CpG.exp.obs[,1]+m0.nonCpG.exp.obs[,1]), (m1.CpG.exp.obs[,1]+m1.nonCpG.exp.obs[,1])), exp=c(m0.exp.obs[,2], m1.exp.obs[,2], (m0.CpG.exp.obs[,2]+m0.nonCpG.exp.obs[,2]), (m1.CpG.exp.obs[,2]+m1.nonCpG.exp.obs[,2])), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs)), rep("M0(CpG+nonCpG)", nrow(m0.CpG.exp.obs)), rep("M1(CpG+nonCpG)", nrow(m1.CpG.exp.obs))))
+
+y.limit=max(m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs[,1:2])
+x.limit=y.limit
+outlier=which.max((m1.CpG.exp.obs+m1.nonCpG.exp.obs)[,2])
+outlier.index=c(outlier, outlier+nrow(m0.exp.obs), outlier+3*nrow(m0.exp.obs), outlier+4*nrow(m0.exp.obs))
+ggplot(m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs[-c(outlier.index),], aes(x=exp, y=obs, color=model)) +
+  geom_point()+
+  # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
+   geom_abline(intercept = 0, slope = 1)+
+   ggtitle("scatter plot of 1Mb windows")+
+   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+#######
+#MSE:Mo: 
+obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M0")
+cat("M0 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+
+obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M1")
+cat("M1 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+
+obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M0(CpG+nonCpG)")
+cat("M0(CpG+nonCpG) has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+
+obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M1(CpG+nonCpG)")
+cat("M1(CpG+nonCpG) has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
 ```
 
 
