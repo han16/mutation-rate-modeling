@@ -474,11 +474,11 @@ div.section {
 </div>
 <div id="model-evaluation" class="section level2">
 <h2>Model evaluation</h2>
-<p>We consider the following 3 models,</p>
+<p>We consider the following models,</p>
 <ul>
 <li><p>Model 0 (M0): 3-mer only for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.</p></li>
 <li><p>Model 1 (M1): 3-mer+features for pooled 9 mutation types</p></li>
-<li><p>split Model 1 (M1) into two submodels, M1(CpG):3-mer+features for pooled 3 CpG mutation types and M1(nonCpG): 3-mer+features for pooled 6 nonCpG mutation types</p></li>
+<li><p>Model M1(CpG+nonCpG): split Model 1 (M1) into two submodels, M1(CpG):3-mer+features for pooled 3 CpG mutation types and M1(nonCpG): 3-mer+features for pooled 6 nonCpG mutation types</p></li>
 <li><p>Model 2 (M2): 3-mer+features for 9 mutation types</p></li>
 </ul>
 <div id="predictive-density-measure" class="section level3">
@@ -524,10 +524,9 @@ div.section {
 <li>M1(CpG+nonCpG) has one outlier, which is removed in scatter plot</li>
 </ul>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<pre><code>## M0 has MSE of 95.95757</code></pre>
-<pre><code>## M1 has MSE of 94.71272</code></pre>
-<pre><code>## M0(CpG+nonCpG) has MSE of 91.60055</code></pre>
-<pre><code>## M1(CpG+nonCpG) has MSE of 938.6796</code></pre>
+<pre><code>## After removing one outlier, M0 has MSE of 95.987</code></pre>
+<pre><code>## After removing one outlier, M1 has MSE of 93.7917</code></pre>
+<pre><code>## After removing one outlier, M1(CpG+nonCpG) has MSE of 93.54005</code></pre>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <ul>
 <li>there is one outlier in the plot of M1</li>

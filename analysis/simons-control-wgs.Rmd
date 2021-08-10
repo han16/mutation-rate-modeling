@@ -47,12 +47,12 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 
 ## Model evaluation
 
-We consider the following 3 models, 
+We consider the following  models, 
 
 * Model 0 (M0): 3-mer only  for 9 mutation types. This is implemented by enforcing all parameters to be zero in M1.  
 
 * Model 1 (M1): 3-mer+features for pooled 9 mutation types 
-* split Model 1 (M1) into two submodels, M1(CpG):3-mer+features for pooled 3 CpG mutation types and M1(nonCpG): 3-mer+features for pooled 6 nonCpG mutation types  
+* Model M1(CpG+nonCpG): split Model 1 (M1) into two submodels, M1(CpG):3-mer+features for pooled 3 CpG mutation types and M1(nonCpG): 3-mer+features for pooled 6 nonCpG mutation types  
 
 * Model 2 (M2): 3-mer+features for 9 mutation types
 
@@ -238,13 +238,19 @@ cat("M1 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
 
 ```{r, echo=F, message=F, warning=F}
 ###########################################
-m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1], (m0.CpG.exp.obs[,1]+m0.nonCpG.exp.obs[,1]), (m1.CpG.exp.obs[,1]+m1.nonCpG.exp.obs[,1])), exp=c(m0.exp.obs[,2], m1.exp.obs[,2], (m0.CpG.exp.obs[,2]+m0.nonCpG.exp.obs[,2]), (m1.CpG.exp.obs[,2]+m1.nonCpG.exp.obs[,2])), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs)), rep("M0(CpG+nonCpG)", nrow(m0.CpG.exp.obs)), rep("M1(CpG+nonCpG)", nrow(m1.CpG.exp.obs))))
+#m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1], (m0.CpG.exp.obs[,1]+m0.nonCpG.exp.obs[,1]), (m1.CpG.exp.obs[,1]+m1.nonCpG.exp.obs[,1])), exp=c(m0.exp.obs[,2], m1.exp.obs[,2], (m0.CpG.exp.obs[,2]+m0.nonCpG.exp.obs[,2]), (m1.CpG.exp.obs[,2]+m1.nonCpG.exp.obs[,2])), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs)), rep("M0(CpG+nonCpG)", nrow(m0.CpG.exp.obs)), rep("M1(CpG+nonCpG)", nrow(m1.CpG.exp.obs))))
 
-y.limit=max(m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs[,1:2])
+#### exclude m0CpGnonCpG
+m0.m1.m1CpCnonCpG.exp.obs=tibble(obs=c(m0.exp.obs[,1], m1.exp.obs[,1], (m1.CpG.exp.obs[,1]+m1.nonCpG.exp.obs[,1])), exp=c(m0.exp.obs[,2], m1.exp.obs[,2], (m1.CpG.exp.obs[,2]+m1.nonCpG.exp.obs[,2])), model=c(rep("M0", nrow(m0.exp.obs)), rep("M1", nrow(m1.exp.obs)), rep("M1(CpG+nonCpG)", nrow(m1.CpG.exp.obs))))
+
+y.limit=max(m0.m1.m1CpCnonCpG.exp.obs[,1:2])
 x.limit=y.limit
+
+### remove the outlier in m1CpGnonCpG
 outlier=which.max((m1.CpG.exp.obs+m1.nonCpG.exp.obs)[,2])
-outlier.index=c(outlier, outlier+nrow(m0.exp.obs), outlier+3*nrow(m0.exp.obs), outlier+4*nrow(m0.exp.obs))
-ggplot(m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs[-c(outlier.index),], aes(x=exp, y=obs, color=model)) +
+outlier.index=c(outlier, outlier+nrow(m0.exp.obs),  outlier+2*nrow(m0.exp.obs))
+
+ggplot(m0.m1.m1CpCnonCpG.exp.obs[-c(outlier.index),], aes(x=exp, y=obs, color=model)) +
   geom_point()+
   # xlim(c(0, x.limit))+ylim(c(0, y.limit))+
    geom_abline(intercept = 0, slope = 1)+
@@ -252,17 +258,17 @@ ggplot(m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs[-c(outlier.index),], aes(x=exp, y=
    theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
 #######
 #MSE:Mo: 
-obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M0")
-cat("M0 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+obs.exp=m0.m1.m1CpCnonCpG.exp.obs[-c(outlier.index),]%>%filter(model=="M0")
+cat("After removing one outlier, M0 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
 
-obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M1")
-cat("M1 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+obs.exp=m0.m1.m1CpCnonCpG.exp.obs[-c(outlier.index),]%>%filter(model=="M1")
+cat("After removing one outlier, M1 has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
 
-obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M0(CpG+nonCpG)")
-cat("M0(CpG+nonCpG) has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+#obs.exp=m0.m1.m1CpCnonCpG.exp.obs%>%filter(model=="M0(CpG+nonCpG)")
+#cat("M0(CpG+nonCpG) has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
 
-obs.exp=m0.m1.m0CpGnonCpG.m1.CpCnonCpG.exp.obs%>%filter(model=="M1(CpG+nonCpG)")
-cat("M1(CpG+nonCpG) has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
+obs.exp=m0.m1.m1CpCnonCpG.exp.obs[-c(outlier.index),]%>%filter(model=="M1(CpG+nonCpG)")
+cat("After removing one outlier, M1(CpG+nonCpG) has MSE of", sum((obs.exp$obs-obs.exp$exp)^2)/nrow(obs.exp), "\n")
 ```
 
 
