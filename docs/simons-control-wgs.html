@@ -678,6 +678,74 @@ cat(&quot;after replace 108 with 0.8, expected rate is&quot;, exp.rate, &quot;\n
 </div>
 </div>
 </div>
+<div id="windows-with-zero-observed-counts" class="section level2">
+<h2>Windows with zero observed counts</h2>
+<p>These windows are possibly repeated regions</p>
+<div id="mb-windows" class="section level3">
+<h3>1Mb windows</h3>
+<pre><code># total number of 1Mb windows 
+wc -l pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m
+3174 pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m
+
+# total number of 1Mb windows with zero observed counts 
+awk &#39;$4==0&#39; pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m | wc -l
+196
+
+# total number of 1Mb windows overlapping with repeated regions
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk &#39;!seen[$0]++&#39; | wc -l
+2918
+
+# total number of zero observed count 1Mb windows overlapping with repeated regions
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m.zero.observed.count.window  -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk &#39;!seen[$0]++&#39; | wc -l
+33
+
+&gt; fisher.test(matrix(c(33, 2918, 196, 3174), nrow=2))
+
+    Fisher&#39;s Exact Test for Count Data
+
+data:  matrix(c(33, 2918, 196, 3174), nrow = 2)
+p-value &lt; 2.2e-16
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.1222485 0.2669226
+sample estimates:
+odds ratio 
+ 0.1831832
+
+33/196 vs 2918/3174 No enrichment! 
+</code></pre>
+</div>
+<div id="k-windows" class="section level3">
+<h3>10k windows</h3>
+<pre><code>wc -l pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k
+310238 pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k
+
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk &#39;!seen[$0]++&#39; | wc -l
+286336
+
+wc -l pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k.zero.observed.count.window
+237327 pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k.zero.observed.count.window
+
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k.zero.observed.count.window  -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk &#39;!seen[$0]++&#39; | wc -l
+217849
+
+&gt; fisher.test(matrix(c(217849, 286336, 237327, 310238), nrow=2))
+
+    Fisher&#39;s Exact Test for Count Data
+
+data:  matrix(c(217849, 286336, 237327, 310238), nrow = 2)
+p-value = 0.1655
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.9868993 1.0022504
+sample estimates:
+odds ratio 
+ 0.9945515
+
+No enrichment! 
+</code></pre>
+</div>
+</div>
 <div id="parameter-estimate-in-m1-m2" class="section level2">
 <h2>Parameter estimate in M1 &amp; M2</h2>
 <div id="m1-vs-m2" class="section level3">

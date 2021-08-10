@@ -330,6 +330,10 @@ MSE.m0=sum((m0.exp.obs[-outlier.index,1]-m0.exp.obs[-outlier.index,2])^2)/(nrow(
 MSE.m1=sum((m1.exp.obs[-outlier.index,1]-m1.exp.obs[-outlier.index,2])^2)/(nrow(m1.exp.obs)-1)
 ```
 
+
+
+
+
 #### M0 vs M2 by adding up all mutation types 
 
 
@@ -832,6 +836,81 @@ geom_bar(stat="identity", fill="blue")+
     ylab("MSE")+
    ggtitle("Chromosome wise MSE")+
   theme(plot.title = element_text(hjust = 0.5, size=10)) # center the title
+```
+
+
+## Windows with zero observed counts 
+
+These windows are possibly repeated regions 
+
+### 1Mb windows 
+
+
+```
+# total number of 1Mb windows 
+wc -l pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m
+3174 pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m
+
+# total number of 1Mb windows with zero observed counts 
+awk '$4==0' pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m | wc -l
+196
+
+# total number of 1Mb windows overlapping with repeated regions
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk '!seen[$0]++' | wc -l
+2918
+
+# total number of zero observed count 1Mb windows overlapping with repeated regions
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.1m.zero.observed.count.window  -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk '!seen[$0]++' | wc -l
+33
+
+> fisher.test(matrix(c(33, 2918, 196, 3174), nrow=2))
+
+	Fisher's Exact Test for Count Data
+
+data:  matrix(c(33, 2918, 196, 3174), nrow = 2)
+p-value < 2.2e-16
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.1222485 0.2669226
+sample estimates:
+odds ratio 
+ 0.1831832
+
+33/196 vs 2918/3174 No enrichment! 
+
+```
+
+
+### 10k windows 
+
+```
+wc -l pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k
+310238 pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k
+
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk '!seen[$0]++' | wc -l
+286336
+
+wc -l pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k.zero.observed.count.window
+237327 pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k.zero.observed.count.window
+
+bedtools intersect -a pooled.mutation.type.data/table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.even.window.as.train.bed.bed.added.10k.zero.observed.count.window  -b /project2/xinhe/Shengtong/mutation_rate/human.genome/repeat.regions/repeat.region  -wa | awk '!seen[$0]++' | wc -l
+217849
+
+> fisher.test(matrix(c(217849, 286336, 237327, 310238), nrow=2))
+
+	Fisher's Exact Test for Count Data
+
+data:  matrix(c(217849, 286336, 237327, 310238), nrow = 2)
+p-value = 0.1655
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+ 0.9868993 1.0022504
+sample estimates:
+odds ratio 
+ 0.9945515
+
+No enrichment! 
+
 ```
 
 
