@@ -914,9 +914,8 @@ No enrichment!
 ```
 
 
-## Parameter estimate in M1 & M2
+## Parameter estimate comparison between M1 & M2
 
-### M1 vs M2
 
 * three continuous variables are firstly standardized, then converted into binary variable before collapsing in both M1 and M2 model
 
@@ -1008,7 +1007,7 @@ figures[[13]]
 figures[[14]]
 ```
 
-### Parameter estimate
+## Parameter estimate from combined sample 
 
 
 * three continuous variables are firstly standardized, then converted into binary variable before collapsing 
@@ -1038,7 +1037,7 @@ theme(text = element_text(size=10))+
    theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
 ```
 
-#### Model M1(3 CpG mutation types combined)
+### Model M1(3 CpG mutation types combined)
 
 ```{r, echo=F, message=F, warning=F}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
@@ -1070,7 +1069,7 @@ theme(text = element_text(size=10))+
 
 ```
 
-#### Model M1(6 nonCpG mutation types combined)
+### Model M1(6 nonCpG mutation types combined)
 
 ```{r, echo=F, message=F, warning=F}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
