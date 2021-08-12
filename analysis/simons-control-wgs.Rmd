@@ -1008,10 +1008,13 @@ figures[[13]]
 figures[[14]]
 ```
 
-### Parameter estimate in M1 
+### Parameter estimate
+
 
 * three continuous variables are firstly standardized, then converted into binary variable before collapsing 
 * vertical lines are 95% confidence interval 
+
+### Model M1 (all 9 mutation types combined)
 
 ```{r, echo=F, message=F, warning=F}
 parameter.estimate.even.window.model1=tibble(estimate=parameter.estimate.even.window[[mut+1]]$para.est, lower=parameter.estimate.even.window[[mut+1]]$para.conf[,1], upper=parameter.estimate.even.window[[mut+1]]$para.conf[,2])
@@ -1026,13 +1029,80 @@ ggplot(parameter.estimate.model1, aes(x=cova, y=estimate, fill=window)) +
     geom_bar(position=position_dodge(), stat="identity") +
    theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
 theme(text = element_text(size=10))+
+   ylim(c(-0.65, 0.4))+ # use same scales to make comparison easier 
    ylab(expression(paste(hat(beta))))+xlab("covariate features")+
     geom_errorbar(aes(ymin=lower, ymax=upper),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
-    ggtitle("Parameter estimate in M1")+
+    ggtitle("Parameter estimate in M1 (9 mutation types combined)")+
    theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
 ```
+
+#### Model M1(3 CpG mutation types combined)
+
+```{r, echo=F, message=F, warning=F}
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
+
+### this is parameter estimate in M1(CpG) 
+parameter.estimate.odd.window=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation.3CpG.combined", ".100bpwindow.odd.line.train.model.with.standardize.covariate.RData", sep=""))
+parameter.estimate.even.window=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation.3CpG.combined", ".100bpwindow.even.line.train.model.with.standardize.covariate.RData", sep=""))
+
+parameter.estimate.even.window.3CpG.combined=tibble(estimate=parameter.estimate.even.window$para.est, lower=parameter.estimate.even.window$para.conf[,1], upper=parameter.estimate.even.window$para.conf[,2])
+
+parameter.estimate.odd.window.3CpG.combined=tibble(estimate=parameter.estimate.odd.window$para.est, lower=parameter.estimate.odd.window$para.conf[,1], upper=parameter.estimate.odd.window$para.conf[,2])
+
+parameter.estimate.3CpG.combined=rbind(parameter.estimate.even.window.3CpG.combined[2:15,], parameter.estimate.odd.window.3CpG.combined[2:15,]) %>% add_column(window=c(rep("even",14), rep("odd", 14)), cova=rep(cova,2))
+
+
+# Use 95% confidence intervals 
+ggplot(parameter.estimate.3CpG.combined, aes(x=cova, y=estimate, fill=window)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+   ylim(c(-0.65, 0.4))+
+   ylab(expression(paste(hat(beta))))+xlab("covariate features")+
+    geom_errorbar(aes(ymin=lower, ymax=upper),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle("Parameter estimate in M1(3CpG combined)")+
+   theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
+
+```
+
+#### Model M1(6 nonCpG mutation types combined)
+
+```{r, echo=F, message=F, warning=F}
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
+cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
+
+### this is parameter estimate in M1(CpG) 
+parameter.estimate.odd.window=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation.6nonCpG.combined", ".100bpwindow.odd.line.train.model.with.standardize.covariate.RData", sep=""))
+parameter.estimate.even.window=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_", "mutation.6nonCpG.combined", ".100bpwindow.even.line.train.model.with.standardize.covariate.RData", sep=""))
+
+parameter.estimate.even.window.6nonCpG.combined=tibble(estimate=parameter.estimate.even.window$para.est, lower=parameter.estimate.even.window$para.conf[,1], upper=parameter.estimate.even.window$para.conf[,2])
+
+parameter.estimate.odd.window.6nonCpG.combined=tibble(estimate=parameter.estimate.odd.window$para.est, lower=parameter.estimate.odd.window$para.conf[,1], upper=parameter.estimate.odd.window$para.conf[,2])
+
+parameter.estimate.6nonCpG.combined=rbind(parameter.estimate.even.window.6nonCpG.combined[2:15,], parameter.estimate.odd.window.6nonCpG.combined[2:15,]) %>% add_column(window=c(rep("even",14), rep("odd", 14)), cova=rep(cova,2))
+
+
+# Use 95% confidence intervals 
+ggplot(parameter.estimate.6nonCpG.combined, aes(x=cova, y=estimate, fill=window)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+   ylim(c(-0.65, 0.4))+
+   ylab(expression(paste(hat(beta))))+xlab("covariate features")+
+    geom_errorbar(aes(ymin=lower, ymax=upper),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle("Parameter estimate in M1(6nonCpG combined)")+
+   theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
+
+```
+
+
 
 ## Referecnce 
 
