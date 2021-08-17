@@ -104,7 +104,7 @@ geom_bar(stat="identity", position=position_dodge())+
 * Split 9 mutation types into 3 CpG combined sample, M1(CpG) and 6 nonCpG combined sample, M1(nonCpG)  
 
 * the higher predicted probability, the better, M1>M1(CpG)+M1(nonCpG)>M0>M2
-
+The way that calculates the precited probability for 3 CpG combined sample and 6 nonCpG combined sample is the same as in M1 by treating the subset of 3 CpG combined sample as the whole sample. 
 
 
 ```{r, echo=F}
@@ -927,6 +927,7 @@ No enrichment!
 ```{r, echo=F, warning=F, message=F}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\"
 cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
+mutation.type=unique(as.character(read.table("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/data/post.predictive.density/post.pred.for.model.txt", header=T)$mutation.type)) # get mutation types 
 parameter.estimate.odd.window=list(); parameter.estimate.even.window=list()
 for (mut in 1:length(mutation.type))
 {
@@ -1101,6 +1102,44 @@ theme(text = element_text(size=10))+
 
 ```
 
+
+
+```{r, echo=F, message=F, warning=F}
+window.type="even"
+parameter.estimate.even.window.diff.model.combine=rbind(parameter.estimate.model1%>%filter(window==window.type), parameter.estimate.3CpG.combined %>% filter(window==window.type), parameter.estimate.6nonCpG.combined %>% filter(window==window.type)) %>% add_column(model=rep(c("9 mutation combined", "3 CpG combined", "6 nonCpG combined"), each=length(cova)))
+
+# Use 95% confidence intervals 
+ggplot(parameter.estimate.even.window.diff.model.combine, aes(x=cova, y=estimate, fill=model)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+   ylim(c(-0.65, 0.4))+
+   ylab(expression(paste(hat(beta))))+xlab("covariate features")+
+    geom_errorbar(aes(ymin=lower, ymax=upper),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(paste(expression("Parameter estimate in even windows")))+
+   theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
+
+
+
+window.type="odd"
+parameter.estimate.even.window.diff.model.combine=rbind(parameter.estimate.model1%>%filter(window==window.type), parameter.estimate.3CpG.combined %>% filter(window==window.type), parameter.estimate.6nonCpG.combined %>% filter(window==window.type)) %>% add_column(model=rep(c("9 mutation combined", "3 CpG combined", "6 nonCpG combined"), each=length(cova)))
+
+# Use 95% confidence intervals 
+ggplot(parameter.estimate.even.window.diff.model.combine, aes(x=cova, y=estimate, fill=model)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
+theme(text = element_text(size=10))+
+   ylim(c(-0.65, 0.4))+
+   ylab(expression(paste(hat(beta))))+xlab("covariate features")+
+    geom_errorbar(aes(ymin=lower, ymax=upper),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+    ggtitle(expression(paste("Parameter estimate in odd windows")))+
+   theme(plot.title = element_text(hjust = 0.5, size=15)) # center the title
+
+```
 
 
 ## Referecnce 

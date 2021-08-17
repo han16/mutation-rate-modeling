@@ -501,7 +501,7 @@ div.section {
 <li><p>In M0, M2 for each one of 9 mutation types, use even(odd) window as train set to estimate parameters, and use remaining odd(even) window to calculate predicted probability, and sum up across all mutation types.</p></li>
 <li><p>In M1, use odd(even) window as train set, and remaining even(odd) window to calculate predicted probability and add them up.</p></li>
 <li><p>Split 9 mutation types into 3 CpG combined sample, M1(CpG) and 6 nonCpG combined sample, M1(nonCpG)</p></li>
-<li><p>the higher predicted probability, the better, M1&gt;M1(CpG)+M1(nonCpG)&gt;M0&gt;M2</p></li>
+<li><p>the higher predicted probability, the better, M1&gt;M1(CpG)+M1(nonCpG)&gt;M0&gt;M2 The way that calculates the precited probability for 3 CpG combined sample and 6 nonCpG combined sample is the same as in M1 by treating the subset of 3 CpG combined sample as the whole sample.</p></li>
 </ul>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
@@ -773,6 +773,7 @@ No enrichment!
 <div id="model-m16-noncpg-mutation-types-combined" class="section level3">
 <h3>Model M1(6 nonCpG mutation types combined)</h3>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-23-1.png" width="672" /><img src="simons-control-wgs_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
 </div>
 </div>
 <div id="referecnce" class="section level2">
