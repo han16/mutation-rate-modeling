@@ -45,6 +45,18 @@ pie(slices,labels = lbls, col=rainbow(length(lbls)),
 ```
 
 
+### Data by mutation type 
+
+
+* Step 1: go to folder: `/project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS/controls`
+* step 2: find mutation type by folder name, `C_to* has CpG and non CpG subfolder` 
+* step 3: after go to folder/subfolder, search be file by `ls *and*ExpObsVar.bed` 
+
+Note (1) the columns of bed file are chr, start, end, observed rate, expected rate, lower bound, upper bound, stand_diff, pvalue. (2) I combined odd window and even windows together, so you will see half odd windows and another half even windows. 
+
+
+
+
 ## Model evaluation
 
 We consider the following  models, 

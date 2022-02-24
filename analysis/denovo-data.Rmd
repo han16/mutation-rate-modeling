@@ -183,7 +183,7 @@ Simons: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS
 ```{r, echo=T, eval=F}
 Folder: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS/controls
 Data for 100bp window: table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.ExpObsVar.bed.bed.add.100bp
-Each row shows data of one 100bp window. Each column: chromosome, start, end, observed DNM count in the window, and fitted mutation rate in the window. 
+Each row shows data of one 100bp window. Each column: chromosome, start, end, observed DNM count in the window, and fitted mutation rate in the window. Those counts are obtained by combing all mutation types together
 
 chr1 	 0 	 100 0 	 0
 chr1 	 100 	 200 0 	 0
