@@ -13,6 +13,7 @@ library(kableExtra)
 library(RColorBrewer)
 library(gplots)
 library(ape)
+library(tidyverse)
 set.seed(123)
 ```
 
@@ -43,6 +44,48 @@ Data: /project2/xinhe/Shengtong/mutation_rate/mutation.rate/Simons_WGS/controls/
 Columns: chr, start, end, observed rate, fitted rate.
 ```
 
+
+### 5k windows 
+
+```{r, echo=F, message=F, warning=F}
+path="C:\\Shengtong\\Research\\mutation-rate\\ObsvsExp.5k.window\\"
+ObsandExp=as_tibble(read.table(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.bed.sorted.bed.added.5k", sep="")))
+#ggplot(ObsandExp, aes(x=V4, y=V5)) +
+ # geom_point()
+plot(as.numeric(as.character(ObsandExp$V5)), as.numeric(as.character(ObsandExp$V4)), lty=2, pch=16, xlab="exp", ylab="obs", ylim=c(0,4), main="A_to_C")
+#dat=data.frame(obs=as.numeric(as.character(ObsandExp$V4)), exp=as.numeric(as.character(ObsandExp$V5)))
+#dat[is.na(dat)] <- 0 # replace NA with 0 
+ #dat=dat[complete.cases(dat), ] # delete rows with NA
+# cor(dat[,1], dat[,2])
+
+#dat=data.frame(obs=ObsandExp$V4, exp=ObsandExp$V5)
+#cor(as.numeric(dat$obs), as.numeric(dat$exp))
+```
+
+* aggregate summary statistics, expected rate and observed count in 100 bp windows 
+
+* there are 2 windows with expected rate >100 
+
+```
+> ObsandExp[which(as.numeric(as.character(ObsandExp$V5))>100),]
+# A tibble: 2 x 5
+  V1           V2        V3 V4    V5         
+  <chr>     <int>     <int> <chr> <chr>      
+1 chr8  139250000 139255000 0     166.3652155
+2 chr8  139255000 139260000 0     101.249892
+```
+
+See below  the high recombination rate of two 100 bp windows. 
+
+```
+chr8     139249900       139250000       0       5.5363439e-08   0       0       1       0.44    .       108.804         0       0         1       0       0       0       0       0
+chr8     139250000       139250100       0       3.779853e-08    0       0       1       0.51    -1.174439       108.804         0         0       1       0       0       0       0       0
+```
+
+```{r, echo=F, warning=F, message=F}
+outlier_index=which(as.numeric(as.character(ObsandExp$V5))>10)
+plot(as.numeric(as.character(ObsandExp$V5[-outlier_index])), as.numeric(as.character(ObsandExp$V4[-outlier_index])), lty=2, pch=16, xlab="exp", ylab="obs", ylim=c(0,4), main="A_to_C with 3 outliers removed")
+```
 
 
 ### 10k windows 

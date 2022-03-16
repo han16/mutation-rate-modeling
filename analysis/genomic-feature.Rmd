@@ -1,7 +1,6 @@
 ---
 title: "Genomic features"
 author: "Shengtong Han"
-date: YYYY-MM-DD
 output: html_document
 ---
 
@@ -52,3 +51,6 @@ Others:
 
 * Human Accelerated Regions (HAR, 562 windows)
 
+## DNA methylation 
+
+Methylation data are downloaded at GEO [GSE63818](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63818) from paper [The Transcriptome and DNA Methylome Landscapes of Human Primordial Germ Cells, Cell, 2015](https://www.sciencedirect.com/science/article/pii/S0092867415005632)

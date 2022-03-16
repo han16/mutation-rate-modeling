@@ -199,6 +199,11 @@ chr1 	 900 	 1000 0 	 0
 ```
 
 
+#### mutaton count by mutationt type 
+
+
+
+
 ## Data processing and model fitting 
 
 ### Data discretization and categorization
