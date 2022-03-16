@@ -88,6 +88,23 @@ plot(as.numeric(as.character(ObsandExp$V5[-outlier_index])), as.numeric(as.chara
 ```
 
 
+
+
+```{r, echo=F, message=F, warning=F}
+path="C:\\Shengtong\\Research\\mutation-rate\\ObsvsExp.5k.window\\"
+ObsandExp=as_tibble(read.table(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.C_to_G.nonCpG.and.mutation.G_to_C.nonCpG.ExpObsVar.bed.sorted.bed.observed.added.5k", sep="")))
+#ggplot(ObsandExp, aes(x=V4, y=V5)) +
+ # geom_point()
+plot(as.numeric(as.character(ObsandExp$V5)), as.numeric(as.character(ObsandExp$V4)), lty=2, pch=16, xlab="exp", ylab="obs", ylim=c(0,4), main="C_to_G.nonCpG")
+#dat=data.frame(obs=as.numeric(as.character(ObsandExp$V4)), exp=as.numeric(as.character(ObsandExp$V5)))
+#dat[is.na(dat)] <- 0 # replace NA with 0 
+ #dat=dat[complete.cases(dat), ] # delete rows with NA
+# cor(dat[,1], dat[,2])
+
+#dat=data.frame(obs=ObsandExp$V4, exp=ObsandExp$V5)
+#cor(as.numeric(dat$obs), as.numeric(dat$exp))
+```
+
 ### 10k windows 
 
 

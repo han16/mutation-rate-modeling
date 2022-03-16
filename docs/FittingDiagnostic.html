@@ -420,13 +420,14 @@ Columns: chr, start, end, observed rate, fitted rate.</code></pre>
 <pre><code>chr8     139249900       139250000       0       5.5363439e-08   0       0       1       0.44    .       108.804         0       0         1       0       0       0       0       0
 chr8     139250000       139250100       0       3.779853e-08    0       0       1       0.51    -1.174439       108.804         0         0       1       0       0       0       0       0</code></pre>
 <p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="k-windows-1" class="section level3">
 <h3>10k windows</h3>
 <p>add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows.</p>
 <div id="residual-distribution-and-qq-plot-of-p-values" class="section level4">
 <h4>Residual distribution and QQ plot of p values</h4>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-6-9.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-7-9.png" width="672" /></p>
 </div>
 <div id="windows-with-high-expected-mutation-rate" class="section level4">
 <h4>Windows with high expected mutation rate</h4>
@@ -563,13 +564,13 @@ chr8
 <div id="hotspot-detection-and-neighborhood-correlation" class="section level4">
 <h4>hotspot detection and neighborhood correlation</h4>
 <p>One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected ‘hotspot’ windows.</p>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-9-9.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-9.png" width="672" /></p>
 <ul>
 <li>No.consecutive windows: 0 means ‘isolated’ windows , 1 means two-consecutive windows, and etc.<br />
 </li>
 <li>with cutoff of 4, all “hotsopt” are isolated and consecutive hotspots are clearly observed until cutoff reduces to 2.</li>
 </ul>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-10-9.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-9.png" width="672" /></p>
 <ul>
 <li>for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density</li>
 <li>the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1.</li>
@@ -579,7 +580,7 @@ chr8
 </div>
 <div id="scatter-plot" class="section level4">
 <h4>scatter plot</h4>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <ul>
 <li>Every point is one chromosome where expected mutation rate and observed mutation count in each 10k window are added up.</li>
 </ul>
@@ -590,7 +591,7 @@ chr8
 <p>add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows.</p>
 <div id="residual-distribution-and-qq-plot-of-p-values-1" class="section level4">
 <h4>Residual distribution and QQ plot of p values</h4>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-12-9.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-13-9.png" width="672" /></p>
 </div>
 <div id="windows-with-high-expected-mutation-rate-1" class="section level4">
 <h4>Windows with high expected mutation rate</h4>
@@ -686,7 +687,7 @@ chr8
 <div id="hotspot-detection-and-neighborhood-correlation-1" class="section level4">
 <h4>hotspot detection and neighborhood correlation</h4>
 <p>One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected ‘hotspot’ windows.</p>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-16-9.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-17-9.png" width="672" /></p>
 <ul>
 <li><p>No.consecutive windows: 0 means ‘isolated’ windows , 1 means two-consecutive windows, and etc.<br />
 </p></li>
@@ -696,7 +697,7 @@ chr8
 </p></li>
 <li><p>Numbers in the table are p values: In the whole genome, randomly pick the same amount of random windows as hotspot windows, do a enrichment test between hotspot windows and random windows under each scenario by one-side poisson test.</p></li>
 </ul>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-19-9.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-1.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-2.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-3.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-4.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-5.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-6.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-7.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-8.png" width="672" /><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-9.png" width="672" /></p>
 <ul>
 <li>for every hotspot window with a residual cutoff, look at the distance to its nearest neighbor and plot the histgram of distance and density</li>
 <li>the mean of the distance is shown in each graph and the blue vertical line is reference line with distance of 1.</li>
@@ -706,7 +707,7 @@ chr8
 </div>
 <div id="scatter-plot-1" class="section level4">
 <h4>scatter plot</h4>
-<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="FittingDiagnostic_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <ul>
 <li>Every point is one chromosome where expected mutation rate and observed mutation count in each 100k window are added up.</li>
 </ul>
