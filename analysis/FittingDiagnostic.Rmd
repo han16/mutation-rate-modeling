@@ -96,14 +96,43 @@ ObsandExp=as_tibble(read.table(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_c
 #ggplot(ObsandExp, aes(x=V4, y=V5)) +
  # geom_point()
 plot(as.numeric(as.character(ObsandExp$V5)), as.numeric(as.character(ObsandExp$V4)), lty=2, pch=16, xlab="exp", ylab="obs", ylim=c(0,4), main="C_to_G.nonCpG")
-#dat=data.frame(obs=as.numeric(as.character(ObsandExp$V4)), exp=as.numeric(as.character(ObsandExp$V5)))
-#dat[is.na(dat)] <- 0 # replace NA with 0 
+dat=data.frame(obs=as.numeric(as.character(ObsandExp$V4)), exp=as.numeric(as.character(ObsandExp$V5)))
+dat[is.na(dat)] <- 0 # replace NA with 0 
  #dat=dat[complete.cases(dat), ] # delete rows with NA
-# cor(dat[,1], dat[,2])
+ cor(dat[,1], dat[,2])
 
 #dat=data.frame(obs=ObsandExp$V4, exp=ObsandExp$V5)
 #cor(as.numeric(dat$obs), as.numeric(dat$exp))
 ```
+## Recombination rate 
+
+* recombination rate in 100 bp windows 
+
+
+```{r, echo=F, warning=F, message=F, cache=T}
+path="C:\\Shengtong\\Research\\mutation-rate\\CovariateFeature\\"
+recombination_rate=read.table(paste(path, "feature.6RecombRate.bed",sep=""), header=F)
+summary(recombination_rate$V4)
+hist(recombination_rate$V4, xlab="recombination rate", main="")
+
+```
+![image info](C:/Shengtong/Research/mutation-rate/CovariateFeature/RecombinationRate.jpeg)
+
+```{r, echo=F}
+group=c("(A):<=1", "(B):(1,10)", "(C):(10,100)", "(D):>100")
+count=numeric()
+count[1]=nrow(recombination_rate[recombination_rate$V4<1,])
+count[2]=nrow(recombination_rate[recombination_rate$V4>1 & recombination_rate$V4<10,])
+count[3]=nrow(recombination_rate[recombination_rate$V4>10 & recombination_rate$V4<100,])
+count[4]=nrow(recombination_rate[recombination_rate$V4>100,])
+
+ggplot(data=data.frame(group=group, count=count), aes(x=group, y=count, fill=group)) +
+  geom_bar(stat="identity")+
+  xlab("recombination rate")+ylab("window counts")
+
+data.frame(group=group, count=count)
+```
+
 
 ### 10k windows 
 
