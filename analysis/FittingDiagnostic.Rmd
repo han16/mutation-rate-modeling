@@ -1,5 +1,5 @@
 ---
-title: "Fitting Diagnostic"
+title: "Fitting Diagnostic-Simons control data"
 author: "Shengtong  Han"
 date: YYYY-MM-DD
 output: html_document
@@ -28,9 +28,7 @@ loadRData <- function(fileName){
 
 
 
-## Simons-control 
-
-###  100 bp windows 
+##  100 bp windows 
 
 
 index  | mutation type | # total windows |# window $p.val<0.05$ |  # window $p.val=0$
@@ -45,9 +43,9 @@ Columns: chr, start, end, observed rate, fitted rate.
 ```
 
 
-### 5k windows 
+## 5k windows 
 
-```{r, echo=F, message=F, warning=F}
+```{r, echo=F, message=F, warning=F, cache=T}
 path="C:\\Shengtong\\Research\\mutation-rate\\ObsvsExp.5k.window\\"
 ObsandExp=as_tibble(read.table(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.A_to_C.and.mutation.T_to_G.ExpObsVar.bed.sorted.bed.added.5k", sep="")))
 #ggplot(ObsandExp, aes(x=V4, y=V5)) +
@@ -90,7 +88,7 @@ plot(as.numeric(as.character(ObsandExp$V5[-outlier_index])), as.numeric(as.chara
 
 
 
-```{r, echo=F, message=F, warning=F}
+```{r, echo=F, message=F, warning=F, cache=T}
 path="C:\\Shengtong\\Research\\mutation-rate\\ObsvsExp.5k.window\\"
 ObsandExp=as_tibble(read.table(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.C_to_G.nonCpG.and.mutation.G_to_C.nonCpG.ExpObsVar.bed.sorted.bed.observed.added.5k", sep="")))
 #ggplot(ObsandExp, aes(x=V4, y=V5)) +
@@ -104,37 +102,10 @@ dat[is.na(dat)] <- 0 # replace NA with 0
 #dat=data.frame(obs=ObsandExp$V4, exp=ObsandExp$V5)
 #cor(as.numeric(dat$obs), as.numeric(dat$exp))
 ```
-## Recombination rate 
-
-* recombination rate in 100 bp windows 
 
 
-```{r, echo=F, warning=F, message=F, cache=T}
-path="C:\\Shengtong\\Research\\mutation-rate\\CovariateFeature\\"
-recombination_rate=read.table(paste(path, "feature.6RecombRate.bed",sep=""), header=F)
-summary(recombination_rate$V4)
-hist(recombination_rate$V4, xlab="recombination rate", main="")
 
-```
-![image info](C:/Shengtong/Research/mutation-rate/CovariateFeature/RecombinationRate.jpeg)
-
-```{r, echo=F}
-group=c("(A):<=1", "(B):(1,10)", "(C):(10,100)", "(D):>100")
-count=numeric()
-count[1]=nrow(recombination_rate[recombination_rate$V4<1,])
-count[2]=nrow(recombination_rate[recombination_rate$V4>1 & recombination_rate$V4<10,])
-count[3]=nrow(recombination_rate[recombination_rate$V4>10 & recombination_rate$V4<100,])
-count[4]=nrow(recombination_rate[recombination_rate$V4>100,])
-
-ggplot(data=data.frame(group=group, count=count), aes(x=group, y=count, fill=group)) +
-  geom_bar(stat="identity")+
-  xlab("recombination rate")+ylab("window counts")
-
-data.frame(group=group, count=count)
-```
-
-
-### 10k windows 
+## 10k windows 
 
 
 add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows. 
@@ -151,7 +122,7 @@ plotQQ.unif <- function(p.obs) {
 
 
 
-#### Residual distribution and QQ plot of p values 
+### Residual distribution and QQ plot of p values 
 
 ```{r, echo=F, warning=F, cache=T}
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG", "C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
@@ -185,7 +156,7 @@ grid()
 
 
 
-#### Windows with high expected mutation rate 
+### Windows with high expected mutation rate 
 
 
 ```{r, echo=F, warning=F, cache=T}
@@ -227,7 +198,7 @@ The reason for high expected mutation rate is that there are about 100 windows o
 
 
 
-#### hotspot detection and neighborhood correlation 
+### hotspot detection and neighborhood correlation 
 
 
 One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected 'hotspot' windows. 
@@ -373,7 +344,7 @@ abline(v=1, col="blue")
 
 
 
-####  scatter plot 
+###  scatter plot 
 
 
 ```{r, echo=F, warning=F, cache=T}
@@ -416,7 +387,7 @@ grid()
 
 
 
-### 100k windows 
+## 100k windows 
 
 add 100bp windows: Observed and estimated mutations for 100k windows are obtained by adding up that in 100bp windows. 
 
@@ -454,7 +425,7 @@ grid()
 ```
 
 
-#### Windows with high expected mutation rate 
+### Windows with high expected mutation rate 
 
 
 ```{r, echo=F, warning=F, cache=T}
@@ -503,7 +474,7 @@ mtext("100 bp windows for chr8:139200000-139300000", outer = TRUE, cex = 1.5)
 
 
 
-#### hotspot detection and neighborhood correlation 
+### hotspot detection and neighborhood correlation 
 
 
 One way to define hotsopt is look at standardized residuals that are greater than a threshold, say 4 and study the distribution of selected 'hotspot' windows. 
@@ -719,7 +690,7 @@ abline(v=1, col="blue")
 * p.val is calculated by ks.test for testing if two distributions are identical or not
 
 
-####  scatter plot 
+###  scatter plot 
 
 
 ```{r, echo=F, warning=F, cache=T}
