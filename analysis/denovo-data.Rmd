@@ -457,7 +457,7 @@ complement.mut.type=c("T_to_G", "T_to_C", "T_to_A", "G_to_T.CpG","G_to_T.nonCpG"
 cova=c("15Brain_5W_embryo1_methy")
 ```
 
-```{r, echo=F, eval=F}
+```{r, echo=F, eval=T}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\"
 
 #setwd("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/analysis") ### set working directory 
@@ -479,17 +479,17 @@ i=1
  simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
  i=4
  simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
- i=5
- simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
-  simons.control.para.est[[i]]=loadRData("C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG.100bpwindow.with.standardize.covariate.methyONLY.RData")
+ #i=5
+ #simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ # simons.control.para.est[[i]]=loadRData("C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG.100bpwindow.with.standardize.covariate.methyONLY.RData")
  i=6
  simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
- i=7
- simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+# i=7
+# simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
  i=8
  simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
- i=9
- simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+# i=9
+# simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
 
 ```
 
@@ -518,7 +518,6 @@ ggplot(methy_only, aes(x=mutation_type, y=estimate, fill=mutation_type)) +
   ylab(expression(paste(hat(beta))))+
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=8))+
   ggtitle("Brain_5W_embryo1_methy")+
-  
   theme(plot.title = element_text(hjust = 0.5, size=15))  #center the title
 ```
 
