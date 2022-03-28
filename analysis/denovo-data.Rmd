@@ -1,7 +1,6 @@
 ---
 title: "De novo mutations of ASD"
 author: "Shengtong  Han"
-date: YYYY-MM-DD
 output: html_document
 ---
 
@@ -14,6 +13,7 @@ library(kableExtra)
 library(RColorBrewer)
 library(gplots)
 library(ape)
+library(tidyverse)
 set.seed(123)
 ```
 
@@ -446,10 +446,81 @@ arrows(barcenters, simons.control.conf.inter[,1], barcenters,simons.control.conf
 ```
 
 
-* compute the raio of confidence interval over absolute value of estimated coefficient, rank them, and  choose maximum of the top 25% quanitle  or 1. That is at least there are 25% covariate features with smallest ratios are selected as significant features.  
+* compute the ratio of confidence interval over absolute value of estimated coefficient, rank them, and  choose maximum of the top 25% quantile  or 1. That is at least there are 25% covariate features with smallest ratios are selected as significant features.  
 
 
+## methylation feature only 
 
+```{r, echo=F}
+mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG","C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
+complement.mut.type=c("T_to_G", "T_to_C", "T_to_A", "G_to_T.CpG","G_to_T.nonCpG", "G_to_C.CpG", "G_to_C.nonCpG", "G_to_A.CpG", "G_to_A.nonCpG")
+cova=c("15Brain_5W_embryo1_methy")
+```
+
+```{r, echo=F, eval=F}
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\"
+
+#setwd("C:/Shengtong/Research/mutation-rate/mutation-rate-modeling/analysis") ### set working directory 
+
+########### don't know why it doesn't work 
+simons.control.para.est=list()
+#for (i in 1:9)
+#{
+#  simons.control.para.est[[i]]=loadRData(paste("..\\..\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "and.mutation", complement.mut.type[i],  "100bpwindow.with.standardize.covariate.methyONLY.RData", sep="."))
+  
+#simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+#}
+
+i=1
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=2
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=3
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=4
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=5
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+  simons.control.para.est[[i]]=loadRData("C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.C_to_A.nonCpG.and.mutation.G_to_T.nonCpG.100bpwindow.with.standardize.covariate.methyONLY.RData")
+ i=6
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=7
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=8
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+ i=9
+ simons.control.para.est[[i]]=loadRData(paste(path, "table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.methyONLY.RData", sep=""))
+
+```
+
+* regress mutation count on methylation feature only 
+* parameter estimated ($\hat{\beta}$) + 95% CI (vertical line)
+* methylation: GSE63818_Brain_5W_embryo1_methylation
+
+
+```{r, echo=F}
+methy.fea=matrix(nrow=length(mut.type), ncol=3)
+sub_set=c(1,2,3,4,6,8)
+for (i in 1:length(sub_set))
+methy.fea[sub_set[i],]=c(simons.control.para.est[[sub_set[i]]]$para.est[2],simons.control.para.est[[sub_set[i]]]$para.conf[2,]) 
+
+methy.fea[5,]=c(-0.005428626, -0.05213374,  0.04088773) # manually add this numbers because those files couldn't be read into 
+methy.fea[7,]=c(0.01748771, -0.02938896, 0.06397908)
+methy.fea[9,]=c(0.03527426, 0.007650857, 0.06276593)
+methy_only=tibble(mutation_type=mut.type, estimate=methy.fea[,1], lower_bound=methy.fea[,2], upper_bound=methy.fea[,3])
+
+ggplot(methy_only, aes(x=mutation_type, y=estimate, fill=mutation_type)) + 
+  geom_bar(stat="identity", color="black", 
+           position=position_dodge()) +
+  theme(legend.position = "none")+ # remove legend 
+  geom_errorbar(aes(ymin=lower_bound, ymax=upper_bound), width=.2,
+                 position=position_dodge(.9))+
+  ylab(expression(paste(hat(beta))))+
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=8))+
+  ggtitle("Brain_5W_embryo1_methy")+
+  
+  theme(plot.title = element_text(hjust = 0.5, size=15))  #center the title
+```
 
 
 ## Session information
