@@ -248,6 +248,7 @@ The window length is set 100 bp. Use GLM to fit the model, and stated otherwise.
 
 
 ```{r, echo=F}
+setwd("C:\\Shengtong\\Research\\mutation-rate\\mutation-rate-modeling\\analysis\\")
 mut.type=c("A_to_C", "A_to_G", "A_to_T", "C_to_A.CpG","C_to_A.nonCpG", "C_to_G.CpG", "C_to_G.nonCpG", "C_to_T.CpG", "C_to_T.nonCpG")
 cova=c("DHS", "CpGisland", "Lamin", "GC", "RT", "RR", "Exon", "H3K27ac", "H3K27me3", "H3K36me3", "H3K4me1","H3K4me3","H3K9ac", "H3K9me3")
 ```
@@ -457,6 +458,8 @@ complement.mut.type=c("T_to_G", "T_to_C", "T_to_A", "G_to_T.CpG","G_to_T.nonCpG"
 cova=c("15Brain_5W_embryo1_methy")
 ```
 
+
+
 ```{r, echo=F, eval=T}
 path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\"
 
@@ -493,8 +496,11 @@ i=1
 
 ```
 
+* base level methylation are averaged in a window as window level methylation, then converted into binary variable with mean as threshold to fit the model 
 * regress mutation count on methylation feature only 
 * parameter estimated ($\hat{\beta}$) + 95% CI (vertical line)
+* methylation samples are downloaded from [GSE63818](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63818) 
+* methylation samples are strand specific. Plus strand data uses plus strand methylation sample and the same for minus strand. 
 * methylation: GSE63818_Brain_5W_embryo1_methylation
 
 
@@ -520,6 +526,132 @@ ggplot(methy_only, aes(x=mutation_type, y=estimate, fill=mutation_type)) +
   ggtitle("Brain_5W_embryo1_methy")+
   theme(plot.title = element_text(hjust = 0.5, size=15))  #center the title
 ```
+
+
+```{r, echo=F, message=FALSE, warning=FALSE}
+path="C:\\Shengtong\\Research\\mutation-rate\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\"
+#methy=c("15GSE63818_PGC_7W_embryo1_M_methylation_calling.bed",
+#  "15GSE63818_PGC_10W_embryo1_F_rep1_methylation_calling.bed", #"15GSE63818_PGC_10W_embryo1_M_methylation_calling.bed", #"15GSE63818_PGC_11W_embryo1_F_methylation_calling.bed", #"15GSE63818_PGC_11W_embryo1_M_rep1_methylation_calling.bed", #"15GSE63818_PGC_13W_embryo1_M_methylation_calling.bed",  #"15GSE63818_Soma_17W_embryo1_F_methylation_calling.bed", #"15GSE63818_Soma_19W_embryo1_M_methylation_calling.bed")
+
+methy=c("PGC_7W_embryo1_M",
+  "PGC_10W_embryo1_F", "PGC_10W_embryo1_M", "PGC_11W_embryo1_F", "PGC_11W_embryo1_M", "PGC_13W_embryo1_M",  "Soma_17W_embryo1_F", "Soma_19W_embryo1_M")
+
+#setwd("C:\\Shengtong\\Research\\mutation-rate\\mutation-rate-modeling\\analysis\\") ### set working directory 
+###############################################
+####### manually type the results 
+para_est=numeric(length(mut.type)*length(methy)); lower_bound=numeric(length(mut.type)*length(methy)); upper_bound=numeric(length(mut.type)*length(methy))
+para_est_mut=data.frame(para_est=para_est, lower_bound=lower_bound, upper_bound=upper_bound, mut_type=rep(mut.type, each=length(methy)), methy=rep(methy, length(mut.type)))
+para_est_mut[1,1:3]=c(0.05894306, 0.006037771, 0.1113505)  # A->C
+para_est_mut[2,1:3]=c(0.05894306, 0.006037771, 0.1113505)
+para_est_mut[3,1:3]=c(0.05894306, 0.006037771, 0.1113505)
+para_est_mut[4,1:3]=c(0.05894306, 0.006037771, 0.1113505)
+para_est_mut[5,1:3]=c(0.05894306, 0.006037771, 0.1113505)
+para_est_mut[6,1:3]=c(0.05894306, 0.006037771, 0.1113505)
+para_est_mut[7,1:3]=c(0.05894306, 0.006037771, 0.1113505)
+para_est_mut[8,1:3]=c(0.0571056, 0.004139021, 0.1095724)
+
+para_est_mut[9,1:3]=c(0.03823484, 0.0111415, 0.06519488) # A->G
+para_est_mut[10,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+para_est_mut[11,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+para_est_mut[12,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+para_est_mut[13,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+para_est_mut[14,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+para_est_mut[15,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+para_est_mut[16,1:3]=c(0.03823484, 0.0111415, 0.06519488)
+
+para_est_mut[17,1:3]=c(0.03284713, -0.02186639, 0.08701867) # A->T
+para_est_mut[18,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+para_est_mut[19,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+para_est_mut[20,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+para_est_mut[21,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+para_est_mut[22,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+para_est_mut[23,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+para_est_mut[24,1:3]=c(0.03284713, -0.02186639, 0.08701867)
+
+para_est_mut[25,1:3]=c(0.07394379, -0.06825234, 0.2127826) # C->A  CpG
+para_est_mut[26,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+para_est_mut[27,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+para_est_mut[28,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+para_est_mut[29,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+para_est_mut[30,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+para_est_mut[31,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+para_est_mut[32,1:3]=c(0.07394379, -0.06825234, 0.2127826)
+
+para_est_mut[33,1:3]=c(-0.005428626, -0.05213374, 0.04088773) # C->A  nonCpG
+para_est_mut[34,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+para_est_mut[35,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+para_est_mut[36,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+para_est_mut[37,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+para_est_mut[38,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+para_est_mut[39,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+para_est_mut[40,1:3]=c(-0.005428626, -0.05213374, 0.04088773)
+
+para_est_mut[41,1:3]=c(0.06348866, -0.09086077, 0.2138658) # C->G  CpG
+para_est_mut[42,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+para_est_mut[43,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+para_est_mut[44,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+para_est_mut[45,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+para_est_mut[46,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+para_est_mut[47,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+para_est_mut[48,1:3]=c(0.06348866, -0.09086077, 0.2138658)
+
+para_est_mut[49,1:3]=c(0.01748771, -0.02938896, 0.06397908) # C->G  nonCpG
+para_est_mut[50,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+para_est_mut[51,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+para_est_mut[52,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+para_est_mut[53,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+para_est_mut[54,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+para_est_mut[55,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+para_est_mut[56,1:3]=c(0.01748771, -0.02938896, 0.06397908)
+
+para_est_mut[57,1:3]=c(0.08481473, 0.05282837, 0.1166308) # C->T  CpG
+para_est_mut[58,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+para_est_mut[59,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+para_est_mut[60,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+para_est_mut[61,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+para_est_mut[62,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+para_est_mut[63,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+para_est_mut[64,1:3]=c(0.08481473, 0.05282837, 0.1166308)
+
+para_est_mut[65,1:3]=c(0.03527426, 0.007650857, 0.06276593) # C->T  nonCpG
+para_est_mut[66,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+para_est_mut[67,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+para_est_mut[68,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+para_est_mut[69,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+para_est_mut[70,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+para_est_mut[71,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+para_est_mut[72,1:3]=c(0.03527426, 0.007650857, 0.06276593)
+###############################################
+########### don't know why it doesn't work
+#simons.control.para.est=list()
+#for (j in 1:length(methy))
+#{
+ # simons.control.para.est[[i]]=load.Rdata2(paste("table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation", mut.type[i], "and.mutation", complement.mut.type[i],  "100bpwindow.with.standardize.covariate.15GSE63818_PGC_10W_embryo1_F_rep1_methylation_calling.bed.RData", sep="."))
+  
+#simons.control.para.est[[i]]=loadRData(paste( "..\\..\\parameter_estimate\\Simons\\100bpwindow\\MethyFeatureOnly\\table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate.15GSE63818_PGC_10W_embryo1_F_rep1_methylation_calling.bed.RData", sep=""))
+  
+ # simons.control.para.est[[j]]=read.table(paste(path,"table.ASCWGS_20180504.WGS1902_hg19_controls_SNV_remove_recurrent_mutation.", mut.type[i],".and.mutation.",complement.mut.type[i],".100bpwindow.with.standardize.covariate",methy[j], ".txt", sep=""))
+#}
+
+
+#para_est_mut=para_est_mut %>% rename("15GSE63818_PGC_7W_embryo1_M_methylation_calling.bed"="7W_embryo1_M")
+  
+ggplot(para_est_mut, aes(x=methy, y=para_est, fill=methy)) + 
+  geom_bar(stat="identity", color="black", 
+           position=position_dodge()) +
+  theme(legend.position = "none")+ # remove legend 
+  geom_errorbar(aes(ymin=lower_bound, ymax=upper_bound), width=.2,
+                 position=position_dodge(.9))+
+  ylab(expression(paste(hat(beta))))+
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=5))+
+  ggtitle("")+
+  theme(plot.title = element_text(hjust = 0.5, size=15))+  #center the title
+facet_wrap(~mut_type)
+```
+
+
+
+* For each mutation type, $\widehat{\beta}$ is nearly identical across difference methylation sample. 
 
 
 ## Session information

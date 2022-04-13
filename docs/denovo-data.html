@@ -827,11 +827,18 @@ chr1     900     1000 0      0</code></pre>
 <div id="methylation-feature-only" class="section level2">
 <h2>methylation feature only</h2>
 <ul>
+<li>base level methylation are averaged in a window as window level methylation, then converted into binary variable with mean as threshold to fit the model</li>
 <li>regress mutation count on methylation feature only</li>
 <li>parameter estimated (<span class="math inline">\(\hat{\beta}\)</span>) + 95% CI (vertical line)</li>
+<li>methylation samples are downloaded from <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63818">GSE63818</a></li>
+<li>methylation samples are strand specific. Plus strand data uses plus strand methylation sample and the same for minus strand.</li>
 <li>methylation: GSE63818_Brain_5W_embryo1_methylation</li>
 </ul>
 <p><img src="denovo-data_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="denovo-data_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<ul>
+<li>For each mutation type, <span class="math inline">\(\widehat{\beta}\)</span> is nearly identical across difference methylation sample.</li>
+</ul>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
