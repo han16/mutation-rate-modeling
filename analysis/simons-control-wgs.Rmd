@@ -68,6 +68,8 @@ We consider the following  models,
 
 * Model 2 (M2): 3-mer+features for 9 mutation types
 
+* Model 2 with variable selection (M2(variable selection)): among 14 covariates features, only significant ones are kept to fit the model.  Significant variables are defined as top 4 variables in terms of the ratio of coefficient estimate over their CI. 
+
 ### Predictive density measure 
 
 * Whole human genome (hg19) is evenly split into 100bp windows 
@@ -115,20 +117,30 @@ geom_bar(stat="identity", position=position_dodge())+
 
 * Split 9 mutation types into 3 CpG combined sample, M1(CpG) and 6 nonCpG combined sample, M1(nonCpG)  
 
-* the higher predicted probability, the better, M1>M1(CpG)+M1(nonCpG)>M0>M2
-The way that calculates the precited probability for 3 CpG combined sample and 6 nonCpG combined sample is the same as in M1 by treating the subset of 3 CpG combined sample as the whole sample. 
+* M2(variable selection appears to be the worst one) 
+
+* the higher predicted probability, the better, M1>M1(CpG)+M1(nonCpG)>M0>M2>M2(variable selection). 
+
+* The way that calculates the precited probability for 3 CpG combined sample and 6 nonCpG combined sample is the same as in M1 by treating the subset of 3 CpG combined sample as the whole sample. 
+
+
 
 
 ```{r, echo=F}
 m1.post.pred=as_tibble(read.table(paste(path, "pooled.mutation.type.log.predictive.density.txt", sep="/"), header=T))
 m1.CpG.post.pred=as_tibble(read.table(paste(path, "pooled.CpG.mutation.type.data.log.predictive.density.txt", sep="/"), header=T))
 m1.nonCpG.post.pred=as_tibble(read.table(paste(path, "pooled.nonCpG.mutation.type.data.log.predictive.density.txt", sep="/"), header=T))
+m2.post.pred.variable.selection=as_tibble(read.table(paste(path, "post.pred.for.model.with.variable.selection.txt", sep="/"), header=T))
+pp2.variable.selection=m2.post.pred.variable.selection%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
+  
 pp0=m0.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp1=m1.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp1.CpG=m1.CpG.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp1.nonCpG=m1.nonCpG.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()
 pp2=m2.post.pred%>%select(post.pred)%>%summarise(sum=sum(post.pred))%>%pull()  
-total.post.pred=tibble(model=c("M0", "M1", "M1(CpG+nonCpG)", "M2"), post.pred=c(pp0, pp1, (pp1.CpG+pp1.nonCpG), pp2))
+
+
+total.post.pred=tibble(model=c("M0", "M1", "M1(CpG+nonCpG)", "M2", "M2(variable selection)"), post.pred=c(pp0, pp1, (pp1.CpG+pp1.nonCpG), pp2, pp2.variable.selection))
 
 ggplot(data=total.post.pred, aes(x=model, y=-post.pred)) +
    theme(axis.text.x = element_text(angle = 60, vjust = 0.5, size=10))+
