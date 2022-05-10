@@ -45,26 +45,24 @@ $$
 
 ## Region level
 
-It's computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within  a window, collapse all bases together, denote $Y$ by the total number of mutations, assume $X_i$ are the same across all bases. Within a window, assuming $Y_i\sim Pois(\mu_i)$ are indepedent poisson random variables, the sum $Y=\sum_iY_i \sim Pois (\sum_i\mu_i)$
+It's computationally hard to infer the mutation rate at single base since there are 3B bases in human genome. So consider the window level. Within  a window, collapse all bases together, denote $Y$ by the total number of mutations, assume $X_i$ are the same across all bases. Within a window, assuming $Y_i\sim Pois(\mu_i)$ are independent poisson random variables, the sum $Y=\sum_iY_i \sim Pois (\sum_i\mu_i)$
 
 
 Considering baseline mutation rate $\mu_{i0}$ at every base $i$, then $Y \sim Pois(\sum_i \mu_{i0} \mu_i)$, where $\sum_i \mu_{i0}\mu_i=\sum_i\mu_{i0}e^{X_i^T\beta}=e^{X^T\beta}\sum_i\mu_{i0}$, assuming $x_i^T\beta$ are the same across all bases in the window and $\sum_i \mu_{i0}$ is the total baseline mutation for the window. Then $Y_j \sim Pois(\mu_{j0}e^{X_j^T\beta})$
 
 
-The likelihood funciton is 
+The likelihood function is 
 
 
-$$
-\begin{aligned} 
+\begin{equation}
 L(\beta|Y)=\prod_j\frac{[\mu_{j0}e^{X_j^T\beta}]^{Y_j}e^{-\mu_{j0}e^{X_j^T\beta}}}{Y_j!}
-\end{aligned}
-$$
+\end{equation}
 
 
 and
 
 * $Y_j$; total number of mutations in  window $j$
-* $X_j$: a vector of covariates for the window, assuming the same acorss all bases in the window
+* $X_j$: a vector of covariates for the window, assuming the same across all bases in the window
 
 
 
@@ -72,18 +70,21 @@ and
 
 And the log likelihood function is 
 
-$$
-\begin{aligned}
+
+\begin{equation}
+\tag{1}
 l(\beta)=\sum_j[Y_jlog(\underbrace{\mu_{j0}e^{X_j^T\beta}}_{\mu_j})]-\sum_j[\underbrace{\mu_{j0}e^{X_j^T\beta}}_{\mu_j}]+constant\\
 =\sum[Y_jlog(\mu_j)]-\sum_j[\mu_j]+constant
-\end{aligned}
-$$
+\end{equation}
+
+
+
 
 
 
 ## Categorization
 
-Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have $P$ binary features (continuous features could be discretized into discrete values). Totally it is going to be $2^P$ feature categories.  Usually $2^P << \frac{3B}{L}$, $L$ is window length. 
+Human genome has 3B bases, even for 100 bp windows, the computation is still expensive. To speed up, one way is to put all windows with similar features into one category and treat the whole category as a single unit. Suppose we have $P$ binary features (continuous features could be categorized into discrete values). Totally it is going to be $2^P$ feature categories.  Usually $2^P << \frac{3B}{L}$, $L$ is window length. 
 
 Let $c$ index category. $Y_c$ is the total number of mutations, $\mu_{c0}$ is the baseline mutation rate, $X_c$ is the feature covariates. 
 
@@ -117,6 +118,9 @@ $\frac{\partial f(\beta)}{\partial \beta_0}=\sum_c (Y_c-\mu_{c0}e^{X_c^T\beta})$
 
 Let $\tilde{y}$ be a new value, $Y$  be the observed data, the posterior predictive distribution of $\tilde{y}$ is 
 
-$p(\tilde{y})=\int p(\tilde{y}|\beta, Y)p(\theta|Y)d\beta$. 
+\begin{equation}
+p(\tilde{y})=\int p(\tilde{y}|\beta, Y)p(\theta|Y)d\beta. 
+\end{equation}
 
-For the Poission regression model where $\beta$ is fixed, the log predictive density is $l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j$, where $\widehat{\mu}_j$ is the predicted mutation rate using the parameter estimated in the training set. Note $\widehat{\mu}_j=\mu_{j0}e^{X_j^T\widehat{\beta}}=0$ when $\mu_{j0}=0$, resulting in invalid predictive density for window $j$.  
+For the Poisson regression model where $\beta$ is fixed, the log predictive density is, by (1) 
+$l(\tilde{y}|\widehat{\beta})=\sum_jY_jlog(\widehat{\mu}_j)-\sum_j\widehat{\mu}_j$, where $\widehat{\mu}_j$ is the predicted mutation rate using the parameter estimated in the training set. Note $\widehat{\mu}_j=\mu_{j0}e^{X_j^T\widehat{\beta}}=0$ when $\mu_{j0}=0$, resulting in invalid predictive density for window $j$.  

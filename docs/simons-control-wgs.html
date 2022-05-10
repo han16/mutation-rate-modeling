@@ -449,9 +449,10 @@ div.section {
 <li><p>In M0, M2 for each one of 9 mutation types, use even(odd) window as train set to estimate parameters, and use remaining odd(even) window to calculate predicted probability, and sum up across all mutation types.</p></li>
 <li><p>In M1, use odd(even) window as train set, and remaining even(odd) window to calculate predicted probability and add them up.</p></li>
 <li><p>Split 9 mutation types into 3 CpG combined sample, M1(CpG) and 6 nonCpG combined sample, M1(nonCpG)</p></li>
-<li><p>M2(variable selection appears to be the worst one)</p></li>
+<li><p>M2(vS-top4); among 14 covariates, pick the top 4 covariates with highest ratio of parameter estimate over CI</p></li>
+<li><p>M2 (VS-zscore), among 14 covariate features, choose the ones with |z score|&gt;2 to refit the model</p></li>
 <li><p>the higher predicted probability, the better, M1&gt;M1(CpG)+M1(nonCpG)&gt;M0&gt;M2&gt;M2(variable selection).</p></li>
-<li><p>The way that calculates the precited probability for 3 CpG combined sample and 6 nonCpG combined sample is the same as in M1 by treating the subset of 3 CpG combined sample as the whole sample.</p></li>
+<li><p>The way that calculates the predicted probability for 3 CpG combined sample and 6 nonCpG combined sample is the same as in M1 by treating the subset of 3 CpG combined sample as the whole sample.</p></li>
 </ul>
 <p><img src="simons-control-wgs_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
