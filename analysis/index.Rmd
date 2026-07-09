@@ -22,3 +22,7 @@ output:
 * [Simons control WGS analysis](simons-control-wgs.html)
 
 * [Baseline mutation rate](baseline-mutation-rate.html)
+
+## For Yuwen (2026)
+
+We used Poisson regression to fit observed mutation count to covariate features, such as  tri-nucleotide context, CpG island and others. Due to heavy computing burden for single-base analysis, we split whole genome into windows, such as 1kb, and collapsed windows with similar covariates feature, to speed up the calculation. Once the parameters in Poisson regression are estimated, we can calculate the desired mutation rate. 
